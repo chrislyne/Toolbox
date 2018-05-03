@@ -1,0 +1,35 @@
+global proc RSTessellate(){
+    if(`window -exists RSTessellateUI`){
+        deleteUI RSTessellateUI;
+    }
+    window -wh 100 75 -rtf 1 -mxb 0 -title "Redshift Tessellate Tool" RSTessellateUI;
+    columnLayout mainCol;
+    formLayout -w 150 -h 75  mainForm;
+    text -label "Max Subdivisions"  intText;
+    intField -w 55 -value 2 -min 1 -max 50 subCall;
+    
+    button -label "apply" -w 150 -command RSSmooth procButton;
+        formLayout -e
+                    -ap intText "left" 5 0
+                    -ac subCall "left" 5 intText
+                    -ac procButton "top" 5 subCall   
+                    mainForm;
+
+    showWindow RSTessellateUI;
+}
+
+global proc RSSmooth ()
+{
+    int $intID = `intField -q -v subCall`;
+    
+    string $sel[] = `ls -sl`;
+    for( $item in $sel)
+    {
+        string $shapes[] = `listRelatives -s -path $item`;
+        for( $shape in $shapes)
+        {
+            setAttr ($shape + ".rsEnableSubdivision") 1;
+            setAttr ($shape + ".rsMaxTessellationSubdivs") $intID;
+        }
+    }
+}

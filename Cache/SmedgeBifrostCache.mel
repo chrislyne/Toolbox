@@ -1,0 +1,78 @@
+global proc SubmitToSmedge()
+{
+    //Query values from UI
+    int $packetSize = `intSliderGrp -q -value slider1`;
+    int $priority = `intSliderGrp -q -value slider2`;
+    int $foam = `checkBox -q -value check2`;
+    int $mesh = `checkBox -q -value check1`;
+    
+    string $submit = "C:/Program Files/Smedge/Submit.exe";
+    string $dir = `dirname $submit`;
+    // set the working dir and PATH to the directory
+    chdir $dir;
+    putenv "PATH" $dir;
+    // now set submit to just the basename of the executable
+    $submit = `basename $submit ""`;
+    
+    float $startFrame = `playbackOptions -q -minTime`;
+    float $endFrame = `playbackOptions -q -maxTime`;
+    
+    string $filename = `file -q -sn`;
+    string $shortname = `file -q -sn -shn`;
+    string $buffer[];
+    tokenize $shortname "." $buffer;
+    string $smedgeName = "bifrost: "+$buffer[0];
+    if($mesh == 1)
+    {
+        $smedgeName += " - MESH";  
+    }
+    if($foam == 1)
+    {
+        $smedgeName += " - FOAM";  
+    }
+
+    string $cmd = $submit + " Script -Type \"Generic Script\" -Name "+$smedgeName+" -Priority "+$priority+" -Pool \"Bifrost\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2017\\bin\\mayabatch.exe\\\" \\\""+$filename+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$foam+","+$mesh+")\\\"";
+    
+    // Do it!
+    print( "// smedgeRender is executing system command:\n// " + $cmd + "\n" );
+    string $result = `system $cmd`;
+}
+
+global proc SmedgeBifrostCache()
+{
+    if (`window -exists submitBifrostWindow`) deleteUI submitBifrostWindow;
+    window -w 200 -h 200 -title "Bifrost Submit Window"  submitBifrostWindow;
+        formLayout submitBifrostForm;
+            text -label "Packets" -w 100 textLabel1;
+            text -label "Priority" -w 100 textLabel2;
+            intSliderGrp -field true -minValue 1 -maxValue 10 -fieldMinValue 1 -value 4 -w 200 slider1;
+            intSliderGrp -field true -minValue 0 -maxValue 100 -fieldMinValue 0 -fieldMaxValue 100 -value 100 -w 200 slider2;
+            checkBox -label "Mesh" -w 100 check1;
+            checkBox -label "Foam" -w 100 check2;
+            
+            button -l "Submit" -h 50 -c ("SubmitToSmedge();deleteUI submitBifrostWindow")  Btn1;
+            button -l "Close" -h 50 -c ("deleteUI submitBifrostWindow")  Btn2 ;
+        formLayout  -edit
+                    -af check1 top 20 
+                    -af check1 left 70
+                    -ac check2 top 10 check1
+                    -af check2 left 70 
+                    -af slider1 top 72
+                    -af slider1 left 70
+                    -af slider2 top 102
+                    -af slider2 left 70 
+                    -af textLabel1 left -12 
+                    -ac textLabel1 top -18 slider1
+                    -af textLabel2 left -12 
+                    -ac textLabel2 top -20 slider2
+                    -af Btn1 bottom 0
+                    -af Btn1 left 0
+                    -ap Btn1 right 0 50
+                    -af Btn2 bottom 0
+                    -ac Btn2 left 0 Btn1
+                    -af Btn2 right 0 
+
+    submitBifrostForm;
+    showWindow submitBifrostWindow;
+}
+//SmedgeBifrostCache();

@@ -1,0 +1,10 @@
+global proc rollDice(){
+	string $sel[] = `ls -sl`;
+	for( $item in $sel)
+	{
+	    float $dice = rand(0,2);
+	      if($dice < 1){
+	          select -tgl $item;
+	      }
+	};
+}

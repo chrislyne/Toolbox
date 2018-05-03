@@ -1,0 +1,8 @@
+global proc playblastTemp(){
+	system("start //bigtop/bigtop/Job_3/System/Deployment/bat/deletePlayblastsFromTemp.bat" );
+
+	int $widths = `getAttr defaultResolution.width`;
+	int $heights = `getAttr defaultResolution.height`;
+
+	playblast  -format image -sequenceTime 0 -clearCache 1 -viewer 1 -showOrnaments 0 -fp 4 -percent 100 -compression "png" -quality 70 -widthHeight $widths $heights;
+}

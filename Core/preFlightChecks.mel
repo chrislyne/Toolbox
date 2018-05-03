@@ -1,0 +1,117 @@
+//Pre Flight Checks
+
+global proc preFlightChecks(){
+
+  //Check if Redshift is loaded
+  string $evalCommand="rsCreateAov";
+  if (`exists $evalCommand`) 
+  {
+
+  string $scenePath = `file -q -sn`;
+  string $buffer2[];
+  $numTokens = `tokenize $scenePath "/" $buffer2`;
+
+  int $pathSize = `size $buffer2`;
+
+  string $holdingPath = ""; 
+  int $counter = 0;
+  int $holdingCounter = 100;
+
+  for( $item in $buffer2)
+  {    
+      if($item == "scenes"){
+       
+            $holdingCounter = $counter;
+           
+        }
+        
+        if($counter > $holdingCounter && $counter < $pathSize -1 ){
+        $holdingPath += ($item+"/");
+          }
+        $counter+=1;
+  };
+
+
+  //get scene name
+  string $sceneName = `file -q -sn -shn`;
+  string $buffer[];
+  $numTokens = `tokenize $sceneName "_" $buffer`;
+
+
+  //set common options
+  setAttr -type "string" "defaultRenderGlobals.imageFilePrefix" ($holdingPath + "<RenderLayer>/<Scene>/"+$buffer[0] + "_<RenderLayer>"); 
+  setAttr "redshiftOptions.imageFormat" 1;
+  //setAttr "redshiftOptions.pngBits" 16;
+  setAttr "defaultRenderGlobals.animation" 1;
+  setAttr "defaultRenderGlobals.extensionPadding" 4;
+  setAttr "defaultRenderGlobals.animation" 0;
+
+
+  //aov options
+
+  string $aov[] = `ls "*rsAov*"`;
+  for( $item in $aov)
+    {
+
+    if (`attributeQuery -node $item -exists "filePrefix"`)
+    {
+        setAttr -type "string" ($item +".filePrefix") "<BeautyPath>/<RenderPass>/<BeautyFile>.<RenderPass>";
+    }
+    
+
+    //$aov = `rsCreateAov -type "Motion Vectors" -n "rsAov_MotionVectors"`;
+
+    if ($item == "rsAov_Depth")
+    {
+      //setAttr ($item +".normalizeZeroToOne") 1;
+      //setAttr ($item +".fileFormat") 2;
+      //setAttr ($item +".pngBits") 16;
+    }
+   
+    };
+    //Check renderable cameras
+
+    //list cameras in scene
+    string $cameraSel[]=`listTransforms -cameras`;
+    int $numberOfCameras = 0;
+    for($node in $cameraSel)
+    {
+        int $i=0;
+        $i=`getAttr ($node+".renderable")`;
+        if($i==1)
+        {
+            //count cameras
+            $numberOfCameras += 1;
+            //Rendering perspective camera
+            if ($node == "persp")
+            {
+                confirmDialog -title "Confirm" -message "Are you sure you want to render the perspective camera?" -button "Okay"; 
+            }
+           
+        }
+    }
+    //more than one camera
+    if ($numberOfCameras > 1)
+    {
+        confirmDialog -title "Confirm" -message "More han one renderable cameras" -button "Okay";
+    }
+    //No camera
+    else if ($numberOfCameras < 1)
+    {
+        confirmDialog -title "Confirm" -message "No renderable cameras" -button "Okay";
+    }
+  }
+  else
+  {
+    error ("Redshift Not Loaded");
+  }
+  smedgeRender;
+}
+
+
+
+
+
+
+
+
