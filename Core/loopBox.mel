@@ -17,7 +17,7 @@ global proc loop()
     }
 }
 
-global proc loopbox()
+global proc loopBox()
 {
     if (`window -exists loopBoxWindow`) deleteUI loopBoxWindow;
     window -w 300 -h 100 -title "Loop Box Window" loopBoxWindow ;

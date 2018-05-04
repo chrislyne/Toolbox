@@ -20,6 +20,8 @@
 	.st14{fill:#3F7EB0;}
 	.st15{fill:#5D96BF;}
 	.st16{display:inline;fill:url(#SVGID_1_);}
+	.st17{fill:#21215E;stroke:#21215E;stroke-width:14;stroke-miterlimit:10;}
+	.st18{fill:#F20000;stroke:#E50000;stroke-width:14;stroke-miterlimit:10;}
 </style>
 <g id="Layer_2">
 	<path class="st0" d="M26,32H6c-3.3,0-6-2.7-6-6L0,6c0-3.3,2.7-6,6-6l20,0c3.3,0,6,2.7,6,6v20C32,29.3,29.3,32,26,32z"/>
@@ -74,19 +76,6 @@
 	</g>
 </g>
 <g id="Layer_1" class="st2">
-	<radialGradient id="SVGID_1_" cx="120.7968" cy="-91.243" r="113.5878" gradientUnits="userSpaceOnUse">
-		<stop  offset="0" style="stop-color:#C7C7C7"/>
-		<stop  offset="1" style="stop-color:#474747"/>
-	</radialGradient>
-	<circle class="st16" cx="120.8" cy="-52.4" r="67.2"/>
-	<g class="st3">
-		
-			<text transform="matrix(1 0 0 1 83.5835 -2.5234)" style="fill:#21215E;stroke:#21215E;stroke-width:14;stroke-miterlimit:10; font-family:'PTSans-Caption'; font-size:129.5756px;">S</text>
-	</g>
-	<g class="st3">
-		
-			<text transform="matrix(1 0 0 1 83.5835 -11.1621)" style="fill:#F20000;stroke:#E50000;stroke-width:14;stroke-miterlimit:10; font-family:'PTSans-Caption'; font-size:129.5756px;">S</text>
-	</g>
 </g>
 <g id="Layer_3" class="st2">
 </g>
