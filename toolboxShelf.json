@@ -28,6 +28,33 @@
 			"command":"source edgeToCurve;edgeToCurve;"
 		},
 		{
+			"icon":"parentShape.svg",
+			"label":"Parent shape node to a new transform",
+			"command":"parent -add -s;"
+		},
+		{
+			"icon":"removeNamespaces.svg",
+			"label":"Remove namespaces from selected objects or from whole scene",
+			"command":"source removeNamespaces;removeNamespaces;"
+		},
+		{
+			"icon":"OpenRenderFolder.svg",
+			"label":"Open project folders",
+			"command":"source OpenRenderFolder;OpenRenderFolder(0);",
+			"stp":"mel",
+			"menuItem":[
+				{
+					"label":"images\\temp",
+					"command":"source OpenRenderFolder;OpenRenderFolder(1);"
+				},
+				{
+					"label":"sourceimages",
+					"command":"source OpenRenderFolder;OpenRenderFolder(2);"
+				}
+				
+			]
+		},
+		{
 			"icon":"multiRef.svg",
 			"label":"reference or import multiple files at once",
 			"command":"source multiRef;multiRef;"
@@ -35,7 +62,18 @@
 		{
 			"icon":"playblastTemp.svg",
 			"label":"playblast with presets",
-			"command":"source playblastTemp;playblastTemp;"
+			"command":"source playblastTemp;playblastTemp(0);",
+			"menuItem":[
+				{
+					"label":".mov",
+					"command":"source playblastTemp;playblastTemp(1);"
+				},
+				{
+					"label":".png",
+					"command":"source playblastTemp;playblastTemp(2);"
+				}
+				
+			]
 		},
 		{
 			"icon":"smedgeRender.svg",
