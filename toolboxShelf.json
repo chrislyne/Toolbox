@@ -1,0 +1,49 @@
+{
+	"icons": [
+		{
+			"icon":"loopBox.svg",
+			"label":"loops through attributes",
+			"command":"source loopBox;loopBox;"
+		},
+		{
+			"icon":"assignNewShader.svg",
+			"label":"assign new shader to selected object",
+			"command":"source assignNewShader;assignNewShader(\"lambert\");",
+			"stp":"mel",
+			"menuItem":[
+				{
+					"label":"lambert",
+					"command":"source assignNewShader;assignNewShader(\"lambert\");"
+				},
+				{
+					"label":"RedshiftMaterial",
+					"command":"source assignNewShader;assignNewShader(\"RedshiftMaterial\");"
+				}
+				
+			]
+		},
+		{
+			"icon":"edgeToCurve.svg",
+			"label":"select edges on object to make curve",
+			"command":"source edgeToCurve;edgeToCurve;"
+		},
+		{
+			"icon":"multiRef.svg",
+			"label":"reference or import multiple files at once",
+			"command":"source multiRef;multiRef;"
+		},
+		{
+			"icon":"playblastTemp.svg",
+			"label":"playblast with presets",
+			"command":"source playblastTemp;playblastTemp;"
+		},
+		{
+			"icon":"smedgeRender.svg",
+			"label":"Submit render to smedge",
+			"command":"source smedgeRender;smedgeRender;"
+		}
+
+	]
+
+
+}
