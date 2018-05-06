@@ -69,8 +69,12 @@
 					"command":"source playblastTemp;playblastTemp(1);"
 				},
 				{
-					"label":".png",
+					"label":".mov on green",
 					"command":"source playblastTemp;playblastTemp(2);"
+				},
+				{
+					"label":".png",
+					"command":"source playblastTemp;playblastTemp(3);"
 				}
 				
 			]
