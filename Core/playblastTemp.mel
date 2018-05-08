@@ -1,3 +1,4 @@
+
 global proc playblastTemp(int $mode){
 
 	$filename = `file -q -sn -shn`;
@@ -18,7 +19,7 @@ global proc playblastTemp(int $mode){
 	//save .mov
 	if($mode == 1)
 	{
-		
+		playblast  -format qt -filename ("movies/" + $buffer[0]) -sequenceTime 0 -clearCache 1 -viewer 1 -showOrnaments 0 -fp 4 -percent 100 -compression "H.264" -quality 80 -widthHeight $widths $heights;
 	}
 
 	//save .mov on green
@@ -39,6 +40,12 @@ global proc playblastTemp(int $mode){
 	{
 	
 		playblast  -format image -filename ("images/playblasts/" + $buffer[0] + "/" + $buffer[0]) -sequenceTime 0 -clearCache 1 -viewer 1 -showOrnaments 0 -fp 4 -percent 100 -compression "png" -quality 70 -widthHeight $widths $heights;
+	}
+
+	if($mode == 4)
+	{
+		displayRGBColor "background" 0 1 0 ; 
+		displayPref -displayGradient false;
 	}
 	
 }

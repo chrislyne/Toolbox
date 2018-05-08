@@ -1,0 +1,65 @@
+//removes turtles
+global proc removeTurtle(){
+
+	unloadPlugin -f "Turtle";
+
+	select -r -ne TurtleDefaultBakeLayer ;
+	string $sel[] = `ls -sl`;
+	if ( `size($sel)` > 0 )
+	{
+    	lockNode -l 0 $sel[0];
+    	delete $sel[0];
+	}
+	deleteShelfTab("TURTLE");
+}
+
+//clears pre/post mel scripts from render globals
+global proc clearMel()
+{
+	setAttr -type "string" defaultRenderGlobals.postMel "";
+	setAttr -type "string" defaultRenderGlobals.preMel "";
+}
+
+//remove vray
+global proc removeVray()
+{
+    if (`attributeExists "postMel" "defaultRenderGlobals"`)
+    {
+        setAttr -type "string" defaultRenderGlobals.postMel "";
+    }
+    if (`attributeExists "preMel" "defaultRenderGlobals"`)
+    {
+        setAttr -type "string" defaultRenderGlobals.preMel "";
+    }
+    
+    string $VRayNodes1[] = `ls "*VRay*"`;
+    
+    if(`size $VRayNodes1` > 0)
+    {
+        delete $vrayNodes;
+    }
+}
+
+global proc clearPlugins(int $mode)
+{
+	if($mode == 0)
+	{
+		removeTurtle();
+		clearMel();
+		removeVray();
+	}
+	if($mode == 1)
+	{
+		removeTurtle();
+	}
+	if($mode == 2)
+	{
+		clearMel();
+	}
+	if($mode == 3)
+	{
+		removeVray();
+	}
+	
+}
+
