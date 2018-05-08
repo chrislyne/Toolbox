@@ -1,7 +1,7 @@
 
 global proc playblastTemp(int $mode){
 
-	$filename = `file -q -sn -shn`;
+	string $filename = `file -q -sn -shn`;
 	string $buffer[];
 	$numTokens = `tokenize $filename "." $buffer`;
 
