@@ -1,7 +1,1 @@
-<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <title>selectReplace</title>
-  <g>
-    <rect x="1" y="1" width="30" height="30" rx="5" ry="5" fill="#94b500"/>
-    <path d="M26,2a4,4,0,0,1,4,4V26a4,4,0,0,1-4,4H6a4,4,0,0,1-4-4V6A4,4,0,0,1,6,2H26m0-2H6A6,6,0,0,0,0,6V26a6,6,0,0,0,6,6H26a6,6,0,0,0,6-6V6a6,6,0,0,0-6-6Z" fill="#3d7ca6"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>selectReplace</title><g id="Layer_2" data-name="Layer 2"><rect x="1" y="1" width="30" height="30" rx="5" ry="5" fill="#94b500"/><path d="M26,2a4,4,0,0,1,4,4V26a4,4,0,0,1-4,4H6a4,4,0,0,1-4-4V6A4,4,0,0,1,6,2H26m0-2H6A6,6,0,0,0,0,6V26a6,6,0,0,0,6,6H26a6,6,0,0,0,6-6V6a6,6,0,0,0-6-6Z" fill="#3d7ca6"/></g><g id="Layer_12" data-name="Layer 12"><path d="M7.45,15.64h4.87v1.65H7.45Z" fill="#424242"/><path d="M14.24,12.75H15.9v.87h0a2.64,2.64,0,0,1,2.13-1,2.67,2.67,0,0,1,1.72.64l-1.2,1.43a1.7,1.7,0,0,0-1.08-.41,1.52,1.52,0,0,0-1.08.41A1.59,1.59,0,0,0,15.9,16V21H14.24Z" fill="#424242"/></g></svg>
