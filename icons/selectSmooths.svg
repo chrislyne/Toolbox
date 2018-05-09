@@ -1,1 +1,18 @@
-<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><style>.cls-1{fill:#94b500;}.cls-2{fill:#3d7ca6;}</style></defs><title>selectSmooths</title><rect class="cls-1" x="1" y="1" width="30" height="30" rx="5" ry="5"/><path class="cls-2" d="M26,2a4,4,0,0,1,4,4V26a4,4,0,0,1-4,4H6a4,4,0,0,1-4-4V6A4,4,0,0,1,6,2H26m0-2H6A6,6,0,0,0,0,6V26a6,6,0,0,0,6,6H26a6,6,0,0,0,6-6V6a6,6,0,0,0-6-6Z"/></svg>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #94b500;
+      }
+
+      .cls-2 {
+        fill: #3d7ca6;
+      }
+    </style>
+  </defs>
+  <title>selectSmooths</title>
+  <g>
+    <rect class="cls-1" x="1" y="1" width="30" height="30" rx="5" ry="5"/>
+    <path class="cls-2" d="M26,2a4,4,0,0,1,4,4V26a4,4,0,0,1-4,4H6a4,4,0,0,1-4-4V6A4,4,0,0,1,6,2H26m0-2H6A6,6,0,0,0,0,6V26a6,6,0,0,0,6,6H26a6,6,0,0,0,6-6V6a6,6,0,0,0-6-6Z"/>
+  </g>
+</svg>
