@@ -1,50 +1,26 @@
 <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <defs>
-    <style>
-      .cls-1, .cls-4, .cls-5 {
-        fill: none;
-      }
-
-      .cls-2 {
-        fill: #c9c9c9;
-      }
-
-      .cls-3 {
-        fill: #2d2d2d;
-      }
-
-      .cls-4, .cls-5 {
-        stroke: #2d2d2d;
-        stroke-miterlimit: 10;
-      }
-
-      .cls-4 {
-        stroke-width: 2px;
-      }
-    </style>
-  </defs>
   <title>smedgeRender</title>
-  <rect class="cls-1" y="0.32" width="32" height="31.68"/>
+  <rect y="0.32" width="32" height="31.68" fill="none"/>
   <g id="_Group_" data-name="&lt;Group&gt;">
-    <rect class="cls-2" width="32" height="10.66"/>
+    <rect width="32" height="10.66" fill="#c9c9c9"/>
   </g>
   <g id="_Group_2" data-name="&lt;Group&gt;">
-    <rect class="cls-3" y="11.1" width="32" height="20.9"/>
+    <rect y="11.1" width="32" height="20.9" fill="#2d2d2d"/>
   </g>
-  <polygon class="cls-3" points="32 3.87 28.08 0 22.19 0 27.2 5 21.49 10.7 27.42 10.66 32 6.14 32 3.87"/>
-  <polygon class="cls-3" points="16.72 5 21.61 4.84 16.71 0 10.82 0 15.82 5 10.12 10.7 16.05 10.66 21.61 5.17 16.72 5"/>
-  <polygon class="cls-3" points="5.58 5 10.48 4.84 5.58 0 0 0 0 0.32 4.69 5 0 9.69 0 10.7 4.92 10.66 10.48 5.17 5.58 5"/>
-  <line class="cls-4" y1="10.88" x2="32" y2="10.88"/>
-  <line class="cls-5" y1="4.98" x2="32" y2="4.98"/>
+  <polygon points="32 3.87 28.08 0 22.19 0 27.2 5 21.49 10.7 27.42 10.66 32 6.14 32 3.87" fill="#2d2d2d"/>
+  <polygon points="16.72 5 21.61 4.84 16.71 0 10.82 0 15.82 5 10.12 10.7 16.05 10.66 21.61 5.17 16.72 5" fill="#2d2d2d"/>
+  <polygon points="5.58 5 10.48 4.84 5.58 0 0 0 0 0.32 4.69 5 0 9.69 0 10.7 4.92 10.66 10.48 5.17 5.58 5" fill="#2d2d2d"/>
+  <line y1="10.88" x2="32" y2="10.88" fill="none" stroke="#2d2d2d" stroke-miterlimit="10" stroke-width="2"/>
+  <line y1="4.98" x2="32" y2="4.98" fill="none" stroke="#2d2d2d" stroke-miterlimit="10"/>
   <g id="_Group_3" data-name="&lt;Group&gt;">
-    <rect class="cls-2" width="32" height="10.66"/>
+    <rect width="32" height="10.66" fill="#c9c9c9"/>
   </g>
   <g id="_Group_4" data-name="&lt;Group&gt;">
-    <rect class="cls-3" y="11.1" width="32" height="20.9"/>
+    <rect y="11.1" width="32" height="20.9" fill="#2d2d2d"/>
   </g>
-  <polygon class="cls-3" points="32 3.87 28.08 0 22.19 0 27.2 5 21.49 10.7 27.42 10.66 32 6.14 32 3.87"/>
-  <polygon class="cls-3" points="16.72 5 21.61 4.84 16.71 0 10.82 0 15.82 5 10.12 10.7 16.05 10.66 21.61 5.17 16.72 5"/>
-  <polygon class="cls-3" points="5.58 5 10.48 4.84 5.58 0 0 0 0 0.32 4.69 5 0 9.69 0 10.7 4.92 10.66 10.48 5.17 5.58 5"/>
-  <line class="cls-4" y1="10.88" x2="32" y2="10.88"/>
-  <line class="cls-5" y1="4.98" x2="32" y2="4.98"/>
+  <polygon points="32 3.87 28.08 0 22.19 0 27.2 5 21.49 10.7 27.42 10.66 32 6.14 32 3.87" fill="#2d2d2d"/>
+  <polygon points="16.72 5 21.61 4.84 16.71 0 10.82 0 15.82 5 10.12 10.7 16.05 10.66 21.61 5.17 16.72 5" fill="#2d2d2d"/>
+  <polygon points="5.58 5 10.48 4.84 5.58 0 0 0 0 0.32 4.69 5 0 9.69 0 10.7 4.92 10.66 10.48 5.17 5.58 5" fill="#2d2d2d"/>
+  <line y1="10.88" x2="32" y2="10.88" fill="none" stroke="#2d2d2d" stroke-miterlimit="10" stroke-width="2"/>
+  <line y1="4.98" x2="32" y2="4.98" fill="none" stroke="#2d2d2d" stroke-miterlimit="10"/>
 </svg>
