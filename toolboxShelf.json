@@ -110,6 +110,11 @@
 			"command":"source multiRef;multiRef;"
 		},
 		{
+			"icon":"cacheYetiFur.svg",
+			"label":"Cache yeti fur",
+			"command":"source cacheYetiFur;cacheYetiFur;"
+		},
+		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"command":"source RSTessellate;RSTessellate;"
