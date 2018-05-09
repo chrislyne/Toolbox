@@ -1,9 +1,54 @@
 {
 	"icons": [
 		{
+			"icon":"selectClear.svg",
+			"label":"Clear selection",
+			"command":"select -cl;"
+		},
+		{
+			"icon":"selectList.svg",
+			"label":"List current selection",
+			"command":"string $quickSel[] = `ls -sl`;;"
+		},
+		{
+			"icon":"selectReplace.svg",
+			"label":"Replace selection with list",
+			"command":"select -r $quickSel;"
+		},
+		{
+			"icon":"selectSmooths.svg",
+			"label":"Select all smooths in the scene",
+			"command":"select \"*polySmoothFace*\";"
+		},
+		{
+			"icon":"clearPlugins.svg",
+			"label":"clears plugins from scene",
+			"command":"source clearPlugins;clearPlugins(0);",
+			"menuItem":[
+				{
+					"label":"Remove turtles",
+					"command":"source clearPlugins;clearPlugins(1);"
+				},
+				{
+					"label":"Remove pre/post scripts",
+					"command":"source clearPlugins;clearPlugins(2);"
+				},
+				{
+					"label":"Remove Vray",
+					"command":"source clearPlugins;clearPlugins(3);"
+				}
+				
+			]
+		},
+		{
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
 			"command":"source loopBox;loopBox;"
+		},
+		{
+			"icon":"mapFaces.svg",
+			"label":"Maps shader on selected faces",
+			"command":"string $selList[] = `ls -sl`;hyperShade -smn;hyperShadePanelGraphCommand(\"hyperShadePanel1\", \"showUpAndDownstream\");select -r $selList;"
 		},
 		{
 			"icon":"assignNewShader.svg",
@@ -21,6 +66,11 @@
 				}
 				
 			]
+		},
+		{
+			"icon":"rivet.svg",
+			"label":"Makes rivet between two edges",
+			"command":"source rivet;rivet;"
 		},
 		{
 			"icon":"edgeToCurve.svg",
@@ -60,6 +110,31 @@
 			"command":"source multiRef;multiRef;"
 		},
 		{
+			"icon":"RSTessellate.svg",
+			"label":"Adds tesselsation to redshift objects",
+			"command":"source RSTessellate;RSTessellate;"
+		},
+		{
+			"icon":"RSObjectId.svg",
+			"label":"Adds object ID to redshift objects",
+			"command":"source RSObjectId;RSObjectId;"
+		},
+		{
+			"icon":"RSAOV.svg",
+			"label":"Adds redshift AOV deffinitions",
+			"command":"source RSAOV;RSAOV;"
+		},
+		{
+			"icon":"RSFresnel.svg",
+			"label":"Create redshift fresnel / occlusion material",
+			"command":"source RSFresnel;RSFresnel;"
+		},
+		{
+			"icon":"RSCameraBokeh.svg",
+			"label":"Adds redshift bokeh to camera",
+			"command":"source RSCameraBokeh;RSCameraBokeh;"
+		},
+		{
 			"icon":"playblastTemp.svg",
 			"label":"playblast with presets",
 			"command":"source playblastTemp;playblastTemp(0);",
@@ -75,9 +150,18 @@
 				{
 					"label":".png",
 					"command":"source playblastTemp;playblastTemp(3);"
+				},
+				{
+					"label":"green",
+					"command":"source playblastTemp;playblastTemp(4);"
 				}
 				
 			]
+		},
+		{
+			"icon":"preFlightChecks.svg",
+			"label":"Pre render checks",
+			"command":"source preFlightChecks;preFlightChecks;"
 		},
 		{
 			"icon":"smedgeRender.svg",

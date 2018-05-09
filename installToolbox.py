@@ -30,6 +30,7 @@ def AddIcons(shelfName):
             icon = buttons[i]['icon']
             srcWindows = (dirname+'/icons/'+icon)
             destWindows = (allparts[1]+'/'+icon)
+            print srcWindows
             cmds.sysFile(srcWindows,copy=destWindows)
             shelfString += ',i1=\''+icon+'\''
         except:
@@ -116,3 +117,6 @@ def toolbox_install():
 
 
 #toolbox_install()
+
+#import installToolbox
+#installToolbox.toolbox_install()
