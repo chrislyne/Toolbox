@@ -75,7 +75,12 @@
 		{
 			"icon":"edgeToCurve.svg",
 			"label":"select edges on object to make curve",
-			"command":"source edgeToCurve;edgeToCurve;"
+			"command":"source edgeToCurve;edgeToCurve(0);",
+			"menuItem":[
+				{
+					"label":"Extrude GEO",
+					"command":"source edgeToCurve;edgeToCurve(1);"
+				}
 		},
 		{
 			"icon":"parentShape.svg",
