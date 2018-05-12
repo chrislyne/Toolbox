@@ -1,6 +1,13 @@
 {
 	"icons": [
 		{
+			"icon":"incrementalSave.svg",
+			"label":"Incremental Save",
+			"script":"Modules/incrementalSave.py",
+			"command":"import io_incrementalSave;io_incrementalSave.IncrementCurrentFile(initials='cl')",
+			"stp":"py"
+		},
+		{
 			"icon":"selectClear.svg",
 			"label":"Clear selection",
 			"command":"select -cl;"
