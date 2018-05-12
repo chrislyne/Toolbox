@@ -4,12 +4,11 @@ from pymel.all import *
 import json
 import os
 import urllib2
-#import maya.mel as mel
 
 def createShelf(shelfName):
     
     shelfExists = 0
-    
+    names = cmds.layout('ShelfLayout',q=True,ca=True)
     for name in names:
         if name == shelfName:
             shelfExists = 1
