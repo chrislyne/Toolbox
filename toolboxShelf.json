@@ -81,6 +81,7 @@
 					"label":"Extrude GEO",
 					"command":"source edgeToCurve;edgeToCurve(1);"
 				}
+			]
 		},
 		{
 			"icon":"parentShape.svg",

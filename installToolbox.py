@@ -3,13 +3,11 @@ import sys
 from pymel.all import *
 import json
 import os
+import urllib
 
 def AddIcons(shelfName):
-
-    #get icon path
-    separator = ';'
-    iconPaths = mel.getenv('XBMLANGPATH')
-    allparts = iconPaths.split(separator)
+    
+    iconsMenu = cmds.optionMenu('iconsMenu', query=True,v=True) 
     
     #read json
     try:
@@ -26,16 +24,15 @@ def AddIcons(shelfName):
     for i, btn in enumerate(buttons):
         shelfElements = buttons[i]
         shelfString = 'cmds.shelfButton(rpt=True'
+        #download icons from github
         try:
             icon = buttons[i]['icon']
-            srcWindows = (dirname+'/icons/'+icon)
-            destWindows = (allparts[1]+'/'+icon)
-            print srcWindows
-            cmds.sysFile(srcWindows,copy=destWindows)
+            testfile = urllib.URLopener()
+            testfile.retrieve(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (iconsMenu+'/'+icon))
             shelfString += ',i1=\''+icon+'\''
+            
         except:
-            print 'no icon specified'
-            icon = ''
+            print ('file '+icon+' not available')
         try:
             label = buttons[i]['label']
             shelfString += ',l=\''+label+'\''
@@ -71,11 +68,42 @@ def CheckText():
    shelfName = cmds.textField('nameText',q=True,text=True)
    AddIcons(shelfName)
 
+def FilterOutSystemPaths(path):
+    systemPath  = 0
+    allparts = path.split('/')
+    for part in allparts:
+        if part == 'ProgramData' or  part == 'Program Files':
+            systemPath = 1
+    
+    return systemPath
+
 
 def installToolboxWindow():
     installForm = cmds.formLayout()
     textLabel = cmds.text(label='Shelf')
     nameText = cmds.textField('nameText',width=250,tx='Custom')
+    scriptsMenu = cmds.optionMenu('scriptsMenu')
+    separator = ';'
+    scriptsPaths = mel.getenv('MAYA_SCRIPT_PATH')
+    allparts = scriptsPaths.split(separator)
+    for i, part in enumerate(allparts):
+        if (i==0):
+            cmds.menuItem( label='Manually install scripts' )
+        if (i<7):
+            isSystemPath = FilterOutSystemPaths(part)
+            if (isSystemPath == 0):
+                cmds.menuItem( label=part )
+            
+    iconsMenu = cmds.optionMenu('iconsMenu')  
+    iconsPaths = mel.getenv('XBMLANGPATH')
+    iconsParts = iconsPaths.split(separator)
+    
+    for i, part in enumerate(iconsParts):
+        if (i<6):
+            isSystemPath = FilterOutSystemPaths(part)
+            if (isSystemPath == 0):
+                cmds.menuItem( label=part )
+     
     btn1 = cmds.button(height=50,label='Install',c='CheckText()')
     btn2 = cmds.button(height=50,label='Close',c='cmds.deleteUI(\'Install Toolbox\')')
     
@@ -85,6 +113,8 @@ def installToolboxWindow():
                      (textLabel, 'left', 10),
                      (nameText, 'top', 10),
                      (nameText, 'right', 10),
+                     (scriptsMenu, 'right', 10),
+                     (iconsMenu, 'right', 10),
                      (btn1, 'bottom', 0),
                      (btn1, 'left', 0),
                      (btn2, 'bottom', 0),
@@ -92,6 +122,10 @@ def installToolboxWindow():
                      ],
                      attachControl=[
                      (nameText, 'left', 10,textLabel),
+                     (scriptsMenu, 'top', 10,textLabel),
+                     (scriptsMenu, 'left', 10,textLabel),
+                     (iconsMenu, 'top', 10,scriptsMenu),
+                     (iconsMenu, 'left', 10,textLabel),
                      (btn2, 'left', 0,btn1)
                      ],
                      attachPosition=[
