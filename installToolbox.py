@@ -3,11 +3,62 @@ import sys
 from pymel.all import *
 import json
 import os
-import urllib
+import urllib2
+#import maya.mel as mel
+
+def createShelf(shelfName):
+    
+    shelfExists = 0
+    
+    for name in names:
+        if name == shelfName:
+            shelfExists = 1
+    
+    if shelfExists == 1:
+        print 'Shelf {} Exists'.format(shelfName)
+    else:
+        print 'Shelf {} does not exist'.format(shelfName)
+        mel.addNewShelfTab(shelfName)
+
+def DownloadFile(remote, local):
+
+    
+    u = urllib2.urlopen(remote)
+    h = u.info()
+    totalSize = int(h["Content-Length"])
+    
+    print "Downloading %s bytes..." % totalSize,
+    fp = open(local, 'wb')
+    
+    blockSize = 8192 #100000 # urllib.urlretrieve uses 8192
+    count = 0
+    while True:
+        chunk = u.read(blockSize)
+        if not chunk: break
+        fp.write(chunk)
+        count += 1
+        if totalSize > 0:
+            percent = int(count * blockSize * 100 / totalSize)
+            if percent > 100: percent = 100
+            print "%2d%%" % percent,
+            if percent < 100:
+                print "\b\b\b\b\b",  # Erase "NN% "
+            else:
+                print "Done."
+    
+    fp.flush()
+    fp.close()
+    if not totalSize:
+        print
 
 def AddIcons(shelfName):
     
-    iconsMenu = cmds.optionMenu('iconsMenu', query=True,v=True) 
+    #check that shelf exists
+    createShelf(shelfName)
+    
+    localScriptsPath = cmds.optionMenu('scriptsMenu', query=True,v=True) 
+    localIconsPath = cmds.optionMenu('iconsMenu', query=True,v=True) 
+    scriptsMenuI = cmds.optionMenu('scriptsMenu', query=True,sl=True)
     
     #read json
     try:
@@ -27,12 +78,19 @@ def AddIcons(shelfName):
         #download icons from github
         try:
             icon = buttons[i]['icon']
-            testfile = urllib.URLopener()
-            testfile.retrieve(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (iconsMenu+'/'+icon))
+            DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (localIconsPath+'/'+icon))
             shelfString += ',i1=\''+icon+'\''
             
         except:
-            print ('file '+icon+' not available')
+            print ('file not available')
+        #download script from github
+        if scriptsMenuI > 1:
+            try:
+                script = buttons[i]['script']
+                fileName = script.split('/')
+                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
+            except:
+                print ('file not available')
         try:
             label = buttons[i]['label']
             shelfString += ',l=\''+label+'\''
@@ -59,9 +117,9 @@ def AddIcons(shelfName):
             for i,l in enumerate(mi):
                 cmds.shelfButton(currentButton,edit=True,mi=(mi[i]['label'],mi[i]['command']))
         except:
-            print 'no menu item'
-            
-
+            print ''
+    
+    
     
 def CheckText():
 

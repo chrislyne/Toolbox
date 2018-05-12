@@ -23,6 +23,7 @@
 		{
 			"icon":"clearPlugins.svg",
 			"label":"clears plugins from scene",
+			"script":"Core/clearPlugins.mel",
 			"command":"source clearPlugins;clearPlugins(0);",
 			"menuItem":[
 				{
@@ -43,6 +44,7 @@
 		{
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
+			"script":"Core/loopBox.mel",
 			"command":"source loopBox;loopBox;"
 		},
 		{
@@ -53,6 +55,7 @@
 		{
 			"icon":"assignNewShader.svg",
 			"label":"assign new shader to selected object",
+			"script":"Core/assignNewShader.mel",
 			"command":"source assignNewShader;assignNewShader(\"lambert\");",
 			"stp":"mel",
 			"menuItem":[
@@ -75,6 +78,7 @@
 		{
 			"icon":"edgeToCurve.svg",
 			"label":"select edges on object to make curve",
+			"script":"Core/edgeToCurve.mel",
 			"command":"source edgeToCurve;edgeToCurve(0);",
 			"menuItem":[
 				{
@@ -91,11 +95,13 @@
 		{
 			"icon":"removeNamespaces.svg",
 			"label":"Remove namespaces from selected objects or from whole scene",
+			"script":"Core/removeNamespaces.mel",
 			"command":"source removeNamespaces;removeNamespaces;"
 		},
 		{
 			"icon":"OpenRenderFolder.svg",
 			"label":"Open project folders",
+			"script":"Core/OpenRenderFolder.mel",
 			"command":"source OpenRenderFolder;OpenRenderFolder(0);",
 			"stp":"mel",
 			"menuItem":[
@@ -113,21 +119,25 @@
 		{
 			"icon":"multiRef.svg",
 			"label":"reference or import multiple files at once",
+			"script":"Core/multiRef.mel",
 			"command":"source multiRef;multiRef;"
 		},
 		{
 			"icon":"cacheYetiFur.svg",
 			"label":"Cache yeti fur",
-			"command":"source cacheYetiFur;cacheYetiFur;"
+			"script":"Cache/batchCacheYetiFur.mel",
+			"command":"source batchCacheYetiFur;batchCacheYetiFur;"
 		},
 		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
+			"script":"Redshift/RSTessellate.mel",
 			"command":"source RSTessellate;RSTessellate;"
 		},
 		{
 			"icon":"RSObjectId.svg",
 			"label":"Adds object ID to redshift objects",
+			"script":"Redshift/RSObjectId.mel",
 			"command":"source RSObjectId;RSObjectId;"
 		},
 		{
@@ -138,16 +148,19 @@
 		{
 			"icon":"RSFresnel.svg",
 			"label":"Create redshift fresnel / occlusion material",
+			"script":"Redshift/RSFresnel.mel",
 			"command":"source RSFresnel;RSFresnel;"
 		},
 		{
 			"icon":"RSCameraBokeh.svg",
 			"label":"Adds redshift bokeh to camera",
+			"script":"Redshift/RSCameraBokeh.mel",
 			"command":"source RSCameraBokeh;RSCameraBokeh;"
 		},
 		{
 			"icon":"playblastTemp.svg",
 			"label":"playblast with presets",
+			"script":"Core/playblastTemp.mel",
 			"command":"source playblastTemp;playblastTemp(0);",
 			"menuItem":[
 				{
@@ -172,11 +185,13 @@
 		{
 			"icon":"preFlightChecks.svg",
 			"label":"Pre render checks",
+			"script":"Core/preFlightChecks.mel",
 			"command":"source preFlightChecks;preFlightChecks;"
 		},
 		{
 			"icon":"smedgeRender.svg",
 			"label":"Submit render to smedge",
+			"script":"Core/smedgeRender.mel",
 			"command":"source smedgeRender;smedgeRender;"
 		}
 
