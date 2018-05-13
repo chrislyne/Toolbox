@@ -43,7 +43,7 @@
 		{
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
-			"command":"source loopBox;loopBox;"
+			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};"
 		},
 		{
 			"icon":"mapFaces.svg",
