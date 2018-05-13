@@ -3,13 +3,61 @@ import sys
 from pymel.all import *
 import json
 import os
+import urllib2
+
+def createShelf(shelfName):
+    
+    shelfExists = 0
+    names = cmds.layout('ShelfLayout',q=True,ca=True)
+    for name in names:
+        if name == shelfName:
+            shelfExists = 1
+    
+    if shelfExists == 1:
+        print 'Shelf {} Exists'.format(shelfName)
+    else:
+        print 'Shelf {} does not exist'.format(shelfName)
+        mel.addNewShelfTab(shelfName)
+
+def DownloadFile(remote, local):
+
+    
+    u = urllib2.urlopen(remote)
+    h = u.info()
+    totalSize = int(h["Content-Length"])
+    
+    print "Downloading %s bytes..." % totalSize,
+    fp = open(local, 'wb')
+    
+    blockSize = 8192 #100000 # urllib.urlretrieve uses 8192
+    count = 0
+    while True:
+        chunk = u.read(blockSize)
+        if not chunk: break
+        fp.write(chunk)
+        count += 1
+        if totalSize > 0:
+            percent = int(count * blockSize * 100 / totalSize)
+            if percent > 100: percent = 100
+            print "%2d%%" % percent,
+            if percent < 100:
+                print "\b\b\b\b\b",  # Erase "NN% "
+            else:
+                print "Done."
+    
+    fp.flush()
+    fp.close()
+    if not totalSize:
+        print
 
 def AddIcons(shelfName):
-
-    #get icon path
-    separator = ';'
-    iconPaths = mel.getenv('XBMLANGPATH')
-    allparts = iconPaths.split(separator)
+    
+    #check that shelf exists
+    createShelf(shelfName)
+    
+    localScriptsPath = cmds.optionMenu('scriptsMenu', query=True,v=True) 
+    localIconsPath = cmds.optionMenu('iconsMenu', query=True,v=True) 
+    scriptsMenuI = cmds.optionMenu('scriptsMenu', query=True,sl=True)
     
     #read json
     try:
@@ -26,16 +74,22 @@ def AddIcons(shelfName):
     for i, btn in enumerate(buttons):
         shelfElements = buttons[i]
         shelfString = 'cmds.shelfButton(rpt=True'
+        #download icons from github
         try:
             icon = buttons[i]['icon']
-            srcWindows = (dirname+'/icons/'+icon)
-            destWindows = (allparts[1]+'/'+icon)
-            print srcWindows
-            cmds.sysFile(srcWindows,copy=destWindows)
+            DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (localIconsPath+'/'+icon))
             shelfString += ',i1=\''+icon+'\''
+            
         except:
-            print 'no icon specified'
-            icon = ''
+            print ('file not available')
+        #download script from github
+        if scriptsMenuI > 1:
+            try:
+                script = buttons[i]['script']
+                fileName = script.split('/')
+                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
+            except:
+                print ('file not available')
         try:
             label = buttons[i]['label']
             shelfString += ',l=\''+label+'\''
@@ -62,20 +116,51 @@ def AddIcons(shelfName):
             for i,l in enumerate(mi):
                 cmds.shelfButton(currentButton,edit=True,mi=(mi[i]['label'],mi[i]['command']))
         except:
-            print 'no menu item'
-            
-
+            print ''
+    
+    
     
 def CheckText():
 
    shelfName = cmds.textField('nameText',q=True,text=True)
    AddIcons(shelfName)
 
+def FilterOutSystemPaths(path):
+    systemPath  = 0
+    allparts = path.split('/')
+    for part in allparts:
+        if part == 'ProgramData' or  part == 'Program Files':
+            systemPath = 1
+    
+    return systemPath
+
 
 def installToolboxWindow():
     installForm = cmds.formLayout()
     textLabel = cmds.text(label='Shelf')
     nameText = cmds.textField('nameText',width=250,tx='Custom')
+    scriptsMenu = cmds.optionMenu('scriptsMenu')
+    separator = ';'
+    scriptsPaths = mel.getenv('MAYA_SCRIPT_PATH')
+    allparts = scriptsPaths.split(separator)
+    for i, part in enumerate(allparts):
+        if (i==0):
+            cmds.menuItem( label='Manually install scripts' )
+        if (i<7):
+            isSystemPath = FilterOutSystemPaths(part)
+            if (isSystemPath == 0):
+                cmds.menuItem( label=part )
+            
+    iconsMenu = cmds.optionMenu('iconsMenu')  
+    iconsPaths = mel.getenv('XBMLANGPATH')
+    iconsParts = iconsPaths.split(separator)
+    
+    for i, part in enumerate(iconsParts):
+        if (i<6):
+            isSystemPath = FilterOutSystemPaths(part)
+            if (isSystemPath == 0):
+                cmds.menuItem( label=part )
+     
     btn1 = cmds.button(height=50,label='Install',c='CheckText()')
     btn2 = cmds.button(height=50,label='Close',c='cmds.deleteUI(\'Install Toolbox\')')
     
@@ -85,6 +170,8 @@ def installToolboxWindow():
                      (textLabel, 'left', 10),
                      (nameText, 'top', 10),
                      (nameText, 'right', 10),
+                     (scriptsMenu, 'right', 10),
+                     (iconsMenu, 'right', 10),
                      (btn1, 'bottom', 0),
                      (btn1, 'left', 0),
                      (btn2, 'bottom', 0),
@@ -92,6 +179,10 @@ def installToolboxWindow():
                      ],
                      attachControl=[
                      (nameText, 'left', 10,textLabel),
+                     (scriptsMenu, 'top', 10,textLabel),
+                     (scriptsMenu, 'left', 10,textLabel),
+                     (iconsMenu, 'top', 10,scriptsMenu),
+                     (iconsMenu, 'left', 10,textLabel),
                      (btn2, 'left', 0,btn1)
                      ],
                      attachPosition=[
