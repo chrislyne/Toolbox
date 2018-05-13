@@ -136,6 +136,18 @@
 			"command":"source batchCacheYetiFur;batchCacheYetiFur;"
 		},
 		{
+			"icon":"exportForTexturing.svg",
+			"label":"Adds tesselsation to redshift objects",
+			"script":"Redshift/exportForTexturing.mel",
+			"command":"source exportForTexturing;exportForTexturing;"
+		},
+		{
+			"icon":"abc_publishModel.svg",
+			"label":"Adds tesselsation to redshift objects",
+			"script":"Redshift/abc_publishModel.mel",
+			"command":"source abc_publishModel;abc_publishModel;"
+		},
+		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"script":"Redshift/RSTessellate.mel",
