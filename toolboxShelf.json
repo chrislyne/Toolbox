@@ -51,12 +51,9 @@
 		{
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
-<<<<<<< HEAD
-			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};"
-=======
+			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};",
 			"script":"Core/loopBox.mel",
 			"command":"source loopBox;loopBox;"
->>>>>>> ecec0f950daaa6e25fb714cd9c27c5a7725b6f4b
 		},
 		{
 			"icon":"mapFaces.svg",

@@ -1,0 +1,36 @@
+global proc OpenRenderFolder(int $temp)
+{
+	string $imagePath[] = `renderSettings -fin -fp`;
+	string $tempImagePath[] = `renderSettings -fin -fpt`;
+	string $sourceimages = `workspace -q -fullName`;
+	string $images = `workspace -q -fullName`;
+	$sourceimages += "/sourceimages/ /";
+	$images += "/images/ /";
+
+	if($temp == 1)
+	{
+	    $imagePath = $tempImagePath;
+	}
+	if($temp == 2)
+	{
+	    $imagePath[0] = $sourceimages;
+	}
+	if($temp == 3)
+	{
+	    $imagePath[0] = $images;
+	}
+	
+	string $buffer[];
+	$numTokens = `tokenize ($imagePath[0]) "/" $buffer`;
+
+	string $folderPath = "";
+
+	for($i=0;$i<$numTokens-1;$i++)
+	{
+	    $folderPath += ($buffer[$i]+"\\");
+	}
+	print $folderPath;
+
+	string $syscmd = "start explorer /n,/e, " + $folderPath; 
+	system( $syscmd );
+}
