@@ -36,7 +36,7 @@ global proc removeVray()
     
     if(`size $VRayNodes1` > 0)
     {
-        delete $vrayNodes;
+        delete $VRayNodes1;
     }
 }
 
