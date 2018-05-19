@@ -90,6 +90,18 @@ def AddIcons(shelfName):
                 DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
             except:
                 print ('file not available')
+        #download modules from github
+        if scriptsMenuI > 1:
+            try:
+                modules = buttons[i]['modules']
+                for mod in modules:
+                    fileName = mod.split('/')
+                    #make folder
+                    if not os.path.exists(localScriptsPath+'/Modules'):
+                        os.makedirs(localScriptsPath+'/Modules')
+                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),(localScriptsPath+'/Modules/'+fileName[-1]))
+            except:
+                print ('file not available')
         try:
             label = buttons[i]['label']
             shelfString += ',l=\''+label+'\''

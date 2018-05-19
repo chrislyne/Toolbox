@@ -3,8 +3,12 @@
 		{
 			"icon":"incrementalSave.svg",
 			"label":"Incremental Save",
-			"script":"Modules/incrementalSave.py",
-			"command":"import incrementalSave;incrementalSave.IncrementCurrentFile(initials=\"cl\")",
+			"script":"Core/incrementalSaveUI.py",
+			"modules": [
+			"Modules/incrementalSave.py",
+			"Modules/IOuserPref.py"
+			],
+			"command":"import incrementalSaveUI;from incrementalSaveUI import *;incrementalSaveUI()",
 			"stp":"python"
 		},
 		{
