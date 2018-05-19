@@ -4,18 +4,22 @@ import maya.mel as mel
 import maya.cmds as cmds
 from pymel.all import *
 
-import imp
-try:
-    dirname = os.path.dirname(__file__)
-    parentDir = dirname
-except:
-    print 'running in test environment'
-    dirname = 'C:/Users/Chris/Dropbox/Projects/Toolbox/Core'
-    parentDir = os.path.abspath(os.path.join(dirname, os.pardir))
-
-IOuserPref = imp.load_source('IOuserPref', (parentDir+'/Modules/IOuserPref.py'))
+def importModules(fileName):
+    import imp
+    try:
+        dirname = os.path.dirname(__file__)
+        #parentDir = dirname
+    except:
+        print 'running in test environment'
+        dirname = 'C:/Users/Chris/Dropbox/Projects/Toolbox'
+        #parentDir = os.path.abspath(os.path.join(dirname, os.pardir))
+    
+    fileName = imp.load_source(fileName, (dirname+'/Modules/'+fileName+'.py'))
+    #IOuserPref = imp.load_source('IOuserPref', (dirname+'/Modules/IOuserPref.py'))
+    return fileName
 
 def updateUserPrefs(initials):
+    IOuserPref = importModules('IOuserPref')
     userConfigFile = IOuserPref.UserPrefPath()
     
     fileExists = os.path.isfile(userConfigFile)
@@ -81,6 +85,8 @@ def user_install(initials):
 #user_install()
 
 def incrementalSaveUI():
+    IOuserPref = importModules('IOuserPref')
+    incrementalSave = importModules('incrementalSave')
     userConfigFile = IOuserPref.UserPrefPath()
     initials = ''
     fileExists = os.path.isfile(userConfigFile)
@@ -94,10 +100,10 @@ def incrementalSaveUI():
         timePassed = t - f1
         timePassedHours = timePassed / 3600
         #update file if too old
-        if timePassedHours > 0.1:
+        if timePassedHours > 168:
             user_install(initials)
         else:
-            import incrementalSave;incrementalSave.IncrementCurrentFile(initials=initials)
+            incrementalSave.IncrementCurrentFile(initials=initials)
     else:
         print 'it is not there'
         #create file
