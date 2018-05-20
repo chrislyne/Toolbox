@@ -149,6 +149,12 @@
 			"command":"source abc_publishModel;abc_publishModel;"
 		},
 		{
+			"icon":"abc_reassignShaders.svg",
+			"label":"Select objects to reassign orriginal materials",
+			"script":"Redshift/abc_reassignShaders.mel",
+			"command":"source abc_reassignShaders;abc_reassignShaders;"
+		},
+		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"script":"Redshift/RSTessellate.mel",
