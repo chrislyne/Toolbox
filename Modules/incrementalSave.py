@@ -48,8 +48,9 @@ def RemoveInitials(s, c, n):
 def RemoveVersion(s, c, n):
     words = s.split(c)
     name = c.join(words)
+    version = words[-1].lower()
     #check if filename has version
-    if ((words[-1].replace("v", "")).isdigit()):
+    if ((version.replace("v", "")).isdigit()):
         name = c.join(words[:n])
     return name
 
