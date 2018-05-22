@@ -22,18 +22,19 @@ def createShelf(shelfName):
 def RemoveButton(shelfName,iconName):
     shelfButtons = cmds.shelfLayout(shelfName,q=True,childArray=True)
 
-    for btn in shelfButtons:
-        label = ''
+    if shelfButtons:
+        for btn in shelfButtons:
+            label = ''
 
-        #Assert that this is a shelfButton
-        if cmds.objectTypeUI(btn,isType='shelfButton'):
+            #Assert that this is a shelfButton
+            if cmds.objectTypeUI(btn,isType='shelfButton'):
 
-            label = cmds.shelfButton(btn,q=True,image=True)
+                label = cmds.shelfButton(btn,q=True,image=True)
 
-            #If this button has the label we're looking for,
-            #delete the button.
-            if iconName == label:
-                cmds.deleteUI(btn)
+                #If this button has the label we're looking for,
+                #delete the button.
+                if iconName == label:
+                    cmds.deleteUI(btn)
 
 def DownloadFile(remote, local):
 
