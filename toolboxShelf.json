@@ -12,24 +12,31 @@
 			"stp":"python"
 		},
 		{
+			"icon":"separator"
+		},
+		{
 			"icon":"selectClear.svg",
 			"label":"Clear selection",
-			"command":"select -cl;"
+			"command":"select -cl;",
+			"stp":"mel"
 		},
 		{
 			"icon":"selectList.svg",
 			"label":"List current selection",
-			"command":"string $quickSel[] = `ls -sl`;;"
+			"command":"string $quickSel[] = `ls -sl`;;",
+			"stp":"mel"
 		},
 		{
 			"icon":"selectReplace.svg",
 			"label":"Replace selection with list",
-			"command":"select -r $quickSel;"
+			"command":"select -r $quickSel;",
+			"stp":"mel"
 		},
 		{
 			"icon":"selectSmooths.svg",
 			"label":"Select all smooths in the scene",
-			"command":"select \"*polySmoothFace*\";"
+			"command":"select \"*polySmoothFace*\";",
+			"stp":"mel"
 		},
 		{
 			"icon":"clearPlugins.svg",
@@ -50,19 +57,22 @@
 					"command":"source clearPlugins;clearPlugins(3);"
 				}
 				
-			]
+			],
+			"stp":"mel"
 		},
 		{
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
 			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};",
 			"script":"Core/loopBox.mel",
-			"command":"source loopBox;loopBox;"
+			"command":"source loopBox;loopBox;",
+			"stp":"mel"
 		},
 		{
 			"icon":"mapFaces.svg",
 			"label":"Maps shader on selected faces",
-			"command":"string $selList[] = `ls -sl`;hyperShade -smn;hyperShadePanelGraphCommand(\"hyperShadePanel1\", \"showUpAndDownstream\");select -r $selList;"
+			"command":"string $selList[] = `ls -sl`;hyperShade -smn;hyperShadePanelGraphCommand(\"hyperShadePanel1\", \"showUpAndDownstream\");select -r $selList;",
+			"stp":"mel"
 		},
 		{
 			"icon":"assignNewShader.svg",
@@ -85,7 +95,8 @@
 		{
 			"icon":"rivet.svg",
 			"label":"Makes rivet between two edges",
-			"command":"source rivet;rivet;"
+			"command":"source rivet;rivet;",
+			"stp":"mel"
 		},
 		{
 			"icon":"edgeToCurve.svg",
@@ -97,18 +108,21 @@
 					"label":"Extrude GEO",
 					"command":"source edgeToCurve;edgeToCurve(1);"
 				}
-			]
+			],
+			"stp":"mel"
 		},
 		{
 			"icon":"parentShape.svg",
 			"label":"Parent shape node to a new transform",
-			"command":"parent -add -s;"
+			"command":"parent -add -s;",
+			"stp":"mel"
 		},
 		{
 			"icon":"removeNamespaces.svg",
 			"label":"Remove namespaces from selected objects or from whole scene",
 			"script":"Core/removeNamespaces.mel",
-			"command":"source removeNamespaces;removeNamespaces;"
+			"command":"source removeNamespaces;removeNamespaces;",
+			"stp":"mel"
 		},
 		{
 			"icon":"OpenRenderFolder.svg",
@@ -126,66 +140,89 @@
 					"command":"source OpenRenderFolder;OpenRenderFolder(2);"
 				}
 				
-			]
+			],
+			"stp":"mel"
 		},
 		{
 			"icon":"multiRef.svg",
 			"label":"reference or import multiple files at once",
 			"script":"Core/multiRef.mel",
-			"command":"source multiRef;multiRef;"
+			"command":"source multiRef;multiRef;",
+			"stp":"mel"
+		},
+		{
+			"icon":"separator"
 		},
 		{
 			"icon":"cacheYetiFur.svg",
 			"label":"Cache yeti fur",
 			"script":"Cache/batchCacheYetiFur.mel",
-			"command":"source batchCacheYetiFur;batchCacheYetiFur;"
+			"command":"source batchCacheYetiFur;batchCacheYetiFur;",
+			"stp":"mel"
+		},
+		{
+			"icon":"separator"
 		},
 		{
 			"icon":"exportForTexturing.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"script":"Redshift/exportForTexturing.mel",
-			"command":"source exportForTexturing;exportForTexturing;"
+			"command":"source exportForTexturing;exportForTexturing;",
+			"stp":"mel"
 		},
 		{
 			"icon":"abc_publishModel.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"script":"Redshift/abc_publishModel.mel",
-			"command":"source abc_publishModel;abc_publishModel;"
+			"command":"source abc_publishModel;abc_publishModel;",
+			"stp":"mel"
 		},
 		{
 			"icon":"abc_reassignShaders.svg",
 			"label":"Select objects to reassign orriginal materials",
 			"script":"Redshift/abc_reassignShaders.mel",
-			"command":"source abc_reassignShaders;abc_reassignShaders;"
+			"command":"source abc_reassignShaders;abc_reassignShaders;",
+			"stp":"mel"
+		},
+		{
+			"icon":"separator"
 		},
 		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
 			"script":"Redshift/RSTessellate.mel",
-			"command":"source RSTessellate;RSTessellate;"
+			"command":"source RSTessellate;RSTessellate;",
+			"stp":"mel"
 		},
 		{
 			"icon":"RSObjectId.svg",
 			"label":"Adds object ID to redshift objects",
 			"script":"Redshift/RSObjectId.mel",
-			"command":"source RSObjectId;RSObjectId;"
+			"command":"source RSObjectId;RSObjectId;",
+			"stp":"mel"
 		},
 		{
 			"icon":"RSAOV.svg",
 			"label":"Adds redshift AOV deffinitions",
-			"command":"source RSAOV;RSAOV;"
+			"command":"source RSAOV;RSAOV;",
+			"stp":"mel"
 		},
 		{
 			"icon":"RSFresnel.svg",
 			"label":"Create redshift fresnel / occlusion material",
 			"script":"Redshift/RSFresnel.mel",
-			"command":"source RSFresnel;RSFresnel;"
+			"command":"source RSFresnel;RSFresnel;",
+			"stp":"mel"
 		},
 		{
 			"icon":"RSCameraBokeh.svg",
 			"label":"Adds redshift bokeh to camera",
 			"script":"Redshift/RSCameraBokeh.mel",
-			"command":"source RSCameraBokeh;RSCameraBokeh;"
+			"command":"source RSCameraBokeh;RSCameraBokeh;",
+			"stp":"mel"
+		},
+		{
+			"icon":"separator"
 		},
 		{
 			"icon":"playblastTemp.svg",
@@ -210,19 +247,32 @@
 					"command":"source playblastTemp;playblastTemp(4);"
 				}
 				
-			]
+			],
+			"stp":"mel"
 		},
 		{
 			"icon":"preFlightChecks.svg",
 			"label":"Pre render checks",
 			"script":"Core/preFlightChecks.mel",
-			"command":"source preFlightChecks;preFlightChecks;"
+			"command":"source preFlightChecks;preFlightChecks;",
+			"stp":"mel"
 		},
 		{
 			"icon":"smedgeRender.svg",
 			"label":"Submit render to smedge",
 			"script":"Core/smedgeRender.mel",
-			"command":"source smedgeRender;smedgeRender;"
+			"command":"source smedgeRender;smedgeRender;",
+			"stp":"mel"
+		},
+		{
+			"icon":"separator"
+		},
+		{
+			"icon":"installToolbox.svg",
+			"label":"install or update toolbox",
+			"script":"installToolbox.mel",
+			"command":"source installToolbox;installToolbox;",
+			"stp":"mel"
 		}
 
 	]

@@ -1,5 +1,5 @@
 global proc installToolbox()
 {
-	python ("import installToolbox;reload installToolbox;from installToolbox import *;installToolbox.toolbox_install()");
+	python ("import installToolbox;reload(installToolbox);from installToolbox import *;installToolbox.toolbox_install()");
 
 }
