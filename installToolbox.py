@@ -19,6 +19,18 @@ def createShelf(shelfName):
         print 'Shelf {} does not exist'.format(shelfName)
         mel.addNewShelfTab(shelfName)
 
+def RemoveSeparator(shelfName,iconName):
+    createShelf(shelfName)
+    shelfButtons = cmds.shelfLayout(shelfName,q=True,childArray=True)
+
+    if shelfButtons:
+        for btn in shelfButtons:
+            label = ''
+
+            #Assert that this is a shelfButton
+            if cmds.objectTypeUI(btn,isType='separator'):
+                cmds.deleteUI(btn)
+
 def RemoveButton(shelfName,iconName):
     shelfButtons = cmds.shelfLayout(shelfName,q=True,childArray=True)
 
@@ -94,8 +106,12 @@ def AddIcons(shelfName):
         #download icons from github
         try:
             icon = buttons[i]['icon']
-            DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (localIconsPath+'/'+icon))
-            shelfString += ',i1=\''+icon+'\''
+            if icon == 'separator':
+                print 'seperator'
+                shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
+            else:
+                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (localIconsPath+'/'+icon))
+                shelfString += ',i1=\''+icon+'\''
             
         except:
             print ('file not available')
@@ -133,7 +149,8 @@ def AddIcons(shelfName):
             stp = buttons[i]['stp']
             shelfString += ',stp=\''+stp+'\''
         except:
-            shelfString += ',stp=\'mel\''
+            #shelfString += ',stp=\'mel\''
+            print 'using mel'
         
         shelfString += ',w=32,h=32,p=\''+shelfName+'\')'
         
@@ -154,8 +171,11 @@ def AddIcons(shelfName):
     
 def CheckText():
 
-   shelfName = cmds.textField('nameText',q=True,text=True)
-   AddIcons(shelfName)
+    shelfName = cmds.textField('nameText',q=True,text=True)
+    #remove separators
+    RemoveSeparator(shelfName,'separator')
+
+    AddIcons(shelfName)
 
 def FilterOutSystemPaths(path):
     systemPath  = 0
