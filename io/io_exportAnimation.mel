@@ -1,0 +1,112 @@
+//export animation
+
+global proc publishFile(string $path)
+{
+    //get workspace
+    string $workspace = `workspace -q -fullName`;
+    string $workspaceBuffer[];
+    clear $workspaceBuffer;
+    $numTokens2 = `tokenize $workspace "/" $workspaceBuffer`;
+    int $workspaceSize = `size $workspaceBuffer`+1;
+    
+    //get filename
+    string $filename = `file -q -sn`;
+    string $buffer[];
+    $numTokens = `tokenize $filename "/" $buffer`;
+    
+    //get relative path
+    string $relativePath = "";
+    for( $i=$workspaceSize; $i<(`size $buffer`-1); ++$i )
+    {
+        $relativePath += ($buffer[$i]+"/");
+    }
+    //published file name
+    string $publishName = "alembicTestSphere";
+    
+    string $exportString = "";
+    string $sel[] = `ls -sl`;
+    for( $item in $sel)
+    {
+        $exportString += (" -root "+$item);
+    }
+    
+    float $startFrame = `playbackOptions -q -minTime`;
+    float $endFrame = `playbackOptions -q -maxTime`;
+    
+    string $folderPath = ($workspace+"/cache/alembic/"+$relativePath);
+    sysFile -makeDir $folderPath ;
+    
+    if (`exists AbcExport`) 
+    {
+        AbcExport -verbose -j ("-frameRange "+$startFrame+" "+$endFrame+" -attr material -attr alembicName -attr rsEnableSubdivision -attr rsMaxTessellationSubdivs -attr rsEnableDisplacement -attr rsMaxDisplacement -attr rsDisplacementScale -attr rsObjectId -attr castsShadows -attr receiveShadows -attr holdOut -attr primaryVisibility -attr smoothShading -attr visibleInReflections -attr visibleInRefractions -attr doubleSided -attr opposite -attr HeadAccessories -attr characterCreation -attr HairColour -attr skinColour -attr shoes -attr pants -attr sleeves -attr HeadAccessories -attr PantsColour -attr SleaveColour -attr ShoeColour -attr hatColour -attr TieColour -attr shoeColour -attr hairColour -attr SkinColour -attr Hair -attr Tie -attr Pants -attr Shoes -attr attribute -attr plug -ro -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa"+$exportString+" -file \""+$workspace+"/cache/alembic/"+$relativePath+"/"+$path+".abc\"");
+    }
+    else
+    {
+        warning("AbcExport plugin not loaded");
+    }
+    //set colours
+    for( $item in $sel)
+    {
+        setAttr (($item) + ".useOutlinerColor") 1;
+        setAttr (($item)+ ".outlinerColorR") 0.48;
+        setAttr (($item)+ ".outlinerColorG") 00;
+        setAttr (($item) + ".outlinerColorB") 0.18;
+        AEdagNodeCommonRefreshOutliners();
+      
+    };
+}
+
+//update name and run
+global proc CheckText()
+{
+   $publishName = `textField -q -text nameText`;
+   publishFile($publishName);
+}
+
+global proc io_exportAnimation()
+{
+    if (`window -exists abcAnimationExportWindow`) deleteUI abcAnimationExportWindow;
+    window -w 300 -h 100 -title "abc Animation Export Window" abcAnimationExportWindow;
+        formLayout dauzerForm;
+             text -label "Prefix" textLabel;
+             textField -w 250 prefixText;
+             text -label "Publish Name" textLabel;
+             textField -w 250 nameText;
+             button -l "Publish" -h 50 -c ("CheckText()") dauzerButton1;
+             button -l "Close" -h 50 -c ("deleteUI abcAnimationExportWindow") dauzerButton2 ;
+        formLayout -edit
+             -af textLabel top 15
+             -af textLabel left 10 
+             -af nameText top 10
+             -ac nameText left 10 textLabel
+             -af nameText right 10 
+             -af dauzerButton1 bottom 0
+             -af dauzerButton1 left 0
+             -ap dauzerButton1 right 0 50
+             -af dauzerButton2 bottom 0
+             -ac dauzerButton2 left 0 dauzerButton1
+             -af dauzerButton2 right 0 
+
+    dauzerForm;
+    string $publishName = "";
+    
+    //get filename
+    string $filename = `file -q -sn -shn`;
+    string $buffer[];
+    $numTokens = `tokenize $filename "." $buffer`;
+    
+    //set text
+    string $sel[] = `ls -sl`;
+    string $selectionString = "";
+    for ($item in $sel)
+    {
+        string $fullNameSplit[];
+        $numTokens = `tokenize $item ":" $fullNameSplit`;
+        int $size = (`size $fullNameSplit`)-1;
+        $selectionString += ("_"+($fullNameSplit[$size]));
+    }
+
+    textField -edit -tx ($buffer[0]+$selectionString) nameText;
+    showWindow abcAnimationExportWindow;
+}
+//abc_exportAnimation();
