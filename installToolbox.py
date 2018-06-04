@@ -100,6 +100,9 @@ def AddIcons(shelfName):
         data = json.load(data_file)
         
     buttons = (data['icons'])
+    #resize progress bar
+    cmds.progressBar('progressControl', edit=True,vis=True, maxValue=len(buttons)-1)
+
     for i, btn in enumerate(buttons):
         shelfElements = buttons[i]
         shelfString = 'cmds.shelfButton(rpt=True'
@@ -115,6 +118,8 @@ def AddIcons(shelfName):
             
         except:
             print ('file not available')
+        #update progress
+        cmds.progressBar('progressControl', edit=True, step=1)
         #download script from github
         if scriptsMenuI > 1:
             try:
@@ -166,6 +171,8 @@ def AddIcons(shelfName):
                 cmds.shelfButton(currentButton,edit=True,mi=(mi[i]['label'],mi[i]['command']))
         except:
             print ''
+
+    cmds.deleteUI('Install Toolbox')
     
     
     
@@ -212,6 +219,8 @@ def installToolboxWindow():
             isSystemPath = FilterOutSystemPaths(part)
             if (isSystemPath == 0):
                 cmds.menuItem( label=part )
+
+    progressControl = cmds.progressBar('progressControl',maxValue=10, vis=False, width=250)
      
     btn1 = cmds.button(height=50,label='Install',c='CheckText()')
     btn2 = cmds.button(height=50,label='Close',c='cmds.deleteUI(\'Install Toolbox\')')
@@ -224,6 +233,8 @@ def installToolboxWindow():
                      (nameText, 'right', 10),
                      (scriptsMenu, 'right', 10),
                      (iconsMenu, 'right', 10),
+                     (progressControl, 'left', 10),
+                     (progressControl, 'right', 10),
                      (btn1, 'bottom', 0),
                      (btn1, 'left', 0),
                      (btn2, 'bottom', 0),
@@ -235,6 +246,8 @@ def installToolboxWindow():
                      (scriptsMenu, 'left', 10,textLabel),
                      (iconsMenu, 'top', 10,scriptsMenu),
                      (iconsMenu, 'left', 10,textLabel),
+                     (progressControl, 'top', 20,iconsMenu),
+                     (progressControl, 'left', 10,textLabel),
                      (btn2, 'left', 0,btn1)
                      ],
                      attachPosition=[
