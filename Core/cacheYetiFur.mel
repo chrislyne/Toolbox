@@ -23,10 +23,10 @@ global proc cacheYetiFur(int $simulate)
 	}
 	
 
-	string $buffer[];
-	$numTokens = `tokenize $node ":" $buffer`;
-	$tokenSize = `size $buffer`;
-	$nodeName = $buffer[$tokenSize -1];
+	string $nodeParts[];
+	tokenize $node ":" $nodeParts;
+	$tokenSize = `size $nodeParts`;
+	$nodeName = $nodeParts[$tokenSize -1];
 
 	//set yeti node output 
 	setAttr -type "string" ($node+".outputCacheFileName") ($fullpath +"/"+ $nodeName +"/"+ $nodeName +".%04d.fur");
@@ -57,4 +57,4 @@ global proc cacheYetiFur(int $simulate)
 	pgYetiCommand -flushGeometryCache;
 	pgYetiCommand -flushTextureCache;
 }
-cacheYetiFur(1)
+//cacheYetiFur(0)

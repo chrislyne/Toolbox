@@ -68,16 +68,21 @@ global proc io_exportAnimation()
     if (`window -exists abcAnimationExportWindow`) deleteUI abcAnimationExportWindow;
     window -w 300 -h 100 -title "abc Animation Export Window" abcAnimationExportWindow;
         formLayout dauzerForm;
-             text -label "Prefix" textLabel;
+             text -label "Prefix" prefixLabel;
              textField -w 250 prefixText;
              text -label "Publish Name" textLabel;
              textField -w 250 nameText;
              button -l "Publish" -h 50 -c ("CheckText()") dauzerButton1;
              button -l "Close" -h 50 -c ("deleteUI abcAnimationExportWindow") dauzerButton2 ;
         formLayout -edit
-             -af textLabel top 15
+             -af prefixLabel top 15
+             -af prefixLabel left 10 
+             -af prefixText top 10
+             -ac prefixText left 10 textLabel
+             -af prefixText right 10 
+             -af textLabel top 45
              -af textLabel left 10 
-             -af nameText top 10
+             -af nameText top 40
              -ac nameText left 10 textLabel
              -af nameText right 10 
              -af dauzerButton1 bottom 0
@@ -109,4 +114,4 @@ global proc io_exportAnimation()
     textField -edit -tx ($buffer[0]+$selectionString) nameText;
     showWindow abcAnimationExportWindow;
 }
-//abc_exportAnimation();
+//io_exportAnimation();
