@@ -35,6 +35,15 @@ global proc publishFile(string $path)
     
     string $folderPath = ($workspace+"/cache/alembic/"+$relativePath);
     sysFile -makeDir $folderPath ;
+
+    if (`exists AbcExport`) 
+    {
+
+    }
+    else
+    {
+        loadPlugin("AbcImport");
+    }
     
     if (`exists AbcExport`) 
     {
@@ -45,6 +54,7 @@ global proc publishFile(string $path)
         warning("AbcExport plugin not loaded");
     }
     //set colours
+    /*
     for( $item in $sel)
     {
         setAttr (($item) + ".useOutlinerColor") 1;
@@ -54,12 +64,15 @@ global proc publishFile(string $path)
         AEdagNodeCommonRefreshOutliners();
       
     };
+    */
 }
 
 //update name and run
 global proc CheckText()
 {
-   $publishName = `textField -q -text nameText`;
+   $prefixString = `textField -q -text prefixText`;
+   $nameString = `textField -q -text nameText`;
+   $publishName = ($prefixString+"_"+$nameString);
    publishFile($publishName);
 }
 
@@ -108,10 +121,10 @@ global proc io_exportAnimation()
         string $fullNameSplit[];
         $numTokens = `tokenize $item ":" $fullNameSplit`;
         int $size = (`size $fullNameSplit`)-1;
-        $selectionString += ("_"+($fullNameSplit[$size]));
+        $selectionString += (($fullNameSplit[$size]));
     }
-
-    textField -edit -tx ($buffer[0]+$selectionString) nameText;
+    textField -edit -tx ($buffer[0]) prefixText;
+    textField -edit -tx ($selectionString) nameText;
     showWindow abcAnimationExportWindow;
 }
-//io_exportAnimation();
+io_exportAnimation();
