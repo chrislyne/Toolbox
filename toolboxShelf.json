@@ -156,8 +156,8 @@
 		{
 			"icon":"cacheYetiFur.svg",
 			"label":"Cache yeti fur",
-			"script":"Cache/batchCacheYetiFur.mel",
-			"command":"source batchCacheYetiFur;batchCacheYetiFur;",
+			"script":"Cache/cacheYetiFur.mel",
+			"command":"source cacheYetiFur;cacheYetiFur;",
 			"stp":"mel"
 		},
 		{

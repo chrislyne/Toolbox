@@ -1,4 +1,4 @@
-global proc cacheYetiFur(int $simulate)
+global proc cacheYetiFur()
 {
     
     string $sel[] = `ls -sl`;
@@ -17,10 +17,10 @@ global proc cacheYetiFur(int $simulate)
 	string $fullpath = ($projectdir + "cache/yeti/"+ $folderName);
 
 	setAttr ($node+".fileMode") 0;
-	for($groom in $grooms)
-	{
-		setAttr ($groom+".doSimulation") $simulate;
-	}
+	//for($groom in $grooms)
+	//{
+		//setAttr ($groom+".doSimulation") $simulate;
+	//}
 	
 
 	string $nodeParts[];
