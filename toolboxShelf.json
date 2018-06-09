@@ -132,7 +132,7 @@
 			"stp":"mel",
 			"menuItem":[
 				{
-					"label":"images\\temp",
+					"label":"images temp",
 					"command":"source OpenRenderFolder;OpenRenderFolder(1);"
 				},
 				{

@@ -244,7 +244,7 @@ proc string smedge_DoSubmitLayer( string $scene, string $layer, string $settings
 	// packet size
 	$cmd += " -PacketSize " + smedge_GetLastSetting( $settings, "PacketSize", "1" );
 	// priority
-	$cmd += " -Priority " + smedge_GetLastSetting( $settings, "Priority", "100" );
+	$cmd += " -Priority " + smedge_GetLastSetting( $settings, "Priority", "50" );
 	// paused
 	$enable = (int) smedge_GetLastSetting( $settings, "Paused", "0" );
 	if( $enable )
@@ -778,9 +778,9 @@ global proc smedgeRender()
 			text -l "Priority";
 			intSliderGrp
 					-field true
-					-value ((int) smedge_GetLastSetting( $settings, "Priority", "100" ))
+					-value ((int) smedge_GetLastSetting( $settings, "Priority", "50" ))
 					-minValue 0 
-					-maxValue 100
+					-maxValue 50
 					-adjustableColumn 2
 					smedgeUI_Priority;
 			checkBox 
