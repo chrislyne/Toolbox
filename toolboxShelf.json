@@ -151,6 +151,13 @@
 			"stp":"mel"
 		},
 		{
+			"icon":"exportForTexturing.svg",
+			"label":"Adds tesselsation to redshift objects",
+			"script":"Redshift/exportForTexturing.mel",
+			"command":"source exportForTexturing;exportForTexturing;",
+			"stp":"mel"
+		},
+		{
 			"icon":"separator"
 		},
 		{
@@ -164,24 +171,45 @@
 			"icon":"separator"
 		},
 		{
-			"icon":"exportForTexturing.svg",
-			"label":"Adds tesselsation to redshift objects",
-			"script":"Redshift/exportForTexturing.mel",
-			"command":"source exportForTexturing;exportForTexturing;",
-			"stp":"mel"
-		},
-		{
 			"icon":"abc_publishModel.svg",
-			"label":"Adds tesselsation to redshift objects",
-			"script":"Redshift/abc_publishModel.mel",
+			"label":"Publish REF",
+			"script":"io/abc_publishModel.mel",
 			"command":"source abc_publishModel;abc_publishModel;",
 			"stp":"mel"
 		},
 		{
 			"icon":"abc_reassignShaders.svg",
-			"label":"Select objects to reassign orriginal materials",
-			"script":"Redshift/abc_reassignShaders.mel",
+			"label":"Select objects to reassign original materials",
+			"script":"io/abc_reassignShaders.mel",
 			"command":"source abc_reassignShaders;abc_reassignShaders;",
+			"stp":"mel"
+		},
+		{
+			"icon":"io_ANIMOUT.png",
+			"label":"Select objects with animation to publish",
+			"script":"io/abc_exportAnimation.mel",
+			"command":"source abc_exportAnimation;abc_exportAnimation;",
+			"stp":"mel"
+		},
+		{
+			"icon":"io_CAMOUT.png",
+			"label":"Publish camera",
+			"script":"io/abc_exportCamera.mel",
+			"command":"source abc_exportCamera;abc_exportCamera;",
+			"stp":"mel"
+		},
+		{
+			"icon":"io_CAMIN.png",
+			"label":"Import camera to scene",
+			"script":"io/abc_importCamera.py",
+			"command":"import abc_importCamera;abc_importCamera.importCameraDialog()",
+			"stp":"python"
+		},
+		{
+			"icon":"io_ANIMIN.png",
+			"label":"Import alembic to scene",
+			"script":"io/abc_importAnimation.mel",
+			"command":"source abc_importAnimation;abc_importAnimation;",
 			"stp":"mel"
 		},
 		{
