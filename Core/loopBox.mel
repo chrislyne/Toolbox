@@ -1,3 +1,20 @@
+global proc callbackName(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
+{
+    print ("dragControl = "+$dragControl+"\n");
+    print ("dropControl = "+$dropControl+"\n");
+    print ("msgs = "+$msgs[0]+"\n");
+    print ("x = "+$x+"\n");
+    print ("y = "+$y+"\n");
+    print ("type = "+$type+"\n");
+    
+    string $msgParts[];
+    tokenize $msgs[0] "." $msgParts;
+    
+
+    textField -e -text $msgParts[1] attrText;
+
+}
+
 global proc loop()
 {
     string $attr = `textField -q -text attrText`;
@@ -23,7 +40,7 @@ global proc loopBox()
     window -w 300 -h 100 -title "Loop Box Window" loopBoxWindow ;
         formLayout loopBoxForm;
              text -label "Attribute" textLabel;
-             textField -w 150 attrText;
+             textField -w 150 -dpc callbackName attrText;
              text -label "Value" valueLabel;
              textField -w 50 valueText;
              button -l "Loop" -h 50 -c ("loop()") btn1;
@@ -50,4 +67,4 @@ global proc loopBox()
     
     showWindow loopBoxWindow;
 }
-//loopbox();
+//loopBox();
