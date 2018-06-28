@@ -1,0 +1,46 @@
+
+global proc DeleteRow(string $rowID)
+{    
+    //delete row that button is in
+    deleteUI ($rowID);
+}
+
+global proc AddRow(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
+{
+    //add new row when attribute is dropped 
+    setParent cl;
+    rowLayout -nc 4;
+    //Delete button
+    $delBtn = `button -l "x" -h 20 -w 20`;
+    string $thisParent = `button -q -parent $delBtn`;
+    button -e -c ("DeleteRow(\""+$thisParent+"\")") $delBtn;
+    textField -w 150 attrText;
+    textField -w 50 valueText;
+    
+    //Loop button
+    $loopBtn = `button -l "Loop" `;
+    button -e $loopBtn;
+}
+
+global proc NewWindow()
+{
+    window -t "columnLayout test" ui_window;
+    frameLayout -lv 0;
+    columnLayout -adj 1 cl;
+    rowLayout -nc 2;
+    
+    text -label "Attribute" textLabel;
+    text -label "Value" valueLabel;
+             
+    setParent ..;
+    setParent ..;
+    columnLayout -adj 1 -h 30 dropAreaColumn;
+    button -l "Drop Attribute Here" -h 30 -dpc "AddRow" -c "AddRow(\"\",\"\",{\"\"},0,0,0)" -bgc 0.3 0.3 0.3;
+    
+    showWindow ui_window;
+
+}
+NewWindow();
+
+
+
