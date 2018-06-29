@@ -8,14 +8,33 @@ global proc DeleteRow(string $rowID)
 global proc AddRow(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
 {
     //add new row when attribute is dropped 
+    
+    print ("dragControl = "+$dragControl+"\n");
+    print ("dropControl = "+$dropControl+"\n");
+    print ("msgs = "+$msgs[0]+"\n");
+    print ("x = "+$x+"\n");
+    print ("y = "+$y+"\n");
+    print ("type = "+$type+"\n");
+    
     setParent cl;
     rowLayout -nc 4;
     //Delete button
     $delBtn = `button -l "x" -h 20 -w 20`;
     string $thisParent = `button -q -parent $delBtn`;
     button -e -c ("DeleteRow(\""+$thisParent+"\")") $delBtn;
+    //Text fields
     textField -w 150 attrText;
     textField -w 50 valueText;
+    string $msgParts[];
+    tokenize $msgs[0] "." $msgParts;
+    
+    $attributeValue = `getAttr($msgs[0])`;
+    //print $attributeValue;
+    string $attributeType = `getAttr -type ($msgs[0])`;
+    print $attributeType;
+    
+    textField -e -text $msgParts[1] attrText;
+    textField -e -text $attributeValue valueText;
     
     //Loop button
     $loopBtn = `button -l "Loop" `;
@@ -36,6 +55,19 @@ global proc NewWindow()
     setParent ..;
     columnLayout -adj 1 -h 30 dropAreaColumn;
     button -l "Drop Attribute Here" -h 30 -dpc "AddRow" -c "AddRow(\"\",\"\",{\"\"},0,0,0)" -bgc 0.3 0.3 0.3;
+    setParent ..;
+    formLayout loopBoxForm;
+             button -l "Loop" -h 50 -c ("loop()") btn1;
+             button -l "Close" -h 50 -c ("deleteUI loopBoxWindow") btn2 ;
+        formLayout -edit
+             -af btn1 bottom 0
+             -af btn1 left 0
+             -ap btn1 right 0 50
+             -af btn2 bottom 0
+             -ac btn2 left 0 btn1
+             -af btn2 right 0 
+
+    loopBoxForm;
     
     showWindow ui_window;
 
