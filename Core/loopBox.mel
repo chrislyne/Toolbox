@@ -1,24 +1,26 @@
-global proc callbackName(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
-{
-    print ("dragControl = "+$dragControl+"\n");
-    print ("dropControl = "+$dropControl+"\n");
-    print ("msgs = "+$msgs[0]+"\n");
-    print ("x = "+$x+"\n");
-    print ("y = "+$y+"\n");
-    print ("type = "+$type+"\n");
-    
-    string $msgParts[];
-    tokenize $msgs[0] "." $msgParts;
-    
-
-    textField -e -text $msgParts[1] attrText;
-
+global proc DeleteRow(string $rowID)
+{    
+    //delete row that button is in
+    deleteUI ($rowID);
 }
 
-global proc loop()
+global proc loop(string $rowID, string $UItype)
 {
+    setParent $rowID;
     string $attr = `textField -q -text attrText`;
-    string $value = `textField -q -text valueText`;
+    switch($UItype)
+    {
+        case "checkBox":
+            string $value = `checkBox -q -v valueText`;
+        break;
+        case "textField":
+            string $value = `textField -q -text valueText`;
+        break;
+        case "double3":
+            string $value = `textField -q -text valueText0`;
+        break;
+    }
+    
     string $sel[] = `ls -sl`;
     for( $item in $sel)
     {
@@ -30,32 +32,128 @@ global proc loop()
         {
             warning ("Attribute "+$attr+" does not exist on object "+$item);
         }
-        
     }
+}
+
+global proc changeAttr(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
+{
+    setParent $dropControl;
+    
+    //string $msgParts[];
+    //tokenize $msgs[0] "." $msgParts;
+    //textField -e -text $msgParts[1] attrText;
+
+}
+
+global proc AddRow(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
+{
+    //add new row when attribute is dropped 
+    
+    print ("dragControl = "+$dragControl+"\n");
+    print ("dropControl = "+$dropControl+"\n");
+    print ("msgs = "+$msgs[0]+"\n");
+    print ("x = "+$x+"\n");
+    print ("y = "+$y+"\n");
+    print ("type = "+$type+"\n");
+    
+    setParent cl;
+    
+    string $msgParts[];
+    tokenize $msgs[0] "." $msgParts;
+    
+    string $attributeType = "none";
+    if ($msgs[0] != "")
+    {
+        $attributeType = `getAttr -type ($msgs[0])`;
+    }
+    
+    
+    print $attributeType;
+    
+    float $attributeValue = "";
+    float $attributeDouble3[];
+    
+    if ($attributeType == "double3")
+    {
+        rowLayout -h 30 -adj 6 -columnAttach 7 "right" 0 -dpc "changeAttr" -bgc 0.3 0.3 0.3 -nc 7 ;
+        $attributeDouble3 = `getAttr($msgs[0])`;
+        $attributeValue = "";
+    }
+    else
+    {
+        rowLayout -h 30 -adj 4 -columnAttach 5 "right" 0 -dpc "changeAttr" -bgc 0.3 0.3 0.3 -nc 5 ;
+        if ($msgs[0] != "")
+        {
+            $attributeValue = `getAttr($msgs[0])`;
+            print "working...";
+        }
+        $attributeDouble3 = {};
+    }
+    
+    //Delete button
+    $delBtn = `button -l "x" -h 20 -w 20`;
+    string $thisParent = `button -q -parent $delBtn`;
+    button -e -c ("DeleteRow(\""+$thisParent+"\")") $delBtn;
+    
+    
+    textField -w 150 attrText;
+    string $UItype = "";
+    
+    switch ($attributeType) 
+    {
+         case "bool":
+             checkBox -l "" valueText;
+             checkBox -e -v $attributeValue valueText;
+             $UItype = "checkBox";
+         break;
+         case "double":
+         case "float":
+         case "long":
+         case "enum":
+         case "doubleAngle":
+         case "string":
+         case "none":
+             textField -w 50 valueText;
+             textField -e -text $attributeValue valueText;
+             $UItype = "textField";
+         break;
+         case "double3":
+             textField -w 50 valueText0;
+             textField -w 50 valueText1;
+             textField -w 50 valueText2;
+             textField -e -text $attributeDouble3[0] valueText0;
+             textField -e -text $attributeDouble3[1] valueText1;
+             textField -e -text $attributeDouble3[2] valueText2;
+             $UItype = "double3";
+         break;
+    }
+    
+    textField -e -text $msgParts[1] attrText;
+    separator -st "none";
+    
+    //Loop button
+    $loopBtn = `button -l "Loop" `;
+    button -e -c ("loop(\""+$thisParent+"\",\""+$UItype+"\")") $loopBtn;
+    
 }
 
 global proc loopBox()
 {
     if (`window -exists loopBoxWindow`) deleteUI loopBoxWindow;
     window -w 300 -h 100 -title "Loop Box Window" loopBoxWindow ;
-        formLayout loopBoxForm;
-             text -label "Attribute" textLabel;
-             textField -w 150 -dpc callbackName attrText;
-             text -label "Value" valueLabel;
-             textField -w 50 valueText;
-             button -l "Loop" -h 50 -c ("loop()") btn1;
+    frameLayout -lv 0;
+    columnLayout -adj 1 -rs 6 cl;
+
+             
+    setParent ..;
+    setParent ..;
+    columnLayout -adj 1 -h 30 dropAreaColumn;
+    button -l "Drop Attribute Here" -h 30 -dpc "AddRow" -c "AddRow(\"\",\"\",{\"\"},0,0,0)" -bgc 0.3 0.3 0.3;
+    setParent ..;
+    formLayout loopBoxForm;
+             button -l "Loop" -h 50 -en 0 -c ("loop()") btn1;
              button -l "Close" -h 50 -c ("deleteUI loopBoxWindow") btn2 ;
         formLayout -edit
-             -af textLabel top 15
-             -af textLabel left 10 
-             -ac attrText top 10 textLabel
-             -af attrText left 10
-             -ap attrText right 0 70
-             -af valueLabel top 15 
-             -ac valueLabel left 10 attrText
-             -ac valueText top 10 textLabel
-             -ac valueText left 10 attrText
-             -af valueText right 10
              -af btn1 bottom 0
              -af btn1 left 0
              -ap btn1 right 0 50
@@ -66,5 +164,6 @@ global proc loopBox()
     loopBoxForm;
     
     showWindow loopBoxWindow;
+
 }
 //loopBox();

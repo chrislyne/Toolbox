@@ -5,6 +5,25 @@ global proc DeleteRow(string $rowID)
     deleteUI ($rowID);
 }
 
+global proc loop(string $rowID)
+{
+    setParent $rowID;
+    string $attr = `textField -q -text attrText`;
+    string $value = `textField -q -text valueText`;
+    string $sel[] = `ls -sl`;
+    for( $item in $sel)
+    {
+        if (`attributeExists $attr $item`)
+        {
+            setAttr ($item+"."+$attr) ((float)$value);
+        }
+        else
+        {
+            warning ("Attribute "+$attr+" does not exist on object "+$item);
+        }
+    }
+}
+
 global proc AddRow(string $dragControl, string $dropControl, string $msgs[], int $x, int $y, int $type)
 {
     //add new row when attribute is dropped 
@@ -38,7 +57,7 @@ global proc AddRow(string $dragControl, string $dropControl, string $msgs[], int
     
     //Loop button
     $loopBtn = `button -l "Loop" `;
-    button -e $loopBtn;
+    button -e -c ("loop(\""+$thisParent+"\")") $loopBtn;
 }
 
 global proc NewWindow()
