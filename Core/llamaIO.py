@@ -13,17 +13,17 @@ def LlamaIOWindow():
     sep1 = cmds.separator( hr=1,style='in' ,height=2)
     
     animTitle = cmds.text(fn='boldLabelFont',label="Animation")
-    publishAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='')
-    publishCam_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='')
-    megaPublish_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
+    publishAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='')
+    publishCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='')
+    megaPublish_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
     
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
     
     sceneTitle = cmds.text(fn='boldLabelFont',label="Scene Reconstruction")
-    importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Import Anim',c='')
-    importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Import Camera',c='')
-    importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='Import Materials',c='')
-    importAll_btn = cmds.iconTextButton(hlc=[1,1,1],st='iconAndTextVertical',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
+    importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='')
+    importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='')
+    importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='')
+    importAll_btn = cmds.iconTextButton(hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
      
     
     cmds.formLayout(installForm,  edit=True, 
