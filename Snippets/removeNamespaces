@@ -1,0 +1,20 @@
+#remove namespace
+global proc removeSceneNamespaces()
+{   
+    namespace -set ":";
+    string $allNamespaces[] = `namespaceInfo -lon`;
+    while (`size $allNamespaces` > 2)
+    {
+        //remove namespaces in scene
+        $allNamespaces = `namespaceInfo -lon`;
+        for( $item in $allNamespaces)
+        {
+            string $namespaceName = ":" + $item;
+            if ($namespaceName != ":UI" && $namespaceName != ":shared")
+            {
+                namespace -f -mv $namespaceName ":";
+                namespace -rm $namespaceName;
+            }
+        }
+    }
+} 
