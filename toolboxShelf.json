@@ -127,21 +127,21 @@
 		{
 			"icon":"OpenRenderFolder.svg",
 			"label":"Open project folders",
-			"script":"Core/OpenRenderFolder.mel",
-			"command":"source OpenRenderFolder;OpenRenderFolder(0);",
-			"stp":"mel",
+			"script":"Core/OpenRenderFolder.py",
+			"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(0)",
+			"stp":"python",
 			"menuItem":[
 				{
 					"label":"images temp",
-					"command":"source OpenRenderFolder;OpenRenderFolder(1);"
+					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(1)"
 				},
 				{
 					"label":"sourceimages",
-					"command":"source OpenRenderFolder;OpenRenderFolder(2);"
+					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(2)"
 				}
 				
 			],
-			"stp":"mel"
+			"stp":"python"
 		},
 		{
 			"icon":"multiRef.svg",
