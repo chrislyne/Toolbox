@@ -199,7 +199,7 @@ def installToolboxWindow():
     textLabel = cmds.text(label='Shelf')
     nameText = cmds.textField('nameText',width=250,tx='Custom')
     scriptsMenu = cmds.optionMenu('scriptsMenu')
-    separator = ';'
+    separator = ';' if cmds.about(nt=True) else ':'
     scriptsPaths = mel.getenv('MAYA_SCRIPT_PATH')
     allparts = scriptsPaths.split(separator)
     for i, part in enumerate(allparts):
