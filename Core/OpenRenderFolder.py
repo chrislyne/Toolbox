@@ -11,7 +11,7 @@ def OpenRenderFolder(folderType):
     
     folderPath = locations[folderType].rsplit('/',1)[0]
     ntfolderPath = folderPath.replace('/','\\')
-    print osfolderPath
+
     #make folder if it doesn't exist
     if not os.path.exists(ntfolderPath):
             os.makedirs(ntfolderPath)
