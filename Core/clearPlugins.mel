@@ -40,6 +40,19 @@ global proc removeVray()
     }
 }
 
+//Remove Mental Ray -_-
+global proc removeMr()
+{
+	string $mrNodes[] = {"mentalrayGlobals","mentalrayItemsList","miDefaultFramebuffer","miDefaultOptions"};
+	for ($node in $mrNodes)
+	{
+	    if (`objExists $node`)
+	    {
+	        delete $node;
+	    }
+	}
+}
+
 global proc clearPlugins(int $mode)
 {
 	if($mode == 0)
@@ -59,6 +72,10 @@ global proc clearPlugins(int $mode)
 	if($mode == 3)
 	{
 		removeVray();
+	}
+	if($mode == 4)
+	{
+		removeMr();
 	}
 	
 }

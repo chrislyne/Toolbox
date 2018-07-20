@@ -55,6 +55,10 @@
 				{
 					"label":"Remove Vray",
 					"command":"source clearPlugins;clearPlugins(3);"
+				},
+				{
+					"label":"Remove MRay",
+					"command":"source clearPlugins;clearPlugins(4);"
 				}
 				
 			],
@@ -133,11 +137,13 @@
 			"menuItem":[
 				{
 					"label":"images temp",
-					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(1)"
+					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(1)",
+					"stp":"python"
 				},
 				{
 					"label":"sourceimages",
-					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(2)"
+					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(2)",
+					"stp":"python"
 				}
 				
 			],
