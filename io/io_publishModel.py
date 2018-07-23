@@ -1,18 +1,169 @@
 import maya.cmds as cmds
+import os, sys, time
+from shutil import copyfile
 
-#add attributes
+###    UTILITIES    ###
+
 def addAttribute(shape,attrName,attrValue):
     if not cmds.attributeQuery(attrName,node=shape,exists=True):
         cmds.addAttr(shape,ln=attrName,dt='string')
     cmds.setAttr('%s.%s'%(shape,attrName),e=True,keyable=True)
     cmds.setAttr('%s.%s'%(shape,attrName),attrValue,type='string')
 
-#publish shaders
-def exportShaders(publishName):
+#write to shader database
+def WriteToDB(filename,log,mode):
+    scenePath = os.path.split(os.path.abspath(filename))
+    folderPath = scenePath[0]+'/'
+    fileName = scenePath[1].split('.')[0]
+    logFileName = folderPath+fileName+'.json'
+    text_file = open(logFileName, mode)
+    text_file.write(log)
+    text_file.close()
+
+#disconnects the rig from the shading network for a clean shader export
+def disconnectRig():
+    connections = []
+    ctrlObjects = []
+    additionalAttributes = []
+    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise']
+    for nType in nodeTypes:
+        nodes = cmds.ls(typ=nType)
+        for node in nodes:
+            
+            #not sure what this is, maybe some kind of garbagy error check
+            if(node != "<done>"):
+                connectedNodes = cmds.listConnections(node,t='transform',plugs=True,c=True,d=False,s=True)
+                if connectedNodes:  
+                    #print connectedNodes                  
+                    #disconnect the nodes
+                    inputs = connectedNodes[0::2]
+                    outputs = connectedNodes[1::2]
+                    for i,item in enumerate(outputs):
+                        c = [outputs[i],inputs[i]]
+                        cmds.disconnectAttr (c[0],c[1])
+                        connections.append(c)
+                        ctrlObjects.append(c[0].split('.')[0])
     
+    #list connections and add them to controller              
+    ctrlObjects = set(ctrlObjects) 
+    for ctrlObj in ctrlObjects:
+        objConnections = ''
+        for connection in connections:
+            if connection[0].split('.')[0] == ctrlObj:
+                objConnections += ('%s,%s;'%(connection[0],connection[1]))
+
+        addAttribute(ctrlObj,'connections',objConnections)
+    #return controllers that affect shading networks
+    return(ctrlObjects)
+
+#reconnect the rig to the shading network
+def reconnectRig(controls):
+    for c in controls:
+        #read connections from controler
+        connections = cmds.getAttr('%s.connections'%(c)).split(';')
+        #make connections
+        for connection in connections:
+            try:
+                cmds.connectAttr(connection.split(',')[0],connection.split(',')[1])
+            except:
+                pass
+
+###     EXPORTS     ###
+
+#export mb
+def makeRef(refName,publishString):
+    #define full file name
+    refFileName  = refName+'.mb'
+    #set outliner colour
+    cmds.setAttr ('%s.useOutlinerColor'%(publishString),1)
+    cmds.setAttr ('%s.outlinerColorR'%(publishString),0.25)
+    cmds.setAttr ('%s.outlinerColorG'%(publishString),0.8)
+    cmds.setAttr ('%s.outlinerColorB'%(publishString),0.25)
+    #refresh outliner
+    mel.eval("AEdagNodeCommonRefreshOutliners();")
+    #add attribute to node for re-publishing
+    addAttribute(publishString,'publishName',refName)
+    
+    #get parent folder
+    scenePath = cmds.file(q=True,sn=True)
+    parentFolder = scenePath.rsplit('/',2)[0]
+    currentFolder = scenePath.rsplit('/',2)[1]
+    
+    #output name
+    pathName = parentFolder+'/'+refFileName
+    backupName = ""
+    
+    #if file exists, increment and back it up
+    if os.path.isfile(pathName):
+        #make backup folder
+        backupFolder = '%s/%s/backup'%(parentFolder,currentFolder)
+        if not os.path.exists(backupFolder):
+            os.makedirs(backupFolder)
+        count = 1
+        backupExists = os.path.isfile('%s/%s%d'%(backupFolder,refFileName,count))
+        while (backupExists == 1):
+            count += 1
+            backupExists = os.path.isfile('%s/%s%d'%(backupFolder,refFileName,count))
+        backupName = '%s/%s%d'%(backupFolder,refFileName,count)
+        copyfile(pathName, backupName)
+    #export .mb REF
+    cmds.file(pathName,force=True,type='mayaBinary',pr=True,es=True)
+    #log
+    logOutput = []
+    logOutput.append(pathName)
+    logOutput.append(scenePath)
+    logOutput.append(backupName)
+    
+    return logOutput
+
+#export alembic
+def makeAlembic(refName, publishString):
+    try: 
+        #check if plug is already loaded
+        if not cmds.pluginInfo('AbcExport',query=True,loaded=True):
+            try:
+                #load abcExport plugin
+                cmds.loadPlugin( 'AbcExport' )
+            except: cmds.error('Could not load AbcExport plugin')
+        #make folder
+        modelFolder = '%scache/alembic/models'%(cmds.workspace(q=True,rd=True))
+        if not os.path.exists(modelFolder):
+            os.makedirs(modelFolder)
+        #export .abc
+        command = '-frameRange 1 1 -attr material -attr alembicName -attr IOID -stripNamespaces -uvWrite -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa -root %s -file models/%s.abc'%(publishString,refName)
+        cmds.AbcExport ( j=command )
+        return '%s/%s.abc'%(modelFolder,refName)
+    except:
+        return 'unable to export .abc'
+
+def sortFaceShadingGroups(shape,shadingGrp):
+    print 'shape = %s\n'%(shape)
+    #find transform
+    transform = cmds.listRelatives(shape,p=True,type='transform')
+    #list all objects in set
+    allObjects = cmds.sets( shadingGrp, q=True )
+    
+    faces = []
+    #search set for matching shapes 
+    for obj in allObjects:
+        splitObj = obj.split('.')
+        if len(splitObj) > 1:
+            if splitObj[0] == transform[0]:
+                faces.append(splitObj[1])
+    #return faces assign to material
+    return faces
+
+
+#publish shaders
+def exportShaders(publishName,scenePath):
+    
+    #get workspace
+    workspace = cmds.workspace(q=True,fullName=True)
+
     #initalise variables 
     allGeo = ""
     allMaterials = []
+    data = '{\n    "shapes":['
     
     #select hierarchy
     grpSel = cmds.ls(sl=True)
@@ -20,26 +171,44 @@ def exportShaders(publishName):
     allDecendingShapes = cmds.ls(allDecending,s=True,l=True)
     
     #loop though if they have materials
-    for shape in allDecendingShapes:
+    for i,shape in enumerate(allDecendingShapes):
         shadingGroups = cmds.listConnections(shape,type='shadingEngine')
         if shadingGroups:
             allGeo += '-root %s '%(shape)
             allMaterials += shadingGroups
+            #remove duplicates from list
+            shadingGroups = list(set(shadingGroups))
             
             #add attributes to shape nodes
             addAttribute(shape,'alembicName',publishName)
             addAttribute(shape,'material',shadingGroups)
             ID = cmds.ls(shape,uuid=True)
             addAttribute(shape,'IOID',ID[0])
-
+            
+            shadingGrpsString = ''
+            #garbagy json formattring
+            for n,shadingGrp in enumerate(shadingGroups):
+                faces = ''
+                allFaces = sortFaceShadingGroups(shape,shadingGrp)
+                for c,f in enumerate(allFaces):
+                    if c > 0:
+                        faces += '","'
+                    faces += '.%s'%(f)
+                if n > 0:
+                    shadingGrpsString += ',\n               '
+                shadingGrpsString +=  '\n            {"%s":["%s"]}'%(shadingGrp,faces)
+            if i > 0:
+                data += ','
+            data += '\n        {\n        "IOID": "%s",\n        "materials": [%s\n        ]\n        }'%(ID[0],shadingGrpsString)
+            #data += '\n     {\n     "%s":\n         {\n         "material": [\n             %s\n            ]\n         }\n     }'%(ID[0],shadingGrpsString)
+    data += '\n ]\n}'  
+    #write connections out to text file    
+    WriteToDB('%s/renderData/alembicShaders/%s/%s/'%(workspace,publishName,publishName),data,'w')
     #materials used in our hierachy    
     allMaterials = list(set(allMaterials))  
     
     #log
     shaderCount = 0
-    
-    #get workspace
-    workspace = cmds.workspace(q=True,fullName=True)
     
     for material in allMaterials:
         #process namespaces
@@ -53,52 +222,59 @@ def exportShaders(publishName):
 
     return shaderCount
 
-"""
+
 #update name and run
 def PublishModelCheckText():
+    
+    #init log variables
+    numberOfFiles = 0
+    numberOfMultiShaders = 0
+    alembicExported = 0
+    
     #list objects
     sel = cmds.ls(sl=True)
     if len(sel) == 1:
-        publishString = sel[0]
-        #remove namespaces from scene 
-        #removeSceneNamespaces <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        
-        publishName = cmds.textField(nameText,q=True,text=True)
+        #get publish name from textfield
+        publishName = cmds.textField('nameText',q=True,text=True)
+        #get current selection so that it can be re-selected at the end
         tempSelect = cmds.ls(sl=True)
        
-        #shaders
-        exportShaders = cmds.checkBox(shadersCheck,q=True,v=True)
-        exportAlembic = cmds.checkBox(alembicCheck,q=True,v=True)
-        shadersEported[]
-        alembicExported = 0
+        #check UI
+        doShaders = cmds.checkBox('shadersCheck',q=True,v=True)
+        doAlembic = cmds.checkBox('alembicCheck',q=True,v=True)
+        doBinary = cmds.checkBox('publishCheck',q=True,v=True)
         
-        if exportShaders == 1:
-            #DisconnectShadingNetworks <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            #shadersExport[] = exportShaders(publishName)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            #shadersEported = shadersExport<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            #Reconnect<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        #full path to scene
+        scenePath = cmds.file(q=True,sn=True)
+        
+        #shaders
+        if doShaders == 1:
+            print 'exporting shaders'
+            ctrlObjs = disconnectRig()
+            numberOfFiles += exportShaders(publishName,scenePath)
+            reconnectRig(ctrlObjs)
 
         #alembic
-        alembicLog = ''
-        if exportAlembic == 1:
-            #alembicExport = makeAlembic(publishName, publishString)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        if doAlembic == 1:
+            print 'exporting abc'
+            makeAlembic(publishName, sel[0])
             alembicExported = 1
-            alembicLog = ('\nAlembic             '+alembicExport)
 
         #binary
-        cmds.select(r=True,tempSelect)
-        #makeRefLog[] = makeRef(publishName, publishString)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        #log
-        #writeLog(publishName,makeRefLog[0],makeRefLog[1],makeRefLog[2],shadersEported[0],alembicLog)<<<<<<<<<<
-        
-        #completeDialog(shadersEported[0], shadersEported[1],alembicExported)
+        if doBinary == 1:
+            print 'exporting binary'
+            makeRef(publishName, sel[0])
+            
+        CompleteDialog(numberOfFiles, numberOfMultiShaders, alembicExported)
 
     #display errors
-    else if(len(sel) > 1):
+    elif len(sel) > 1:
         cmds.error('select only ONE object to publish')
     else:
         cmds.error('select an object to publish')
-"""
+    
+    
+
 
 ###    LOG    ###
    
@@ -151,9 +327,9 @@ def IO_publishModel_window():
     textLabel = cmds.text(label='Publish Name')
     nameText = cmds.textField('nameText',w=250)
     reloadButton = cmds.iconTextButton(style='iconOnly',image1='refresh.png',c='setText()')
-    shadersCheck = cmds.checkBox(l='Export Shaders',v=1)
-    alembicCheck = cmds.checkBox(l='Export Alembic',v=1)
-    publishCheck = cmds.checkBox(l='Create REF',v=1)
+    shadersCheck = cmds.checkBox('shadersCheck',l='Export Shaders',v=1)
+    alembicCheck = cmds.checkBox('alembicCheck',l='Export Alembic',v=1)
+    publishCheck = cmds.checkBox('publishCheck',l='Create REF',v=1)
     btn1 = cmds.button(l='Publish',h=50,c='PublishModelCheckText()')
     btn2 = cmds.button(l='Close',h=50,c='deleteUI shaderExportWindow')
     #UI layout
