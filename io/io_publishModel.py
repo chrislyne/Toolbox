@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 import os, sys, time
 from shutil import copyfile
+import platform
 
 ###    UTILITIES    ###
 
@@ -72,6 +73,7 @@ def reconnectRig(controls):
 
 #export mb
 def makeRef(refName,publishString):
+    print refName
     #define full file name
     refFileName  = refName+'.mb'
     #set outliner colour
@@ -130,7 +132,14 @@ def makeAlembic(refName, publishString):
         if not os.path.exists(modelFolder):
             os.makedirs(modelFolder)
         #export .abc
-        command = '-frameRange 1 1 -attr material -attr alembicName -attr IOID -stripNamespaces -uvWrite -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa -root %s -file models/%s.abc'%(publishString,refName)
+        additionalAttr = ''
+        #IO attributes
+        additionalAttributes = ['alembicName','IOID']
+        #redshift attributes
+        additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
+        for attr in additionalAttributes:
+            additionalAttr += ' -attr %s'%(attr)
+        command = '-frameRange 1 1%s -stripNamespaces -uvWrite -worldSpace -writeVisibility -writeUVSets -dataFormat ogawa -root %s -file models/%s.abc'%(additionalAttr,publishString,refName)
         cmds.AbcExport ( j=command )
         return '%s/%s.abc'%(modelFolder,refName)
     except:
@@ -249,22 +258,25 @@ def PublishModelCheckText():
         
         #shaders
         if doShaders == 1:
-            print 'exporting shaders'
             ctrlObjs = disconnectRig()
             numberOfFiles += exportShaders(publishName,scenePath)
             reconnectRig(ctrlObjs)
 
         #alembic
         if doAlembic == 1:
-            print 'exporting abc'
             makeAlembic(publishName, sel[0])
             alembicExported = 1
 
         #binary
+        makeRefLog = [0,0,0]
         if doBinary == 1:
-            print 'exporting binary'
-            makeRef(publishName, sel[0])
+            cmds.select(tempSelect,r=True)
+            makeRefLog = makeRef(publishName, sel[0])
             
+        #log
+        writeLog(publishName, makeRefLog[0], makeRefLog[1], makeRefLog[2],alembicExported,numberOfFiles)
+        
+        #dialog
         CompleteDialog(numberOfFiles, numberOfMultiShaders, alembicExported)
 
     #display errors
@@ -277,7 +289,25 @@ def PublishModelCheckText():
 
 
 ###    LOG    ###
-   
+
+def writeLog(refFileName, pathName, scenePath, backupName,alembicExported,shaderExport):
+
+    #log
+    #get parent folder
+    scenePath = cmds.file(q=True,sn=True)
+    currentFolder = scenePath.rsplit('/',1)[0]
+    #machine name 
+    computer = platform.node()
+    #Create A String Array With Test Data
+    filePath = '%s/log/%s.mb.log'%(currentFolder,refFileName)
+    if not os.path.exists('%s/log'%(currentFolder)):
+        os.makedirs('%s/log'%(currentFolder))
+    text_file = open(filePath, 'a')
+    #Print Array To File
+    log = '%s\nPublished to        %s\nPublished from      %s\nBackup file         %s\nAlembic Exported    %s\nShaders Exported    %s\nMachine             %s\n\n'%(cmds.date(),pathName,scenePath,backupName,alembicExported,shaderExport,computer)
+    text_file.write(log)
+    #Close File
+    text_file.close() 
          
 ###    UI    ###
 
@@ -331,7 +361,7 @@ def IO_publishModel_window():
     alembicCheck = cmds.checkBox('alembicCheck',l='Export Alembic',v=1)
     publishCheck = cmds.checkBox('publishCheck',l='Create REF',v=1)
     btn1 = cmds.button(l='Publish',h=50,c='PublishModelCheckText()')
-    btn2 = cmds.button(l='Close',h=50,c='deleteUI shaderExportWindow')
+    btn2 = cmds.button(l='Close',h=50,c='cmds.deleteUI(\'Publish REF Window\')')
     #UI layout
     cmds.formLayout(
         publishForm,
