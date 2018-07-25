@@ -1,110 +1,130 @@
+import maya.cmds as cmds
+import re
+
 #export animation
-
-def publishFile(path):
-
+def publishFile(abcFilename):
     #get workspace
     workspace = cmds.workspace( q=True, directory=True, rd=True)
-
+    workspaceLen = len(workspace.split('/'))
     #get filename
     filename = cmds.file(q=True,sn=True)
-
-    #get relative path
+    #get relative path (from scenes)
     relativePath = ''
-    for( $i=$workspaceSize; $i<(`size $buffer`-1); ++$i ):
+    for dir in filename.split('/')[8:-1]:
+        relativePath += '%s/'%(dir)
 
-        relativePath += ($buffer[$i]+"/");
-
-    #published file name
-    string $publishName = "alembicTestSphere";
-    
+    #string of objects to export
     exportString = ''
     sel = cmds.ls(sl=True)
     for item in sel:
         exportString += ' -root %s'%(item)
+
     #get timeline
-    startFrame = cmds.playbackOptions(q=True,minTime=True)
-    endFrame = cmds.playbackOptions(q=True,maxTime=True)
-    
-    folderPath = '%s/cache/alembic/%s'%(workspace,relativePath)
+    startFrame = int(cmds.playbackOptions(q=True,minTime=True))
+    endFrame = int(cmds.playbackOptions(q=True,maxTime=True))
+
+    #set folder to export to  
+    folderPath = '%scache/alembic/%s'%(workspace,relativePath)
     if not os.path.exists(folderPath):
         os.makedirs(folderPath)
 
-    #check if plug is already loaded
+    #check if plugin is already loaded
     if not cmds.pluginInfo('AbcImport',query=True,loaded=True):
         try:
             #load abcExport plugin
             cmds.loadPlugin( 'AbcImport' )
-        except: cmds.error('Could not load AbcImport plugin')
+        except: 
+            cmds.error('Could not load AbcImport plugin')
 
-        #export .abc
-        additionalAttr = ''
-        #IO attributes
-        additionalAttributes = ['alembicName','IOID']
-        #redshift attributes
-        additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
-        for attr in additionalAttributes:
-            additionalAttr += ' -attr %s'%(attr)
-        command = '-verbose -j ("-frameRange "+$startFrame+" "+$endFrame+" -attr material -attr alembicName -attr rsEnableSubdivision -attr rsMaxTessellationSubdivs -attr rsEnableDisplacement -attr rsMaxDisplacement -attr rsDisplacementScale -attr rsObjectId -attr castsShadows -attr receiveShadows -attr holdOut -attr primaryVisibility -attr smoothShading -attr visibleInReflections -attr visibleInRefractions -attr doubleSided -attr opposite -attr HeadAccessories -attr characterCreation -attr HairColour -attr skinColour -attr shoes -attr pants -attr sleeves -attr HeadAccessories -attr PantsColour -attr SleaveColour -attr ShoeColour -attr hatColour -attr TieColour -attr shoeColour -attr hairColour -attr SkinColour -attr Hair -attr Tie -attr Pants -attr Shoes -attr attribute -attr plug -ro -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa"+$exportString+" -file \""+$workspace+"/cache/alembic/"+$relativePath+"/"+$path+".abc\"")'
-        cmds.AbcExport ( j=command )
+    #export .abc
+    additionalAttr = ''
+    #IO attributes
+    additionalAttributes = ['alembicName','IOID']
+    #redshift attributes
+    additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
+    for attr in additionalAttributes:
+        additionalAttr += ' -attr %s'%(attr)
+    command = '-frameRange %d %d%s -ro -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa%s -file %scache/alembic/%s%s.abc'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
+    #write to disk
+    cmds.AbcExport ( j=command )
 
-//update name and run
-global proc CheckText()
-{
-   $prefixString = `textField -q -text prefixText`;
-   $nameString = `textField -q -text nameText`;
-   $publishName = ($prefixString+"_"+$nameString);
-   publishFile($publishName);
-}
+#update name and run
+def CheckText():
+    #construct filename from user input
+    prefixString = cmds.textField('prefixText',q=True,text=True)
+    nameString = cmds.textField('nameText',q=True,text=True)
+    publishName = prefixString+'_'+nameString
+    publishFile(publishName)
 
-global proc io_exportAnimation()
-{
-    if (`window -exists abcAnimationExportWindow`) deleteUI abcAnimationExportWindow;
-    window -w 300 -h 100 -title "abc Animation Export Window" abcAnimationExportWindow;
-        formLayout dauzerForm;
-             text -label "Prefix" prefixLabel;
-             textField -w 250 prefixText;
-             text -label "Publish Name" textLabel;
-             textField -w 250 nameText;
-             button -l "Publish" -h 50 -c ("CheckText()") dauzerButton1;
-             button -l "Close" -h 50 -c ("deleteUI abcAnimationExportWindow") dauzerButton2 ;
-        formLayout -edit
-             -af prefixLabel top 15
-             -af prefixLabel left 10 
-             -af prefixText top 10
-             -ac prefixText left 10 textLabel
-             -af prefixText right 10 
-             -af textLabel top 45
-             -af textLabel left 10 
-             -af nameText top 40
-             -ac nameText left 10 textLabel
-             -af nameText right 10 
-             -af dauzerButton1 bottom 0
-             -af dauzerButton1 left 0
-             -ap dauzerButton1 right 0 50
-             -af dauzerButton2 bottom 0
-             -ac dauzerButton2 left 0 dauzerButton1
-             -af dauzerButton2 right 0 
+def anim_setText():
+    #get filename
+    filename = cmds.file(q=True,sn=True,shn=True).split('.')[0]
+    #set text
+    publishName = ''
+    sel = cmds.ls(sl=True)
+    selection = []
+    #remove any unnecessary characters and namespaces
+    for item in sel:
+        selection.append(re.split(':|\|',item)[-1].replace('_', ''))
+    selection = list(set(selection))
+    for i,s in enumerate(selection):
+        if i != 0:
+            publishName += '_'
+        publishName += s
+    #shorten name if longer than 50 characters
+    if len(publishName)>50:
+        publishName = '%s_anim'%(selection[0])
+    #lengthen name if none exists
+    if len(publishName)== 0:
+        publishName = 'anim'
+    cmds.textField('prefixText',e=True,tx=filename)
+    cmds.textField('nameText',e=True,tx=publishName)
+    #return [filename,publishName]
 
-    dauzerForm;
-    string $publishName = "";
-    
-    //get filename
-    string $filename = `file -q -sn -shn`;
-    string $buffer[];
-    $numTokens = `tokenize $filename "." $buffer`;
-    
-    //set text
-    string $sel[] = `ls -sl`;
-    string $selectionString = "";
-    for ($item in $sel)
-    {
-        string $fullNameSplit[];
-        $numTokens = `tokenize $item ":" $fullNameSplit`;
-        int $size = (`size $fullNameSplit`)-1;
-        $selectionString += (($fullNameSplit[$size]));
-    }
-    textField -edit -tx ($buffer[0]) prefixText;
-    textField -edit -tx ($selectionString) nameText;
-    showWindow abcAnimationExportWindow;
-}
-io_exportAnimation();
+def IO_publishAnim_window():
+    #UI objects
+    publishForm = cmds.formLayout()
+    prefixLabel = cmds.text(label='Prefix')
+    prefixText = cmds.textField('prefixText',w=250)
+    textLabel = cmds.text(label='Publish Name')
+    nameText = cmds.textField('nameText',w=250)
+    reloadButton = cmds.iconTextButton(style='iconOnly',image1='refresh.png',c='anim_setText()')
+    btn1 = cmds.button(l='Publish',h=50,c='PublishModelCheckText()')
+    btn2 = cmds.button(l='Close',h=50,c='cmds.deleteUI(\'Publish Animation Window\')')
+    #UI layout
+    cmds.formLayout(
+        publishForm,
+        edit=True,
+        attachForm=[
+        (prefixLabel,'top',15),
+        (prefixLabel,'left',10),
+        (reloadButton,'right',10),
+        (prefixText,'top',10),
+        (textLabel,'left',10),
+        (btn1,'bottom',0),
+        (btn1,'left',0),
+        (btn2,'bottom',0),
+        (btn2,'right',0)
+        ],
+        attachControl=[
+        (prefixText,'left',10,textLabel),
+        (prefixText,'right',10,reloadButton),
+        (textLabel,'top',10,prefixLabel),
+        (nameText,'top',10,prefixLabel),
+        (nameText,'left',10,textLabel),
+        (nameText,'right',10,reloadButton),
+        (reloadButton,'top',10,prefixLabel),
+        (btn2,'left',0,btn1)
+        ],
+        attachPosition=[
+        (btn1,'right',0,50)
+        ])
+    anim_setText()
+
+def IO_publishAnim():
+    workspaceName = 'Publish Animation Window'
+    if(cmds.workspaceControl(workspaceName, exists=True)):
+        cmds.deleteUI(workspaceName)
+    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishAnim_window()')
+
+IO_publishAnim()

@@ -1,6 +1,14 @@
 import maya.cmds as cmds
 import maya.mel as mel
 
+def pythonDropTest( dragControl, dropControl, messages, x, y, dragType ): 
+    print dragControl
+    print dropControl
+    print messages
+    print x
+    print y
+    print dragType
+
 def LlamaIOWindow():
     
     buttonColour = [0.33,0.58,0.74]
@@ -8,14 +16,17 @@ def LlamaIOWindow():
     installForm = cmds.formLayout(bgc=[0.1,0.4,0.55])
 
     modelTitle = cmds.text(fn='boldLabelFont',label="Modeling")
-    publishModel_btn = cmds.iconTextButton(hlc=[1,1,1],olc=[0,0,0],st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish REF',ann='Select top node to publish',c='')
+    publishModel_btn = cmds.iconTextButton('publishModel_btn',fla=0,hlc=[0,1,1],olc=[0,0,0],st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish REF',ann='Select top node to publish',c='import io_publishModel;from io_publishModel import IO_publishModel_window;io_publishModel.IO_publishModel(1)')
+    cmds.popupMenu( parent='publishModel_btn')
+    cmds.menuItem(label='Advanced',c='import io_publishModel;from io_publishModel import IO_publishModel_window;io_publishModel.IO_publishModel(0)',stp='python')
+
     
     sep1 = cmds.separator( hr=1,style='in' ,height=2)
     
     animTitle = cmds.text(fn='boldLabelFont',label="Animation")
     publishAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='')
     publishCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='')
-    megaPublish_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
+    megaPublish_btn = cmds.iconTextButton(en=False,st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
     
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
     
@@ -23,7 +34,7 @@ def LlamaIOWindow():
     importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='')
     importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='')
     importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='')
-    importAll_btn = cmds.iconTextButton(hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
+    importAll_btn = cmds.iconTextButton(en=False,hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
      
     
     cmds.formLayout(installForm,  edit=True, 

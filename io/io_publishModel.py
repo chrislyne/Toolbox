@@ -1,4 +1,5 @@
 import maya.cmds as cmds
+import maya.mel as mel
 import os, sys, time
 from shutil import copyfile
 import platform
@@ -285,7 +286,49 @@ def PublishModelCheckText():
     else:
         cmds.error('select an object to publish')
     
+def publishModel():
     
+    #init log variables
+    numberOfFiles = 0
+    numberOfMultiShaders = 0
+    alembicExported = 0
+    
+    #list objects
+    sel = cmds.ls(sl=True)
+    if len(sel) == 1:
+        #get publish name from textfield
+        publishName = assumedPublishName()
+        #get current selection so that it can be re-selected at the end
+        tempSelect = cmds.ls(sl=True)
+        
+        #full path to scene
+        scenePath = cmds.file(q=True,sn=True)
+        
+        #shaders
+        ctrlObjs = disconnectRig()
+        numberOfFiles += exportShaders(publishName,scenePath)
+        reconnectRig(ctrlObjs)
+
+        #alembic
+        makeAlembic(publishName, sel[0])
+        alembicExported = 1
+
+        #binary
+        makeRefLog = [0,0,0]
+        cmds.select(tempSelect,r=True)
+        makeRefLog = makeRef(publishName, sel[0])
+            
+        #log
+        writeLog(publishName, makeRefLog[0], makeRefLog[1], makeRefLog[2],alembicExported,numberOfFiles)
+        
+        #dialog
+        CompleteDialog(numberOfFiles, numberOfMultiShaders, alembicExported)
+
+    #display errors
+    elif len(sel) > 1:
+        cmds.error('select only ONE object to publish')
+    else:
+        cmds.error('select an object to publish')   
 
 
 ###    LOG    ###
@@ -336,7 +379,7 @@ def CompleteDialog(numberOfFiles, numberOfMultiShaders, alembicExported):
 
 
 #set text field
-def setText():
+def assumedPublishName():
     #check if publish name exists (object has been published before)
     sel = cmds.ls(sl=True)
     if sel and (cmds.attributeQuery('publishName', node=sel[0],exists=True)):
@@ -347,9 +390,11 @@ def setText():
         splitName = filename.split('.')
         parts = splitName[0].split('_')
         publishName =  (parts[0] + "_REF")
-    #set textField text
-    cmds.textField('nameText',e=True,tx=publishName)
+    return publishName
 
+def setTextField():
+    publishName = assumedPublishName()
+    cmds.textField('nameText',e=True,tx=publishName)
 
 def IO_publishModel_window():
     #UI objects
@@ -391,12 +436,18 @@ def IO_publishModel_window():
         attachPosition=[
         (btn1,'right',0,50)
         ])
-    setText()
+    setTextField()
 
-def IO_publishModel():
-    workspaceName = 'Publish REF Window'
-    if(cmds.workspaceControl(workspaceName, exists=True)):
-        cmds.deleteUI(workspaceName)
-    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishModel_window()')
+def IO_publishModel(silent):
+    if silent == 1:
+        print 'silent mode'
+        publishModel()
+    else:
+        workspaceName = 'Publish REF Window'
+        if(cmds.workspaceControl(workspaceName, exists=True)):
+            cmds.deleteUI(workspaceName)
+        cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishModel_window()')
 
-IO_publishModel()
+        
+
+#IO_publishModel(0) 
