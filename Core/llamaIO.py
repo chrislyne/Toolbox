@@ -1,13 +1,6 @@
 import maya.cmds as cmds
 import maya.mel as mel
 
-def pythonDropTest( dragControl, dropControl, messages, x, y, dragType ): 
-    print dragControl
-    print dropControl
-    print messages
-    print x
-    print y
-    print dragType
 
 def LlamaIOWindow():
     
