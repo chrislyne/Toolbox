@@ -1,0 +1,13 @@
+global proc saveFile(string $name,string $animPath,string $cameraPath)
+{
+	if (`pluginInfo -query -loaded AbcImport` != 1)
+	{
+    	loadPlugin AbcImport;
+	} 
+	string $abcPath = toNativePath($animPath);
+	string $importFiles = `AbcImport -mode import $animPath`;
+	print ($abcPath);
+    string $path = toNativePath( $name );
+	file -rn $path;
+	file -save;
+}

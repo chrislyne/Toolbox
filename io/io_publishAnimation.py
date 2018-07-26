@@ -1,5 +1,6 @@
 import maya.cmds as cmds
 import re
+import os
 
 #export animation
 def publishFile(abcFilename):
@@ -47,16 +48,23 @@ def publishFile(abcFilename):
     command = '-frameRange %d %d%s -ro -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa%s -file %scache/alembic/%s%s.abc'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
     #write to disk
     cmds.AbcExport ( j=command )
+    return '%scache/alembic/%s%s.abc'%(workspace,relativePath,abcFilename)
+
+def runSilent():
+    #construct filename from user input
+    names = createFilenames()
+    publishName = names[0]+'_'+names[1]
+    return publishFile(publishName)
 
 #update name and run
-def CheckText():
+def runWithUI():
     #construct filename from user input
     prefixString = cmds.textField('prefixText',q=True,text=True)
     nameString = cmds.textField('nameText',q=True,text=True)
     publishName = prefixString+'_'+nameString
     publishFile(publishName)
 
-def anim_setText():
+def createFilenames():
     #get filename
     filename = cmds.file(q=True,sn=True,shn=True).split('.')[0]
     #set text
@@ -77,9 +85,13 @@ def anim_setText():
     #lengthen name if none exists
     if len(publishName)== 0:
         publishName = 'anim'
-    cmds.textField('prefixText',e=True,tx=filename)
-    cmds.textField('nameText',e=True,tx=publishName)
-    #return [filename,publishName]
+    return [filename,publishName]
+
+def anim_setText():
+    #get filename
+    names = createFilenames()
+    cmds.textField('prefixText',e=True,tx=names[0])
+    cmds.textField('nameText',e=True,tx=names[1])
 
 def IO_publishAnim_window():
     #UI objects
@@ -89,7 +101,7 @@ def IO_publishAnim_window():
     textLabel = cmds.text(label='Publish Name')
     nameText = cmds.textField('nameText',w=250)
     reloadButton = cmds.iconTextButton(style='iconOnly',image1='refresh.png',c='anim_setText()')
-    btn1 = cmds.button(l='Publish',h=50,c='PublishModelCheckText()')
+    btn1 = cmds.button(l='Publish',h=50,c='runWithUI()')
     btn2 = cmds.button(l='Close',h=50,c='cmds.deleteUI(\'Publish Animation Window\')')
     #UI layout
     cmds.formLayout(
@@ -121,10 +133,14 @@ def IO_publishAnim_window():
         ])
     anim_setText()
 
-def IO_publishAnim():
-    workspaceName = 'Publish Animation Window'
-    if(cmds.workspaceControl(workspaceName, exists=True)):
-        cmds.deleteUI(workspaceName)
-    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishAnim_window()')
+def IO_publishAnim(silent):
+    if silent == 1:
+        print 'silent'
+        return runSilent()
+    else:
+        workspaceName = 'Publish Animation Window'
+        if(cmds.workspaceControl(workspaceName, exists=True)):
+            cmds.deleteUI(workspaceName)
+        cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishAnim_window()')
 
-IO_publishAnim()
+#print IO_publishAnim(1)

@@ -1,0 +1,1 @@
+C:\Program Files\Autodesk\Maya2017\bin>mayabatch.exe -command "saveFile(\"foo\",\"C:/Users/Chris/Documents/maya/projects/default/cache/alembic/ANIM/SH0001/SH0001_anim_v001_cl_CAMERA.abc\",\"\")"

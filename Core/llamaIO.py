@@ -13,12 +13,17 @@ def LlamaIOWindow():
     cmds.popupMenu( parent='publishModel_btn')
     cmds.menuItem(label='Advanced',c='import io_publishModel;from io_publishModel import IO_publishModel_window;io_publishModel.IO_publishModel(0)',stp='python')
 
-    
-    sep1 = cmds.separator( hr=1,style='in' ,height=2)
+    sep1t = cmds.separator( hr=1,style='none' ,height=1,backgroundColor=[0.0,0.2,0.35])
+    sep1 = cmds.separator( hr=1,style='none' ,height=10,backgroundColor=[0.25,0.25,0.25])
+    sep1b = cmds.separator( hr=1,style='none' ,height=1,backgroundColor=[0.4,0.6,0.75])
     
     animTitle = cmds.text(fn='boldLabelFont',label="Animation")
-    publishAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='')
-    publishCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='')
+    publishAnim_btn = cmds.iconTextButton('publishAnim_btn',fla=0,st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window;io_publishAnimation.IO_publishAnim(0)',stp='python')
+    cmds.popupMenu( parent='publishAnim_btn')
+    cmds.menuItem(label='Advanced',c='import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window;io_publishAnimation.IO_publishAnim(0)',stp='python')
+    publishCam_btn = cmds.iconTextButton('publishCam_btn',fla=0,st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
+    cmds.popupMenu( parent='publishCam_btn')
+    cmds.menuItem(label='Advanced',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
     megaPublish_btn = cmds.iconTextButton(en=False,st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
     
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
@@ -50,6 +55,8 @@ def LlamaIOWindow():
                      attachControl=[
                      (publishModel_btn, 'top', 10,modelTitle),
                      (sep1, 'top', 24,publishModel_btn),
+                     (sep1t, 'bottom', 0,sep1),
+                     (sep1b, 'top', 0,sep1),
                      (publishAnim_btn, 'top', 10,animTitle),
                      (publishCam_btn, 'top', 10,animTitle),
                      (megaPublish_btn, 'top', 1,publishCam_btn),
@@ -61,8 +68,12 @@ def LlamaIOWindow():
                      (importAll_btn, 'top', 1,importMat_btn)
                      ],
                      attachPosition=[
+                     (sep1t, 'right', 0,100),
+                     (sep1t, 'left', 0,0),
                      (sep1, 'right', 0,100),
                      (sep1, 'left', 0,0),
+                     (sep1b, 'right', 0,100),
+                     (sep1b, 'left', 0,0),
                      (publishAnim_btn, 'right', 0, 50),
                      (publishCam_btn, 'left', 1, 50),
                      (sep2, 'right', 0,100),
