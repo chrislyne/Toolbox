@@ -5,6 +5,7 @@ import maya.cmds as cmds
 from pymel.all import *
 import json
 
+
 #load user settings from disk
 def LoadUserSettings(filename,property):
     initials = ''
@@ -114,6 +115,7 @@ def userIDWindow():
     #cmds.textField(nameText,edit=True,tx=initials)
 
 def user_install():
+    import userIDWindow
     workspaceName = 'User ID'
     if(cmds.workspaceControl('User ID', exists=True)):
         cmds.deleteUI('User ID')
