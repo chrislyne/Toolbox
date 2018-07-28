@@ -3,14 +3,9 @@ import maya.mel as mel
 import os, sys, time
 from shutil import copyfile
 import platform
+from LlamaIO import addAttribute
 
 ###    UTILITIES    ###
-
-def addAttribute(shape,attrName,attrValue):
-    if not cmds.attributeQuery(attrName,node=shape,exists=True):
-        cmds.addAttr(shape,ln=attrName,dt='string')
-    cmds.setAttr('%s.%s'%(shape,attrName),e=True,keyable=True)
-    cmds.setAttr('%s.%s'%(shape,attrName),attrValue,type='string')
 
 #write to shader database
 def WriteToDB(filename,log,mode):

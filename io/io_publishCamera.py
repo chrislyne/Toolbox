@@ -1,14 +1,6 @@
 import maya.cmds as cmds
 import os
-
-###    UTILITIES    ###
-
-#add attribue
-def addAttribute(shape,attrName,attrValue):
-    if not cmds.attributeQuery(attrName,node=shape,exists=True):
-        cmds.addAttr(shape,ln=attrName,dt='string')
-    cmds.setAttr('%s.%s'%(shape,attrName),e=True,keyable=True)
-    cmds.setAttr('%s.%s'%(shape,attrName),attrValue,type='string')
+from LlamaIO import addAttribute
     
 ###        EXPORTS        ###
 

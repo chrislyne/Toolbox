@@ -24,7 +24,7 @@ def LlamaIOWindow():
     publishCam_btn = cmds.iconTextButton('publishCam_btn',fla=0,st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
     cmds.popupMenu( parent='publishCam_btn')
     cmds.menuItem(label='Advanced',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
-    megaPublish_btn = cmds.iconTextButton(en=False,st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='')
+    megaPublish_btn = cmds.iconTextButton('megaPublish_btn',fla=0,st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='import io_publishToNewScene;io_publishToNewScene.runExportScripts()',stp='python')
     
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
     
