@@ -1,3 +1,4 @@
+import subprocess
 import maya.cmds as cmds
 import os
 import io_publishAnimation
@@ -6,6 +7,7 @@ import io_publishCamera
 from io_publishCamera import io_exportCamera_window
 from LlamaIO import containsDigits
 from LlamaIO import addPadding
+from LlamaIO import UserPrefs 
 
 
 def runExportScripts():
@@ -61,7 +63,7 @@ def makeNewFile(animPath,cameraPath):
     if not os.path.exists(newFolder):
         os.makedirs(newFolder)
     #get final file name/path
-    fileName = niceFileName(filename.rsplit('/',1)[1],'RENDER','cl')
+    fileName = niceFileName(filename.rsplit('/',1)[1],'RENDER',UserPrefs.getUserPrefs())
     renderFilename = '%s/%s'%(newFolder,fileName)
     #execute
     command = r'C:/Progra~1/Autodesk/Maya2017/bin/mayabatch.exe -command "saveFile(""%s"",""%s"",""%s"")"'%(renderFilename,animPath,cameraPath)

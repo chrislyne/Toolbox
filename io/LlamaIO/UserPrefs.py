@@ -5,7 +5,6 @@ import maya.cmds as cmds
 from pymel.all import *
 import json
 
-
 #load user settings from disk
 def LoadUserSettings(filename,property):
     initials = ''
@@ -17,9 +16,6 @@ def LoadUserSettings(filename,property):
                 initials = inputString
         except:
             cmds.error('could not parse '+filename+' try deleting it')
-    else:
-        print 'no file'
-
     return initials
     
 #save user settings
@@ -62,15 +58,14 @@ def updateUserPrefs(initials):
         if timePassedHours > 0.1:
             SaveUserSettings(initials)
     else:
-        print 'it is not there'
         #create file
         SaveUserSettings(initials)
-
 
 def getUserPrefs():
     prefFile = UserPrefPath()
     initials = LoadUserSettings(prefFile,['user','initals'])
     if not initials:
+        #wait for user input
         while True:
             initials = userInput()
             if initials:
