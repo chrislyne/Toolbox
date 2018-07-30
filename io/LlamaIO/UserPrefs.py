@@ -5,7 +5,6 @@ import maya.cmds as cmds
 from pymel.all import *
 import json
 
-
 #load user settings from disk
 def LoadUserSettings(filename,property):
     initials = ''
@@ -17,9 +16,6 @@ def LoadUserSettings(filename,property):
                 initials = inputString
         except:
             cmds.error('could not parse '+filename+' try deleting it')
-    else:
-        print 'no file'
-
     return initials
     
 #save user settings
@@ -62,65 +58,36 @@ def updateUserPrefs(initials):
         if timePassedHours > 0.1:
             SaveUserSettings(initials)
     else:
-        print 'it is not there'
         #create file
         SaveUserSettings(initials)
-
 
 def getUserPrefs():
     prefFile = UserPrefPath()
     initials = LoadUserSettings(prefFile,['user','initals'])
     if not initials:
-        user_install()
+        #wait for user input
+        while True:
+            initials = userInput()
+            if initials:
+                updateUserPrefs(initials)
+                break
     return initials
 
 ###        UI        ###
 
-def inputText():
-    initals = cmds.textField('nameText',q=True,text=True)
-    return initals
-
-def userIDWindow():
-    installForm = cmds.formLayout()
-    textMessage = cmds.text(label='Hey, it\'s been over a week are these still your initials?')
-    textLabel = cmds.text(label='Initials')
-    nameText = cmds.textField('nameText',width=250)
+def userInput():
+    result = cmds.promptDialog(
+                    title='User Prefs Input',
+                    message='Enter Initials:',
+                    button=['Update', 'Cancel'],
+                    defaultButton='Update',
+                    cancelButton='Cancel',
+                    dismissString='Cancel')
     
-     
-    btn1 = cmds.button(height=50,label='Update',c='updateUserPrefs(inputText());cmds.deleteUI(\'User ID\')')
-    btn2 = cmds.button(height=50,label='Close',c='cmds.deleteUI(\'User ID\')')
-    
-    cmds.formLayout(installForm,  edit=True, 
-                     attachForm=[
-                     (textMessage, 'top', 15),
-                     (textMessage, 'left', 10),
-                     (textLabel, 'top', 45),
-                     (textLabel, 'left', 10),
-                     (nameText, 'top', 40),
-                     (nameText, 'right', 10),
-                     (btn1, 'bottom', 0),
-                     (btn1, 'left', 0),
-                     (btn2, 'bottom', 0),
-                     (btn2, 'right', 0)
-                     ],
-                     attachControl=[
-                     (nameText, 'left', 10,textLabel),
-                     (btn2, 'left', 0,btn1)
-                     ],
-                     attachPosition=[
-                     (btn1, 'right', 0, 50)
-                     ]
-                     )
-    #set initals from user config                 
-    #cmds.textField(nameText,edit=True,tx=initials)
-
-def user_install():
-    import userIDWindow
-    workspaceName = 'User ID'
-    if(cmds.workspaceControl('User ID', exists=True)):
-        cmds.deleteUI('User ID')
-    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'userIDWindow()')
-
-        
-        
+    if result == 'Update':
+        text = cmds.promptDialog(query=True, text=True)
+        return text
+       
+#from LlamaIO import UserPrefs 
+#from LlamaIO.UserPrefs import *       
 #print getUserPrefs()    
