@@ -93,7 +93,7 @@ def LlamaIO():
     cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'LlamaIOWindow()')
 
 
-LlamaIO()
+#LlamaIO()
 
 #import installToolbox
 #installToolbox.toolbox_install()
