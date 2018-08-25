@@ -19,7 +19,12 @@ def ListAllFiles():
     files = os.listdir(removeFilename[0])
     allinitialless = []
     for item in files:
-        initialless = simpleSplit(item, '_', -1)
+        #check for initials
+        end = item.split('_')[-1]
+        if any(char.isdigit() for char in end):
+            initialless = item.rsplit('.',1)[0]
+        else:
+            initialless = item.rsplit('_',1)[0]
         versionless = simpleSplit(initialless, '_', -1)
         allinitialless.append (initialless)
     return allinitialless
@@ -85,21 +90,27 @@ def CreateCandidate(filename):
     return candidate
 
 def CompareCandidate(candidate,allFiles,folder,initials):
-    foundMatch = 0
-    newName = candidate
-    for i in allFiles:
-        if candidate == i:
-            foundMatch = 1
-            j = CreateCandidate(i)
-            CompareCandidate(j,allFiles,folder,initials)
-            newName = j
-    if (foundMatch == 0):
+    nextCandidate = candidate
+    success = False
+    
+    while success == False:
+        foundMatch = False
+        for f in allFiles:
+            if nextCandidate == f:
+                foundMatch = True
+                nextCandidate = CreateCandidate(f)
+
+        if foundMatch == False:
+            success = True
+            break
+     
+    if (success == True):
         
         intitialsExt = ''
         if len(initials) > 0:
             intitialsExt = '_'+initials
         
-        fullNewName = (folder+'/'+newName+intitialsExt+'.mb')
+        fullNewName = (folder+'/'+nextCandidate+intitialsExt+'.mb')
         cmds.file(rename=fullNewName)
         cmds.file( save=True )
 
@@ -119,7 +130,7 @@ def IncrementCurrentFile(**keyword_parameters):
     
     CompareCandidate(candidate,allFiles,folder,initials)
 
-#IncrementCurrentFile(initials='cl')
+#IncrementCurrentFile()
 
 
 
