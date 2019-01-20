@@ -8,6 +8,7 @@ from PySide2 import QtWidgets
 from PySide2 import QtCore
 import subprocess
 import os
+import sys
 
 
 
@@ -145,8 +146,7 @@ def submitButton():
                     if value and w.parent() == l:
                         if cmds.attributeQuery(w.objectName(),node=l.checkBox_layerEnable.text(),ex=True) == False:
                             cmds.addAttr(l.checkBox_layerEnable.text(),ln=w.objectName(),dt='string')
-                        cmds.setAttr('%s.%s'%(l.checkBox_layerEnable.text(),w.objectName()),value,type="string")
-                        
+                        cmds.setAttr('%s.%s'%(l.checkBox_layerEnable.text(),w.objectName()),value,type="string")       
                 except:
                     pass
 
@@ -187,14 +187,24 @@ def globalVariables():
 def setOptionsFromFile(f,window):
     try:
         data = IO.loadJSON(f)
-        #print data
         for o in data:
+            oe = eval(o)
+            type = oe.metaObject().className()
             try:
                 for v in data[o]:
                     for i in v:
-                        #print ('%s.%s(%s)'%(o,i,v[i]))
-                        eval('%s.%s(%s)'%(o,i,v[i]))
-                        
+                        print i
+                        #eval('%s.%s(%s)'%(o,i,v[i]))  
+                        if type == 'QLineEdit':
+                            oe.setText(v[i].strip('\''))
+                        if type == 'QComboBox':
+                            oe.setCurrentText(v[i].strip('\''))
+                        if type == 'QSpinBox':
+                            oe.setValue(v[i].strip('\''))
+                        if type == 'QSlider':
+                            oe.setValue(v[i].strip('\''))
+                        if type == 'QCheckBox':
+                            oe.setChecked(v[i].strip('\''))
             except:
                 pass
     except:
