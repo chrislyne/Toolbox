@@ -4,6 +4,8 @@ import baseIO.sceneVar as sceneVar
 import baseIO.qtBase as qtBase
 import baseIO.getProj as getProj
 from PySide2 import QtGui
+from PySide2 import QtWidgets
+from PySide2 import QtCore
 import subprocess
 import os
 
@@ -12,15 +14,33 @@ import os
 class LayerWidget(qtBase.BaseWidget):
 
     layerWidgets = []
+    previousValue = ''
 
     def __init__(self,layers,parentWindow):
         self.uiFile = 'submitToFarmWidget.ui'
         self.parent = parentWindow
+        self.previousValue = parentWindow.mainWidget.prioritySlider.value()
         for l in layers:
             self.BuildUI()
             self.aWidget.checkBox_layerEnable.setText(l[0]) 
             self.aWidget.checkBox_layerEnable.setChecked(l[1]) 
             self.layerWidgets.append(self.aWidget)
+
+            #read attributes from layer
+            widgets = self.aWidget.findChildren(QtWidgets.QWidget)
+            for w in widgets:
+                try:
+                    if w.parent() == self.aWidget:
+                        value = cmds.getAttr('%s.%s'%(l[0],w.objectName()))
+                        type = w.metaObject().className()
+                        if type == 'QLineEdit':
+                            w.setText(value)
+                        if type == 'QComboBox':
+                            w.setCurrentText(value)
+                        if type == 'QSpinBox':
+                            w.setValue(int(value))
+                except:
+                    pass
             
         #connect main controls to layer controls
         parentWindow.mainWidget.prioritySlider.valueChanged.connect(self.slide01)
@@ -34,9 +54,13 @@ class LayerWidget(qtBase.BaseWidget):
 
         
     #widget functions
+    
     def slide01(self,value):
+        difference = self.previousValue - value
         for layer in self.layerWidgets:
-            layer.layerPrioritySlider.setValue(value)
+            #print addValue
+            layer.layerPrioritySlider.setValue(layer.layerPrioritySlider.value()-difference)
+        self.previousValue = value
 
     def packetSize(self,value):
         for layer in self.layerWidgets:
@@ -54,10 +78,11 @@ class LayerWidget(qtBase.BaseWidget):
         for layer in self.layerWidgets:
             layer.checkBox_layerEnable.setChecked(value)
 
+    
 
 
 def globalDict():
-    print 'global'
+    #print 'global'
     prefData = []
     prefData.append(['window.mainWidget.lineEdit_render','setText','\'%s\''%window.mainWidget.lineEdit_render.text()])
     prefData.append(['window.mainWidget.lineEdit_submitExe','setText','\'%s\''%window.mainWidget.lineEdit_submitExe.text()])
@@ -106,6 +131,26 @@ def submitButton():
     
     for l in layerWidget.layerWidgets:
         if l.checkBox_layerEnable.isChecked() == 1:
+            widgets = l.findChildren(QtWidgets.QWidget)
+            for w in widgets:
+                try:
+                    value = ''
+                    type = w.metaObject().className()
+                    if type == 'QLineEdit':
+                        value = w.text()
+                    if type == 'QComboBox':
+                        value = w.currentText()
+                    if type == 'QSpinBox':
+                        value = w.value()
+                    if value and w.parent() == l:
+                        if cmds.attributeQuery(w.objectName(),node=l.checkBox_layerEnable.text(),ex=True) == False:
+                            cmds.addAttr(l.checkBox_layerEnable.text(),ln=w.objectName(),dt='string')
+                        cmds.setAttr('%s.%s'%(l.checkBox_layerEnable.text(),w.objectName()),value,type="string")
+                        
+                except:
+                    pass
+
+            #create string
             submitString = ''
             submitString += '%s '%window.mainWidget.lineEdit_submitExe.text()
             submitString += ' -Type Redshift for Maya'
@@ -125,7 +170,7 @@ def submitButton():
             if window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -ErrorIgnores'
             submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
-            send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+            #send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
             print submitString
             #Submit.exe Script -Type Redshift for Maya -Scene Z:/Job_2/Amstel/maya/scenes/RENDER/SH0040/SH0040_RENDER_v018_cl.mb -Project Z:/Job_2/Amstel/maya -im fooBar -Name maya: SH0040_RENDER_v018_cl "(rs_snow)" -Range 0-230 -PacketSize 8 -Priority 50 -Paused -Pool Redshift -Creator Chris -CPUs 1 -GPUs 1 -RAM 0 -Note  -Extra "-rl rs_snow" -DistributeMode 0
     #projectDict()
@@ -142,12 +187,12 @@ def globalVariables():
 def setOptionsFromFile(f,window):
     try:
         data = IO.loadJSON(f)
-        print data
+        #print data
         for o in data:
             try:
                 for v in data[o]:
                     for i in v:
-                        print ('%s.%s(%s)'%(o,i,v[i]))
+                        #print ('%s.%s(%s)'%(o,i,v[i]))
                         eval('%s.%s(%s)'%(o,i,v[i]))
                         
             except:
@@ -171,14 +216,18 @@ def submitRenderUI():
     window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
-    buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
-    window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+    #buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
+    #window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+
+
 
     setOptionsFromFile('%s/globalPrefs.json'%qtBase.self_path(),window)
     setOptionsFromFile('%s/localPrefs.json'%qtBase.local_path(),window)
     setOptionsFromFile('%s/data/projectPrefs.json'%getProj.getProject(),window)
     window.mainWidget.lineEdit_range.setText('%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame()))
     setOptionsFromFile('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()),window)
+
+
 
 
     return window
