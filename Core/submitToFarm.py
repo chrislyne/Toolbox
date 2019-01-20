@@ -170,7 +170,7 @@ def submitButton():
             if window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -ErrorIgnores'
             submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
-            #send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+            send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
             print submitString
             #Submit.exe Script -Type Redshift for Maya -Scene Z:/Job_2/Amstel/maya/scenes/RENDER/SH0040/SH0040_RENDER_v018_cl.mb -Project Z:/Job_2/Amstel/maya -im fooBar -Name maya: SH0040_RENDER_v018_cl "(rs_snow)" -Range 0-230 -PacketSize 8 -Priority 50 -Paused -Pool Redshift -Creator Chris -CPUs 1 -GPUs 1 -RAM 0 -Note  -Extra "-rl rs_snow" -DistributeMode 0
     #projectDict()
@@ -226,8 +226,8 @@ def submitRenderUI():
     window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
-    #buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
-    #window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+    buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
+    window.mainWidget.pushButton_settings.setIcon(buttonIcon)
 
 
 
