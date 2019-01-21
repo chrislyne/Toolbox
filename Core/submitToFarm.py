@@ -168,7 +168,7 @@ def submitButton():
             submitString += ' -Creator %s'%window.mainWidget.lineEdit_name.text()
             submitString += ' -Note %s'%window.mainWidget.lineEdit_note.text()
             if window.mainWidget.checkBox_errors.isChecked() == 1:
-                submitString += ' -ErrorIgnores'
+                submitString += ' -DetectErrors 0'
             submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
             send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
             print submitString
