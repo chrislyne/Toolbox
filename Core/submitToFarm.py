@@ -115,6 +115,10 @@ def fileDict():
 
     prefData.append(['img','imgpath','path'])
     prefData.append(['img','imgname','name'])
+    prefData.append(['user','trelloID','name'])
+    prefData.append(['user','trelloAddress','name'])
+    prefData.append(['user','emailAddress','name'])
+    prefData.append(['user','slackID','name'])
 
     IO.writePrefsToFile(prefData,'%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
 
