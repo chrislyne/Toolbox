@@ -26,7 +26,10 @@ class LayerWidget(qtBase.BaseWidget):
             self.aWidget.checkBox_layerEnable.setText(l[0]) 
             self.aWidget.checkBox_layerEnable.setChecked(l[1]) 
             self.layerWidgets.append(self.aWidget)
-
+            #set attributes from global controls
+            self.aWidget.spinBox_layerPacketSize.setValue(parentWindow.mainWidget.spinBox_packetSize.value())
+            self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
+            
             #read attributes from layer
             widgets = self.aWidget.findChildren(QtWidgets.QWidget)
             for w in widgets:
@@ -52,7 +55,8 @@ class LayerWidget(qtBase.BaseWidget):
         height = 50*len(layers)
         parentWindow.mainWidget.scrollAreaWidgetContents.setMaximumHeight(height)
         parentWindow.mainWidget.scrollAreaWidgetContents.setMinimumHeight(height)
-
+        
+        
         
     #widget functions
     
@@ -174,7 +178,10 @@ def submitButton():
             if window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
             submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
-            send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+            try:
+                send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+            except:
+                print 'failed to submit, check path to submit.exe exists'
             print submitString
             #Submit.exe Script -Type Redshift for Maya -Scene Z:/Job_2/Amstel/maya/scenes/RENDER/SH0040/SH0040_RENDER_v018_cl.mb -Project Z:/Job_2/Amstel/maya -im fooBar -Name maya: SH0040_RENDER_v018_cl "(rs_snow)" -Range 0-230 -PacketSize 8 -Priority 50 -Paused -Pool Redshift -Creator Chris -CPUs 1 -GPUs 1 -RAM 0 -Note  -Extra "-rl rs_snow" -DistributeMode 0
     #projectDict()
@@ -195,22 +202,17 @@ def setOptionsFromFile(f,window):
             oe = eval(o)
             type = oe.metaObject().className()
             try:
-                for v in data[o]:
-
-                    for i in v:
-                        #merge these two loops ^^
-                        print i
-                        #eval('%s.%s(%s)'%(o,i,v[i]))  
-                        if type == 'QLineEdit':
-                            oe.setText(v[i].strip('\''))
-                        if type == 'QComboBox':
-                            oe.setCurrentText(v[i].strip('\''))
-                        if type == 'QSpinBox':
-                            oe.setValue(v[i].strip('\''))
-                        if type == 'QSlider':
-                            oe.setValue(v[i].strip('\''))
-                        if type == 'QCheckBox':
-                            oe.setChecked(v[i].strip('\''))
+                for v in data[o]: 
+                    if type == 'QLineEdit':
+                        oe.setText(data[o][v].strip('\''))
+                    if type == 'QComboBox':
+                        oe.setCurrentText(data[o][v].strip('\''))
+                    if type == 'QSpinBox':
+                        oe.setValue(data[o][v])
+                    if type == 'QSlider':
+                        oe.setValue(data[o][v])
+                    if type == 'QCheckBox':
+                        oe.setChecked(data[o][v].strip('\''))
             except:
                 pass
     except:
@@ -232,8 +234,11 @@ def submitRenderUI():
     window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
-    #buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
-    #window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+    try:
+        buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
+        window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+    except:
+        pass
 
 
 
