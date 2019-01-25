@@ -196,7 +196,9 @@ def setOptionsFromFile(f,window):
             type = oe.metaObject().className()
             try:
                 for v in data[o]:
+
                     for i in v:
+                        #merge these two loops ^^
                         print i
                         #eval('%s.%s(%s)'%(o,i,v[i]))  
                         if type == 'QLineEdit':
@@ -230,8 +232,8 @@ def submitRenderUI():
     window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
-    buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
-    window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+    #buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
+    #window.mainWidget.pushButton_settings.setIcon(buttonIcon)
 
 
 
