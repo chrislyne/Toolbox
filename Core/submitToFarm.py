@@ -91,24 +91,24 @@ class LayerWidget(qtBase.BaseWidget):
 def globalDict():
     #print 'global'
     prefData = []
-    prefData.append(['window.mainWidget.lineEdit_render','setText','\'%s\''%window.mainWidget.lineEdit_render.text()])
-    prefData.append(['window.mainWidget.lineEdit_submitExe','setText','\'%s\''%window.mainWidget.lineEdit_submitExe.text()])
+    prefData.append(['pathToRenderExe','value','\'%s\''%window.mainWidget.lineEdit_render.text()])
+    prefData.append(['pathToSubmitExe','value','\'%s\''%window.mainWidget.lineEdit_submitExe.text()])
     IO.writePrefsToFile(prefData,'%s/globalPrefs.json'%qtBase.self_path())
 
 def projectDict():
     prefData = []
-    prefData.append(['window.mainWidget.lineEdit_render','setText','\'%s\''%window.mainWidget.lineEdit_render.text()])
-    prefData.append(['window.mainWidget.lineEdit_trelloBoard','setText','\'%s\''%window.mainWidget.lineEdit_trelloBoard.text()])
+    prefData.append(['pathToRenderExe','value','\'%s\''%window.mainWidget.lineEdit_render.text()])
+    prefData.append(['trelloBoard','value','\'%s\''%window.mainWidget.lineEdit_trelloBoard.text()])
     IO.writePrefsToFile(prefData,'%s/data/projectPrefs.json'%getProj.getProject())
 
 def localDict():
     prefData = []
-    prefData.append(['window.mainWidget.lineEdit_name','setText','\'%s\''%window.mainWidget.lineEdit_name.text()])
-    prefData.append(['window.mainWidget.lineEdit_slack','setText','\'%s\''%window.mainWidget.lineEdit_slack.text()])
-    prefData.append(['window.mainWidget.checkBox_paused','setChecked',window.mainWidget.checkBox_paused.isChecked()])
-    prefData.append(['window.mainWidget.prioritySlider','setValue',window.mainWidget.prioritySlider.value()])
-    prefData.append(['window.mainWidget.comboBox_pool','setCurrentText','\'%s\''%window.mainWidget.comboBox_pool.currentText()])
-    prefData.append(['window.mainWidget.spinBox_packetSize','setValue',window.mainWidget.spinBox_packetSize.value()])
+    prefData.append(['userName','value','\'%s\''%window.mainWidget.lineEdit_name.text()])
+    prefData.append(['userSlackID','value','\'%s\''%window.mainWidget.lineEdit_slack.text()])
+    prefData.append(['checkBox_Paused','value',window.mainWidget.checkBox_paused.isChecked()])
+    prefData.append(['prioritySlider','value',window.mainWidget.prioritySlider.value()])
+    prefData.append(['comboBox_pool','value','\'%s\''%window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['spinBox_packetSize','value',window.mainWidget.spinBox_packetSize.value()])
     IO.writePrefsToFile(prefData,'%s/localPrefs.json'%qtBase.local_path())
 
 def fileDict():
@@ -197,28 +197,40 @@ def globalVariables():
 
     return varibales
 
-def setOptionsFromFile(data,window):
-    
-        for o in data:
-            try:
-                oe = eval(o)
-                type = oe.metaObject().className()
-                try:
-                    for v in data[o]: 
-                        if type == 'QLineEdit':
-                            oe.setText(data[o][v].strip('\''))
-                        if type == 'QComboBox':
-                            oe.setCurrentText(data[o][v].strip('\''))
-                        if type == 'QSpinBox':
-                            oe.setValue(data[o][v])
-                        if type == 'QSlider':
-                            oe.setValue(data[o][v])
-                        if type == 'QCheckBox':
-                            oe.setChecked(data[o][v].strip('\''))
-                except:
-                    pass
-            except:
-                pass
+def setUiValue(uiObject,value,window):
+
+    type = uiObject.metaObject().className()
+
+    if type == 'QLineEdit':
+        uiObject.setText(value["value"].strip('\''))
+    if type == 'QComboBox':
+        uiObject.setCurrentText(value["value"].strip('\''))
+    if type == 'QSpinBox':
+        uiObject.setValue(value["value"])
+    if type == 'QSlider':
+        uiObject.setValue(value["value"])
+    if type == 'QCheckBox':
+        uiObject.setChecked(value["value"].strip('\''))
+
+
+def setOptions(data,window):
+
+    UIinputs = [
+                    [window.mainWidget.lineEdit_render,"pathToRenderExe"],
+                    [window.mainWidget.lineEdit_submitExe,"pathToSubmitExe"],
+                    [window.mainWidget.lineEdit_trelloBoard,"trelloBoard"],
+                    [window.mainWidget.lineEdit_name,"userName"],
+                    [window.mainWidget.lineEdit_slack,"userSlackID"],
+                    [window.mainWidget.checkBox_paused,"checkBox_Paused"],
+                    [window.mainWidget.prioritySlider,"prioritySlider"],
+                    [window.mainWidget.comboBox_pool,"comboBox_pool"],
+                    [window.mainWidget.spinBox_packetSize,"spinBox_packetSize"]
+                ]
+    for d in UIinputs:
+        try:
+            setUiValue(d[0],data[d[1]],window)
+        except:
+            pass
 
 def mergeDictionaries(dict1,dict2):
     try:
@@ -257,7 +269,7 @@ def submitRenderUI():
     comboDict = mergeDictionaries(comboDict,{"window.mainWidget.lineEdit_range": {"setText":rangeFromTimeline}})
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
 
-    setOptionsFromFile(comboDict,window)
+    setOptions(comboDict,window)
     return window
 
 
