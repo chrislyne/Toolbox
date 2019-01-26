@@ -29,6 +29,8 @@ class LayerWidget(qtBase.BaseWidget):
             #set attributes from global controls
             self.aWidget.spinBox_layerPacketSize.setValue(parentWindow.mainWidget.spinBox_packetSize.value())
             self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
+            self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
+            self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
             
             #read attributes from layer
             widgets = self.aWidget.findChildren(QtWidgets.QWidget)
@@ -195,28 +197,35 @@ def globalVariables():
 
     return varibales
 
-def setOptionsFromFile(f,window):
-    try:
-        data = IO.loadJSON(f)
+def setOptionsFromFile(data,window):
+    
         for o in data:
-            oe = eval(o)
-            type = oe.metaObject().className()
             try:
-                for v in data[o]: 
-                    if type == 'QLineEdit':
-                        oe.setText(data[o][v].strip('\''))
-                    if type == 'QComboBox':
-                        oe.setCurrentText(data[o][v].strip('\''))
-                    if type == 'QSpinBox':
-                        oe.setValue(data[o][v])
-                    if type == 'QSlider':
-                        oe.setValue(data[o][v])
-                    if type == 'QCheckBox':
-                        oe.setChecked(data[o][v].strip('\''))
+                oe = eval(o)
+                type = oe.metaObject().className()
+                try:
+                    for v in data[o]: 
+                        if type == 'QLineEdit':
+                            oe.setText(data[o][v].strip('\''))
+                        if type == 'QComboBox':
+                            oe.setCurrentText(data[o][v].strip('\''))
+                        if type == 'QSpinBox':
+                            oe.setValue(data[o][v])
+                        if type == 'QSlider':
+                            oe.setValue(data[o][v])
+                        if type == 'QCheckBox':
+                            oe.setChecked(data[o][v].strip('\''))
+                except:
+                    pass
             except:
                 pass
+
+def mergeDictionaries(dict1,dict2):
+    try:
+        dict1.update(dict2)
     except:
         pass
+    return dict1
 
 def submitRenderUI():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'submitToFarm.ui')
@@ -239,18 +248,16 @@ def submitRenderUI():
         window.mainWidget.pushButton_settings.setIcon(buttonIcon)
     except:
         pass
+    #merge all dictionaries into one
+    comboDict = {}
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/globalPrefs.json'%qtBase.self_path()))
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/projectPrefs.json'%getProj.getProject()))
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
+    rangeFromTimeline =  '%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame())
+    comboDict = mergeDictionaries(comboDict,{"window.mainWidget.lineEdit_range": {"setText":rangeFromTimeline}})
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
 
-
-
-    setOptionsFromFile('%s/globalPrefs.json'%qtBase.self_path(),window)
-    setOptionsFromFile('%s/localPrefs.json'%qtBase.local_path(),window)
-    setOptionsFromFile('%s/data/projectPrefs.json'%getProj.getProject(),window)
-    window.mainWidget.lineEdit_range.setText('%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame()))
-    setOptionsFromFile('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()),window)
-
-
-
-
+    setOptionsFromFile(comboDict,window)
     return window
 
 
@@ -259,26 +266,3 @@ window = submitRenderUI()
 #get render layers from scene
 layers = sceneVar.getRenderLayers()
 layerWidget = LayerWidget(layers,window)
-        
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-
