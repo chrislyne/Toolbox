@@ -190,13 +190,6 @@ def submitButton():
     localDict()
     fileDict()
 
-def globalVariables():
-
-    varibales = []
-    gpus = 1
-
-    return varibales
-
 def setUiValue(uiObject,value,window):
 
     type = uiObject.metaObject().className()
@@ -224,7 +217,8 @@ def setOptions(data,window):
                     [window.mainWidget.checkBox_paused,"checkBox_Paused"],
                     [window.mainWidget.prioritySlider,"prioritySlider"],
                     [window.mainWidget.comboBox_pool,"comboBox_pool"],
-                    [window.mainWidget.spinBox_packetSize,"spinBox_packetSize"]
+                    [window.mainWidget.spinBox_packetSize,"spinBox_packetSize"],
+                    [window.mainWidget.lineEdit_range,"lineEdit_range"]
                 ]
     for d in UIinputs:
         try:
@@ -266,7 +260,7 @@ def submitRenderUI():
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/projectPrefs.json'%getProj.getProject()))
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
     rangeFromTimeline =  '%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame())
-    comboDict = mergeDictionaries(comboDict,{"window.mainWidget.lineEdit_range": {"setText":rangeFromTimeline}})
+    comboDict = mergeDictionaries(comboDict,{"lineEdit_range": {"value":rangeFromTimeline}})
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
 
     setOptions(comboDict,window)
