@@ -62,4 +62,4 @@ class BaseWidget():
     parent = ''
     def BuildUI(self):
         self.aWidget = qtWindow('%s/%s'%(self_path(),self.uiFile))
-        self.parent.mainWidget.verticalLayout_3.addWidget(self.aWidget)
+        self.parent.addWidget(self.aWidget)

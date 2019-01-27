@@ -13,7 +13,7 @@ class LayerWidget(qtBase.BaseWidget):
 
     def __init__(self,layers,parentWindow):
         self.uiFile = 'projectConfigWidget.ui'
-        self.parent = parentWindow
+        self.parent = parentWindow.mainWidget.tabWidget.verticalLayout_3
         for l in layers:
             self.BuildUI()
             self.aWidget.label.setText(l[0]) 

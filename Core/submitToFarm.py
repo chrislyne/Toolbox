@@ -19,7 +19,7 @@ class LayerWidget(qtBase.BaseWidget):
 
     def __init__(self,layers,parentWindow):
         self.uiFile = 'submitToFarmWidget.ui'
-        self.parent = parentWindow
+        self.parent = parentWindow.mainWidget.verticalLayout_3
         self.previousValue = parentWindow.mainWidget.prioritySlider.value()
         for l in layers:
             self.BuildUI()
