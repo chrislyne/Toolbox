@@ -135,9 +135,9 @@ def AddIcons(shelfName):
                 for mod in modules:
                     fileName = mod.split('/')
                     #make folder
-                    if not os.path.exists(localScriptsPath+'/Modules'):
-                        os.makedirs(localScriptsPath+'/Modules')
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),(localScriptsPath+'/Modules/'+fileName[-1]))
+                    if not os.path.exists('%s/%s'%(localScriptsPath,fileName[0])):
+                        os.makedirs('%s/%s'%(localScriptsPath,fileName[0]))
+                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod)'%s/%s/%s'%(localScriptsPath,fileName[0],fileName[-1]))
             except:
                 print ('file not available')
         try:
