@@ -11,7 +11,7 @@ def publishFile(abcFilename):
     filename = cmds.file(q=True,sn=True)
     #get relative path (from scenes)
     relativePath = ''
-    for dir in filename.split('/')[8:-1]:
+    for dir in filename.split('/')[workspaceLen:-1]:
         relativePath += '%s/'%(dir)
 
     #string of objects to export
@@ -45,7 +45,13 @@ def publishFile(abcFilename):
     additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
     for attr in additionalAttributes:
         additionalAttr += ' -attr %s'%(attr)
-    command = '-frameRange %d %d%s -ro -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa%s -file %scache/alembic/%s%s.abc'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
+    command = '-frameRange %d %d%s -uvWrite -writeVisibility -wholeFrameGeo -worldSpace -writeUVSets -dataFormat ogawa%s -file \"%scache/alembic/%s%s.abc\"'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
+    #load plugin
+    if not cmds.pluginInfo('AbcExport',query=True,loaded=True):
+        try:
+            #load abcExport plugin
+            cmds.loadPlugin( 'AbcExport' )
+        except: cmds.error('Could not load AbcExport plugin')
     #write to disk
     cmds.AbcExport ( j=command )
     return '%scache/alembic/%s%s.abc'%(workspace,relativePath,abcFilename)
@@ -95,6 +101,7 @@ def anim_setText():
 
 def IO_publishAnim_window():
     #UI objects
+
     publishForm = cmds.formLayout()
     prefixLabel = cmds.text(label='Prefix')
     prefixText = cmds.textField('prefixText',w=250)
@@ -143,4 +150,4 @@ def IO_publishAnim(silent):
             cmds.deleteUI(workspaceName)
         cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'IO_publishAnim_window()')
 
-#print IO_publishAnim(1)
+#IO_publishAnim(0)

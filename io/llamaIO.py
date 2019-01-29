@@ -18,7 +18,7 @@ def LlamaIOWindow():
     sep1b = cmds.separator( hr=1,style='none' ,height=1,backgroundColor=[0.4,0.6,0.75])
     
     animTitle = cmds.text(fn='boldLabelFont',label="Animation")
-    publishAnim_btn = cmds.iconTextButton('publishAnim_btn',fla=0,st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window;io_publishAnimation.IO_publishAnim(0)',stp='python')
+    publishAnim_btn = cmds.iconTextButton('publishAnim_btn',fla=0,st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window, runWithUI;io_publishAnimation.IO_publishAnim(0)',stp='python')
     cmds.popupMenu( parent='publishAnim_btn')
     cmds.menuItem(label='Advanced',c='import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window;io_publishAnimation.IO_publishAnim(0)',stp='python')
     publishCam_btn = cmds.iconTextButton('publishCam_btn',fla=0,st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
@@ -31,7 +31,7 @@ def LlamaIOWindow():
     sceneTitle = cmds.text(fn='boldLabelFont',label="Scene Reconstruction")
     importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='')
     importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='')
-    importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='')
+    importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='import io_importMaterials;io_importMaterials.assignMaterials()')
     importAll_btn = cmds.iconTextButton(en=False,hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
      
     

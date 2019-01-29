@@ -22,7 +22,7 @@ def disconnectRig():
     connections = []
     ctrlObjects = []
     additionalAttributes = []
-    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise']
+    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise','projection']
     for nType in nodeTypes:
         nodes = cmds.ls(typ=nType)
         for node in nodes:
@@ -226,7 +226,6 @@ def exportShaders(publishName,scenePath):
         shaderCount += 1
 
     return shaderCount
-
 
 #update name and run
 def PublishModelCheckText():
