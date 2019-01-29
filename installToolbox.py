@@ -137,7 +137,7 @@ def AddIcons(shelfName):
                     #make folder
                     if not os.path.exists('%s/%s'%(localScriptsPath,fileName[0])):
                         os.makedirs('%s/%s'%(localScriptsPath,fileName[0]))
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod)'%s/%s/%s'%(localScriptsPath,fileName[0],fileName[-1]))
+                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
             except:
                 print ('file not available')
         try:

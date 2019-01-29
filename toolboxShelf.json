@@ -179,15 +179,15 @@
 		{
 			"icon":"io_Llama.svg",
 			"label":"LlamaIO pipeline control",
-			"script":"io/llamaIO.py",
+			"script":"llamaIO_mod/llamaIO.py",
 			"modules": [
-			"io/io_importAnimation.py",
-			"io/io_importCamera.py",
-			"io/io_importMaterials.py",
-			"io/io_publishAnimation.py",
-			"io/io_publishCamera.py",
-			"io/io_publishModel.py",
-			"io/io_publishToNewScene.py"
+			"llamaIO_mod/io_importAnimation.py",
+			"llamaIO_mod/io_importCamera.py",
+			"llamaIO_mod/io_importMaterials.py",
+			"llamaIO_mod/io_publishAnimation.py",
+			"llamaIO_mod/io_publishCamera.py",
+			"llamaIO_mod/io_publishModel.py",
+			"llamaIO_mod/io_publishToNewScene.py"
 			],
 			"command":"import llamaIO;from llamaIO import LlamaIOWindow;llamaIO.LlamaIO()",
 			"stp":"python"
