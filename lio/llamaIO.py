@@ -21,16 +21,16 @@ def LlamaIOWindow():
     publishAnim_btn = cmds.iconTextButton('publishAnim_btn',fla=0,st='iconAndTextVertical',i='io_publishAnim.svg',bgc=buttonColour,height=50,width=100,label='Publish Anim',c='from lio.io_publishAnimation import IO_publishAnim_window, runWithUI;lio.io_publishAnimation.IO_publishAnim(0)',stp='python')
     cmds.popupMenu( parent='publishAnim_btn')
     cmds.menuItem(label='Advanced',c='from lio.io_publishAnimation import IO_publishAnim_window, runWithUI;lio.io_publishAnimation.IO_publishAnim(0)',stp='python')
-    publishCam_btn = cmds.iconTextButton('publishCam_btn',fla=0,st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
+    publishCam_btn = cmds.iconTextButton('publishCam_btn',fla=0,st='iconAndTextVertical',i='io_publishCam.svg',bgc=buttonColour,height=50,width=100,label='Publish Camera',c='from lio.io_publishCamera import io_exportCamera_window, runWithUI;lio.io_publishCamera.io_exportCamera(0)',stp='python')
     cmds.popupMenu( parent='publishCam_btn')
-    cmds.menuItem(label='Advanced',c='import io_publishCamera;from io_publishCamera import io_exportCamera_window;io_publishCamera.io_exportCamera(0)',stp='python')
+    cmds.menuItem(label='Advanced',c=';from lio.io_publishCamera import io_exportCamera_window, runWithUI;lio.io_publishCamera.io_exportCamera(0)',stp='python')
     megaPublish_btn = cmds.iconTextButton('megaPublish_btn',fla=0,st='iconAndTextVertical',i='io_publishModel.svg',bgc=buttonColour,height=50,width=100,label='Publish to NEW SCENE',c='import io_publishToNewScene;io_publishToNewScene.runExportScripts()',stp='python')
     
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
     
     sceneTitle = cmds.text(fn='boldLabelFont',label="Scene Reconstruction")
     importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='')
-    importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='')
+    importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='import lio.io_importCamera.importCameraDialog();')
     importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='import io_importMaterials;io_importMaterials.assignMaterials()')
     importAll_btn = cmds.iconTextButton(en=False,hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')
      

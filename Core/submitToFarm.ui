@@ -720,6 +720,16 @@ background-image: url(/icon/io_ANIMOUT.png);
           </item>
           <item>
            <property name="text">
+            <string>Yeti</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1080TI</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>Redshift</string>
            </property>
           </item>

@@ -190,7 +190,7 @@
 			"llamaIO_mod/io_publishToNewScene.py",
 			"llamaIO_mod/__init__.py"
 			],
-			"command":"import llamaIO;from llamaIO import LlamaIOWindow;llamaIO.LlamaIO()",
+			"command":"import lio;from lio.llamaIO import LlamaIOWindow;lio.llamaIO.LlamaIO()",
 			"stp":"python"
 		},
 		{

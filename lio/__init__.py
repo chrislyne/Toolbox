@@ -3,6 +3,6 @@ import io_publishModel
 import io_publishAnimation
 from io_publishAnimation import IO_publishAnim_window, runWithUI
 import io_importMaterials
-
+import io_publishCamera
 
 #import io_publishAnimation;from io_publishAnimation import IO_publishAnim_window, runWithUI;io_publishAnimation.IO_publishAnim(0)
