@@ -1,5 +1,5 @@
 {
-	"icons": [
+	"buttons": [
 		{
 			"icon":"incrementalSave.svg",
 			"label":"Incremental Save",
@@ -177,7 +177,7 @@
 			"icon":"separator"
 		},
 		{
-			"icon":"io_Llama.svg",
+			"icon":["io_Llama.svg","io_importAnim.svg","io_importCam.svg","io_publishAnim.svg","io_publishCam.svg","io_publishModel.svg"],
 			"label":"LlamaIO pipeline control",
 			"script":"llamaIO_mod/llamaIO.py",
 			"modules": [
