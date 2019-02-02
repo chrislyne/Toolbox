@@ -1,3 +1,5 @@
+import maya.cmds as cmds
+
 #adds value to an attribute
 def addAttribute(shape,attrName,attrValue):
     if not cmds.attributeQuery(attrName,node=shape,exists=True):

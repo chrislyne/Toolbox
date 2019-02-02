@@ -1,13 +1,10 @@
 {
-	"icons": [
+	"buttons": [
 		{
 			"icon":"incrementalSave.svg",
 			"label":"Incremental Save",
 			"script":"Core/incrementalSaveUI.py",
-			"modules": [
-			"Modules/incrementalSave.py",
-			"Modules/IOuserPref.py"
-			],
+			"modules": ["Modules/incrementalSave.py","Modules/IOuserPref.py"],
 			"command":"import incrementalSaveUI;from incrementalSaveUI import *;incrementalSaveUI()",
 			"stp":"python"
 		},
@@ -177,10 +174,20 @@
 			"icon":"separator"
 		},
 		{
-			"icon":"io_Llama.svg",
+			"icon":["io_Llama.svg","io_importAnim.svg","io_importCam.svg","io_publishAnim.svg","io_publishCam.svg","io_publishModel.svg"],
 			"label":"LlamaIO pipeline control",
-			"script":"Core/llamaIO.py",
-			"command":"import llamaIO;from llamaIO import LlamaIOWindow;llamaIO.LlamaIO()",
+			"script":"lio/llamaIO.py",
+			"modules": [
+			"lio/io_importAnimation.py",
+			"lio/io_importCamera.py",
+			"lio/io_importMaterials.py",
+			"lio/io_publishAnimation.py",
+			"lio/io_publishCamera.py",
+			"lio/io_publishModel.py",
+			"lio/io_publishToNewScene.py",
+			"lio/__init__.py"
+			],
+			"command":"import lio;from lio.llamaIO import LlamaIOWindow;lio.llamaIO.LlamaIO()",
 			"stp":"python"
 		},
 		{

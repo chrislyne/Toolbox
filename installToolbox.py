@@ -99,7 +99,7 @@ def AddIcons(shelfName):
     with open(JSONPath) as data_file:    
         data = json.load(data_file)
         
-    buttons = (data['icons'])
+    buttons = (data['buttons'])
     #resize progress bar
     cmds.progressBar('progressControl', edit=True,vis=True, maxValue=len(buttons)-1)
 
@@ -109,12 +109,16 @@ def AddIcons(shelfName):
         #download icons from github
         try:
             icon = buttons[i]['icon']
-            if icon == 'separator':
-                print 'seperator'
-                shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
-            else:
-                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+icon), (localIconsPath+'/'+icon))
-                shelfString += ',i1=\''+icon+'\''
+            if isinstance(icon,basestring):
+                icon = [icon]
+            for ii,ico in enumerate(icon):
+                if ico == 'separator':
+                    print 'seperator'
+                    shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
+                else:
+                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
+                    if ii == 0:
+                        shelfString += ',i1=\''+ico+'\''
             
         except:
             print ('file not available')
@@ -135,9 +139,9 @@ def AddIcons(shelfName):
                 for mod in modules:
                     fileName = mod.split('/')
                     #make folder
-                    if not os.path.exists(localScriptsPath+'/Modules'):
-                        os.makedirs(localScriptsPath+'/Modules')
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),(localScriptsPath+'/Modules/'+fileName[-1]))
+                    if not os.path.exists('%s/%s'%(localScriptsPath,fileName[0])):
+                        os.makedirs('%s/%s'%(localScriptsPath,fileName[0]))
+                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
             except:
                 print ('file not available')
         try:
@@ -160,7 +164,8 @@ def AddIcons(shelfName):
         shelfString += ',w=32,h=32,p=\''+shelfName+'\')'
         
         #remove old button
-        RemoveButton(shelfName,icon)
+        for ico in icon:
+            RemoveButton(shelfName,ico)
 
         #add icons to shelf
         currentButton = eval (shelfString)
@@ -186,6 +191,8 @@ def CheckText():
 
 def FilterOutSystemPaths(path):
     systemPath  = 0
+    if path[0] == '/':
+        systemPath = 1
     allparts = path.split('/')
     for part in allparts:
         if part == 'ProgramData' or  part == 'Program Files':
@@ -269,7 +276,7 @@ def toolbox_install():
     workspaceName = 'Install Toolbox'
     if(cmds.workspaceControl('Install Toolbox', exists=True)):
         cmds.deleteUI('Install Toolbox')
-    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'installToolboxWindow()')
+    cmds.workspaceControl(workspaceName,initialHeight=250,initialWidth=300,uiScript = 'installToolboxWindow()')
 
 
 #toolbox_install()

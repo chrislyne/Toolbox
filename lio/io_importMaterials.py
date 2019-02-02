@@ -66,8 +66,11 @@ def assignMaterials():
             materialPath = project +'renderData/alembicShaders/%s/%s_%s.mb'%(ref,ref,m[1])
             cmds.file(materialPath,i=True,type='mayaBinary',ignoreVersion=True,mergeNamespacesOnClash=True,namespace=ref)
             materialName = '%s:%s'%(ref,m[1])
-            cmds.sets(cmds.sets( m[0], q=True ),e=True,forceElement=materialName) 
+            try:
+                cmds.sets(cmds.sets( m[0], q=True ),e=True,forceElement=materialName) 
+            except:
+                print 'failed to assign %s'%materialName
             #remove temporary sets
             cmds.delete( m[0])
 
-assignMaterials()      
+#assignMaterials()      
