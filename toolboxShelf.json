@@ -274,6 +274,13 @@
 			"icon":"separator"
 		},
 		{
+			"icon":"icecream.svg",
+			"label":"icecream?",
+			"script":"toSlack.py",
+			"command":"import toSlack;toSlack.icecreamBot()",
+			"stp":"python"
+		},
+		{
 			"icon":"installToolbox.svg",
 			"label":"install or update toolbox",
 			"script":"installToolbox.mel",
