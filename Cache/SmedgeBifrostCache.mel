@@ -3,6 +3,7 @@ global proc SubmitToSmedge()
     //Query values from UI
     int $packetSize = `intSliderGrp -q -value slider1`;
     int $priority = `intSliderGrp -q -value slider2`;
+    int $sim = `checkBox -q -value check3`;
     int $foam = `checkBox -q -value check2`;
     int $mesh = `checkBox -q -value check1`;
     
@@ -22,16 +23,35 @@ global proc SubmitToSmedge()
     string $buffer[];
     tokenize $shortname "." $buffer;
     string $smedgeName = "bifrost: "+$buffer[0];
+    string $extentionType = "";
+    string $extra = "";
+    if($sim == 1)
+    {
+        $smedgeName += " - SIM";  
+        $extentionType = ".sim";
+        $extra = "-UsageLimit 1 -DistributeMode \"Forward\"";
+    }
     if($mesh == 1)
     {
         $smedgeName += " - MESH";  
+        $extentionType = ".mesh";
     }
     if($foam == 1)
     {
-        $smedgeName += " - FOAM";  
+        $smedgeName += " - FOAM"; 
+        $extentionType = ".foam"; 
     }
 
-    string $cmd = $submit + " Script -Type \"Generic Script\" -Name "+$smedgeName+" -Priority "+$priority+" -Pool \"Bifrost\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2017\\bin\\mayabatch.exe\\\" \\\""+$filename+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$foam+","+$mesh+")\\\"";
+    //make folder
+    sysFile -makeDir ("Z:/Job_2/Amstel/maya/cache/bifrost/"+$buffer[0]); // Windows
+
+    //save file
+    file -rename ($filename+$extentionType); 
+    file -save;
+    file -rename $filename; 
+    file -save;
+
+    string $cmd = $submit + " Script -Type \"Generic Script\" -Status \"Paused\" -Name "+$smedgeName+" -Priority "+$priority+" "+$extra+" -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2018\\bin\\mayabatch.exe\\\" \\\""+$filename+$extentionType+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$sim+","+$foam+","+$mesh+")\\\"";
     
     // Do it!
     print( "// smedgeRender is executing system command:\n// " + $cmd + "\n" );
@@ -45,8 +65,9 @@ global proc SmedgeBifrostCache()
         formLayout submitBifrostForm;
             text -label "Packets" -w 100 textLabel1;
             text -label "Priority" -w 100 textLabel2;
-            intSliderGrp -field true -minValue 1 -maxValue 10 -fieldMinValue 1 -value 4 -w 200 slider1;
+            intSliderGrp -field true -minValue 1 -maxValue 1000 -fieldMinValue 1 -value 4 -w 200 slider1;
             intSliderGrp -field true -minValue 0 -maxValue 100 -fieldMinValue 0 -fieldMaxValue 100 -value 100 -w 200 slider2;
+            checkBox -label "Sim" -w 100 check3;
             checkBox -label "Mesh" -w 100 check1;
             checkBox -label "Foam" -w 100 check2;
             
@@ -57,9 +78,11 @@ global proc SmedgeBifrostCache()
                     -af check1 left 70
                     -ac check2 top 10 check1
                     -af check2 left 70 
-                    -af slider1 top 72
+                    -ac check3 top 10 check2
+                    -af check3 left 70 
+                    -ac slider1 top 72 check3
                     -af slider1 left 70
-                    -af slider2 top 102
+                    -ac slider2 top 102 check3
                     -af slider2 left 70 
                     -af textLabel1 left -12 
                     -ac textLabel1 top -18 slider1

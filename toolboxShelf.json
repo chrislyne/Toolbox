@@ -171,6 +171,13 @@
 			"stp":"mel"
 		},
 		{
+			"icon":"cacheBifrost.svg",
+			"label":"Cache Bifrost on Smedge",
+			"script":"Cache/SmedgeBifrostCache.mel",
+			"command":"source SmedgeBifrostCache;SmedgeBifrostCache;",
+			"stp":"mel"
+		},
+		{
 			"icon":"separator"
 		},
 		{
