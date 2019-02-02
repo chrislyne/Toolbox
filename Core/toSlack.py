@@ -14,7 +14,7 @@ class send_message_to_slack():
         
         try:
             json_data = json.dumps(self.post)
-            file = open("toSlack","r") 
+            file = open("C:/Users/Chris/Documents/maya/2017/scripts/toSlack","r") 
             slackHook = file.read() 
             req = Request(slackHook,
                                   data=json_data.encode('ascii'),
@@ -22,20 +22,12 @@ class send_message_to_slack():
             resp = urlopen(req)
         except Exception as em:
             print("EXCEPTION: " + str(em))
- 
- def icecreamBot():
+
+def icecreamBot():
     newBot = send_message_to_slack()
     newBot.icon_emoji = ':icecream:'
     newBot.username = 'Icecream Bot'
     newBot.tex = 'Icecream?'
-    newBot.channel = '#dev'
+    newBot.channel = '#general'
     newBot.send()
 
-'''
-newBot = send_message_to_slack()
-newBot.icon_emoji = ':icecream:'
-newBot.username = 'Icecream Bot'
-newBot.tex = 'Icecream?'
-newBot.channel = '#standup'
-newBot.send()
-'''
