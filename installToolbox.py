@@ -191,6 +191,8 @@ def CheckText():
 
 def FilterOutSystemPaths(path):
     systemPath  = 0
+    if path[0] == '/':
+        systemPath = 1
     allparts = path.split('/')
     for part in allparts:
         if part == 'ProgramData' or  part == 'Program Files':
@@ -274,7 +276,7 @@ def toolbox_install():
     workspaceName = 'Install Toolbox'
     if(cmds.workspaceControl('Install Toolbox', exists=True)):
         cmds.deleteUI('Install Toolbox')
-    cmds.workspaceControl(workspaceName,initialHeight=100,initialWidth=300,uiScript = 'installToolboxWindow()')
+    cmds.workspaceControl(workspaceName,initialHeight=250,initialWidth=300,uiScript = 'installToolboxWindow()')
 
 
 #toolbox_install()
