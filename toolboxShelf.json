@@ -155,8 +155,8 @@
 		},
 		{
 			"icon":"exportForTexturing.svg",
-			"label":"Adds tesselsation to redshift objects",
-			"script":"Redshift/exportForTexturing.mel",
+			"label":"Export geo and UV maps for texturing",
+			"script":"Core/exportForTexturing.mel",
 			"command":"source exportForTexturing;exportForTexturing;",
 			"stp":"mel"
 		},
