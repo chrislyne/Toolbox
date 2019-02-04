@@ -128,6 +128,18 @@ def fileDict():
 
     IO.writePrefsToFile(prefData,'%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
 
+def layerDict(l):
+    prefData = []
+
+    prefData.append(['img','imgpath','path'])
+    prefData.append(['img','imgname','name'])
+    prefData.append(['user','trelloID','name'])
+    prefData.append(['user','trelloAddress','name'])
+    prefData.append(['user','emailAddress','name'])
+    prefData.append(['user','slackID','name'])
+
+    IO.writePrefsToFile(prefData,'%s/data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),l))
+
 #button functions
 def selectSubmitExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
@@ -185,6 +197,7 @@ def submitButton():
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
+            layerDict(l.checkBox_layerEnable.text())
             #Submit.exe Script -Type Redshift for Maya -Scene Z:/Job_2/Amstel/maya/scenes/RENDER/SH0040/SH0040_RENDER_v018_cl.mb -Project Z:/Job_2/Amstel/maya -im fooBar -Name maya: SH0040_RENDER_v018_cl "(rs_snow)" -Range 0-230 -PacketSize 8 -Priority 50 -Paused -Pool Redshift -Creator Chris -CPUs 1 -GPUs 1 -RAM 0 -Note  -Extra "-rl rs_snow" -DistributeMode 0
     #projectDict()
     localDict()

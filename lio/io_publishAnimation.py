@@ -40,7 +40,7 @@ def publishFile(abcFilename):
     #export .abc
     additionalAttr = ''
     #IO attributes
-    additionalAttributes = ['alembicName','IOID']
+    additionalAttributes = ['alembicName','IOID','material']
     #redshift attributes
     additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
     for attr in additionalAttributes:

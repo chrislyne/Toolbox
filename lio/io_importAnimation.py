@@ -1,3 +1,6 @@
+import maya.cmds as cmds
+import maya.mel as mel
+
 def io_importAnimation():
 
     #import dialog
@@ -16,13 +19,13 @@ def io_importAnimation():
     string $fileParts[];
     $numTokens2 = `tokenize $filename "." $fileParts`;
     string $filename2 = $fileParts[0];
-    //create top level group
+    #create top level group
     select -cl;
     if (`objExists |GEO` == 0)
     {
         string $newRootGroup = `group -em -n "GEO"`;
     }
-    //create file group
+    #create file group
     string $newGroup = `group -em -n $filename2`;
     parent $newGroup |GEO;
     string $importFiles = `AbcImport -mode import -reparent $newGroup $abcPath`;
@@ -33,9 +36,9 @@ def io_importAnimation():
 }
 
 def importAnim(filename):
-        command = "AbcImport -mode import \""+filename+"\""; 
-        mel.eval(command)
-        setupSceneFromCam()
+    command = "AbcImport -mode import \""+filename+"\""; 
+    mel.eval(command)
+    setupSceneFromCam()
 
 def importAnimDialog():
     myWorkspace = cmds.workspace( q=True, fullName=True )
@@ -45,4 +48,4 @@ def importAnimDialog():
     if (filename):
         importAnim(filename[0])
 
-abc_importAnimation();
+#abc_importAnimation();
