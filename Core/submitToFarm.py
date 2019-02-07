@@ -119,26 +119,24 @@ def fileDict():
     prefData.append(['window.mainWidget.spinBox_packetSize','setValue',window.mainWidget.spinBox_packetSize.value()])
     prefData.append(['window.mainWidget.comboBox_pool','setCurrentText','\'%s\''%window.mainWidget.comboBox_pool.currentText()])
 
-    prefData.append(['img','imgpath','path'])
-    prefData.append(['img','imgname','name'])
-    prefData.append(['user','trelloID','name'])
-    prefData.append(['user','trelloAddress','name'])
-    prefData.append(['user','emailAddress','name'])
-    prefData.append(['user','slackID','name'])
 
-    IO.writePrefsToFile(prefData,'%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
+    IO.writePrefsToFile(prefData,'%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
 
 def layerDict(l):
     prefData = []
+    #get image path for the render layer
+    rendeFilePath = cmds.renderSettings(fin=True,fp=True,cts=True,lyr=l)
+    path = rendeFilePath[0].rsplit('/',1)[0]
+    filename = rendeFilePath[0].split('/')[-1]
 
-    prefData.append(['img','imgpath','path'])
-    prefData.append(['img','imgname','name'])
+    prefData.append(['img','imgpath','%s/'%path])
+    prefData.append(['img','imgname',filename])
     prefData.append(['user','trelloID','name'])
     prefData.append(['user','trelloAddress','name'])
-    prefData.append(['user','emailAddress','name'])
-    prefData.append(['user','slackID','name'])
+    prefData.append(['user','name',window.mainWidget.lineEdit_name.text()])
+    prefData.append(['user','slackID',window.mainWidget.lineEdit_slack.text()])
 
-    IO.writePrefsToFile(prefData,'%s/data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),l))
+    IO.writePrefsToFile(prefData,'%s/.data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),l))
 
 #button functions
 def selectSubmitExe():
@@ -274,7 +272,7 @@ def submitRenderUI():
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
     rangeFromTimeline =  '%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame())
     comboDict = mergeDictionaries(comboDict,{"lineEdit_range": {"value":rangeFromTimeline}})
-    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
 
     setOptions(comboDict,window)
     return window
