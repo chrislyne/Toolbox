@@ -192,6 +192,8 @@ def submitButton():
             submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
             try:
                 send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+                #send = subprocess.check_output(submitString)
+                #print 'send = %s'%send
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString

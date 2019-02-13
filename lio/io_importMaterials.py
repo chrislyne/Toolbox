@@ -48,7 +48,7 @@ def assignMaterials():
                             for material in (obj["materials"]):
                                 #print material.keys()[0]
                                 
-                                setName = '%s_%s'%(ref,material.keys()[0])
+                                setName = '%s_%s_SET'%(ref,material.keys()[0])
                                 
                                 for f in material.values()[0]:
                                     objSetf = '%s%s'%(objSet[0],f)
