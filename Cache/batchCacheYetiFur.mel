@@ -1,4 +1,4 @@
-global proc batchCacheYetiFur(string $node, string $groom, int $simulate)
+global proc batchCacheYetiFur(string $node)
 {
 	//get project name
 	string $projectdir = `workspace -q -rd`;
@@ -11,7 +11,7 @@ global proc batchCacheYetiFur(string $node, string $groom, int $simulate)
 	string $fullpath = ($projectdir + "cache/yeti/"+ $folderName);
 
 	setAttr ($node+".fileMode") 0;
-	setAttr ($groom+".doSimulation") $simulate;
+	//setAttr ($groom+".doSimulation") $simulate;
 
 	string $buffer[];
 	$numTokens = `tokenize $node ":" $buffer`;
@@ -38,7 +38,7 @@ global proc batchCacheYetiFur(string $node, string $groom, int $simulate)
 
 	//turn cache on
 	setAttr ($node+".fileMode") 1;
-	setAttr ($groom+".doSimulation") 0;
+	//setAttr ($groom+".doSimulation") 0;
 	
 	//flush cache
 	pgYetiCommand -flushGeometryCache;

@@ -1,0 +1,23 @@
+//select reference object first
+//make sure to select shape nodes
+
+global proc connectTextureReferenceObject()
+{
+	//list selected objects
+	string $sel[] = `ls -sl`;
+
+	//convert selection to shape nodes
+	// 
+	//
+
+	//loop through connecting reference object output to base object input
+	for ($s in $sel)
+	{
+		if ($sel[0] != $s)
+		{
+			connectAttr -f ($sel[0]+".message") ($s+".referenceObject");
+		}
+	}
+}
+
+

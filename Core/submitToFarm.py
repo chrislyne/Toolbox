@@ -189,11 +189,11 @@ def submitButton():
             submitString += ' -Note %s'%window.mainWidget.lineEdit_note.text()
             if window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
-            submitString += ' -CPUs 1 -GPUs 1 -RAM 0 -DistributeMode 0'
+            submitString += ' -CPUs 0 -GPUs 1 -RAM 0 -DistributeMode 0'
             try:
-                send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
-                #send = subprocess.check_output(submitString)
-                #print 'send = %s'%send
+                #send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+                send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
+                print 'send = %s'%send
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
