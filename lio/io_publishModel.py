@@ -174,6 +174,12 @@ def exportShaders(publishName,scenePath):
     grpSel = cmds.ls(sl=True)
     allDecending = cmds.listRelatives(grpSel,allDescendents=True )
     allDecendingShapes = cmds.ls(allDecending,s=True,l=True)
+
+    #make folder
+    shaderFolder = '%s/renderData/alembicShaders/%s'%(workspace,publishName)
+    if not os.path.exists(shaderFolder):
+        os.makedirs(shaderFolder)
+
     
     #loop though if they have materials
     for i,shape in enumerate(allDecendingShapes):
