@@ -184,6 +184,20 @@ def exportShaders(publishName,scenePath):
     #loop though if they have materials
     for i,shape in enumerate(allDecendingShapes):
         shadingGroups = cmds.listConnections(shape,type='shadingEngine')
+
+        #change mesh preview to render time smooth
+        try:
+            renderTimeOn = cmds.getAttr('%s.rsEnableSubdivision'%shape)
+            previewOn = cmds.getAttr('%s.displaySmoothMesh'%shape)
+            #turn display smooth off 
+            cmds.setAttr('%s.displaySmoothMesh'%shape,0)
+            #add redshift smooth
+            if previewOn != 0 and renderTimeOn == 0:
+                cmds.setAttr('%s.rsEnableSubdivision'%shape,1)
+                cmds.setAttr('%s.rsMaxTessellationSubdivs'%shape,2)
+        except:
+            pass
+
         if shadingGroups:
             allGeo += '-root %s '%(shape)
             allMaterials += shadingGroups
