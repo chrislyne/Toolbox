@@ -71,6 +71,15 @@ def reconnectRig(controls):
             except:
                 pass
 
+def reconnectMatarials(allConnections):
+    for c in allConnections:
+        #make connections
+        c = c.replace('"', '')
+        try:
+            cmds.connectAttr(c.split(',')[0],c.split(',')[1])
+        except:
+            pass
+
 ###     EXPORTS     ###
 
 #export mb
@@ -164,7 +173,7 @@ def sortFaceShadingGroups(shape,shadingGrp):
 
 
 #publish shaders
-def exportShaders(publishName,scenePath,ctrlObjs):
+def exportShaders(publishName,scenePath):
     
     #get workspace
     workspace = cmds.workspace(q=True,fullName=True)
@@ -172,6 +181,7 @@ def exportShaders(publishName,scenePath,ctrlObjs):
     #initalise variables 
     allGeo = ""
     allMaterials = []
+    allConections = []
     data = '{\n    "shapes":['
     
     #select hierarchy
@@ -186,7 +196,7 @@ def exportShaders(publishName,scenePath,ctrlObjs):
 
     
     #loop though if they have materials
-    for i,shape in enumerate(allDecendingShapes):
+    for s,shape in enumerate(allDecendingShapes):
         shadingGroups = cmds.listConnections(shape,type='shadingEngine')
 
         #change mesh preview to render time smooth
@@ -216,9 +226,38 @@ def exportShaders(publishName,scenePath,ctrlObjs):
             
             shadingGrpsString = ''
             #garbagy json formattring
+            controlData = ''
             for n,shadingGrp in enumerate(shadingGroups):
+            
 
                 #new place to disconnect rig
+                nodes = cmds.listHistory (shadingGrp)
+                for node in nodes:
+                    connections = []
+                    ctrlObjects = []
+            
+                    #not sure what this is, maybe some kind of garbagy error check
+                    if(node != "<done>"):
+                        connectedNodes = cmds.listConnections(node,t='transform',plugs=True,c=True,d=False,s=True)
+                        if connectedNodes:   
+                            inputs = connectedNodes[0::2]
+                            outputs = connectedNodes[1::2]
+                            controlData = ',\n        "controls":['
+                            
+                            for i,item in enumerate(outputs):
+                                outputLong = cmds.ls(outputs[i].split('.')[0],l=True)[0]
+                                outputLong = outputLong.split('|',1)[1]
+                                outputLong = '%s.%s'%(outputLong,outputs[i].split('.')[1])
+                                c = [outputLong,inputs[i]]
+                                cmds.disconnectAttr (c[0],c[1])
+                                connections.append(c)
+                                ctrlObjects.append(c[0].split('.')[0])
+
+                                if i > 0:
+                                    controlData += ','
+                                controlData += '"%s,%s"'%(outputLong,inputs[i])
+                                allConections.append('"%s,%s"'%(outputLong,inputs[i]))
+                            controlData += ']'        
 
                 faces = ''
                 allFaces = sortFaceShadingGroups(shape,shadingGrp)
@@ -228,21 +267,12 @@ def exportShaders(publishName,scenePath,ctrlObjs):
                     faces += '.%s'%(f)
                 if n > 0:
                     shadingGrpsString += ',\n               '
-                shadingGrpsString +=  '\n            {"%s":["%s"]}'%(shadingGrp,faces)
-            if i > 0:
+                shadingGrpsString +=  '{"%s":["%s"]}'%(shadingGrp,faces)
+            if s > 0:
                 data += ','
-            data += '\n        {\n        "IOID": "%s",\n        "materials": [%s\n        ]\n        }'%(ID[0],shadingGrpsString)
-            #data += '\n     {\n     "%s":\n         {\n         "material": [\n             %s\n            ]\n         }\n     }'%(ID[0],shadingGrpsString)
-    
-    #add controls to json data
-    ctrlData = ',\n    "controls":['
-    for n,c in enumerate(ctrlObjs):
-        if n > 0:
-            ctrlData += ','
-        ctrlData += '"%s"'%c
-    ctrlData += ']'
-    
-    data += '\n ]%s\n}'%ctrlData 
+            data += '\n        {\n        "IOID": "%s",\n        "materials": [%s]%s\n        }'%(ID[0],shadingGrpsString,controlData)
+
+    data += '\n ]\n}'
     #write connections out to text file    
     WriteToDB('%s/renderData/alembicShaders/%s/%s/'%(workspace,publishName,publishName),data,'w')
     #materials used in our hierachy    
@@ -251,6 +281,7 @@ def exportShaders(publishName,scenePath,ctrlObjs):
     #log
     shaderCount = 0
     
+    #write all shaders to disk
     for material in allMaterials:
         #process namespaces
         materialFilename = material.replace(':', '_')
@@ -260,6 +291,8 @@ def exportShaders(publishName,scenePath,ctrlObjs):
         
         #increment to log
         shaderCount += 1
+    #reconnect rig to materials after export
+    reconnectMatarials(allConections)
 
     return shaderCount
 
@@ -289,12 +322,10 @@ def PublishModelCheckText():
         
         #shaders
         if doShaders == 1:
-            ctrlObjs = disconnectRig()
-            numberOfFiles += exportShaders(publishName,scenePath,ctrlObjs)
-            reconnectRig(ctrlObjs)
+            #ctrlObjs = disconnectRig()
+            numberOfFiles += exportShaders(publishName,scenePath)
+            #reconnectRig(ctrlObjs)
             
-            for ctrl in ctrlObjs:
-                print 'control objects = %s'%ctrl
 
         #alembic
         if doAlembic == 1:
