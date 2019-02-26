@@ -22,7 +22,7 @@ def disconnectRig():
     connections = []
     ctrlObjects = []
     additionalAttributes = []
-    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise','projection']
+    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise','projection','lambert']
     for nType in nodeTypes:
         nodes = cmds.ls(typ=nType)
         for node in nodes:
@@ -30,13 +30,14 @@ def disconnectRig():
             #not sure what this is, maybe some kind of garbagy error check
             if(node != "<done>"):
                 connectedNodes = cmds.listConnections(node,t='transform',plugs=True,c=True,d=False,s=True)
-                if connectedNodes:  
-                    #print connectedNodes                  
+                if connectedNodes:                   
                     #disconnect the nodes
                     inputs = connectedNodes[0::2]
                     outputs = connectedNodes[1::2]
                     for i,item in enumerate(outputs):
-                        c = [outputs[i],inputs[i]]
+                        outputLong = cmds.ls(outputs[i].split('.')[0],l=True)[0]
+                        outputLong = '%s.%s'%(outputLong,outputs[i].split('.')[1])
+                        c = [outputLong,inputs[i]]
                         cmds.disconnectAttr (c[0],c[1])
                         connections.append(c)
                         ctrlObjects.append(c[0].split('.')[0])
@@ -47,8 +48,11 @@ def disconnectRig():
         objConnections = ''
         for connection in connections:
             if connection[0].split('.')[0] == ctrlObj:
+                #ctrlObj = cmds.ls(ctrlObj,l=True)
                 objConnections += ('%s,%s;'%(connection[0],connection[1]))
-
+        #convert to long path 
+        #ctrlObj = cmds.ls(ctrlObj,l=True)[0]
+        print ctrlObj
         addAttribute(ctrlObj,'connections',objConnections)
     #return controllers that affect shading networks
     return(ctrlObjects)
@@ -69,7 +73,6 @@ def reconnectRig(controls):
 
 #export mb
 def makeRef(refName,publishString):
-    print refName
     #define full file name
     refFileName  = refName+'.mb'
     #set outliner colour
@@ -142,7 +145,6 @@ def makeAlembic(refName, publishString):
         return 'unable to export .abc'
 
 def sortFaceShadingGroups(shape,shadingGrp):
-    print 'shape = %s\n'%(shape)
     #find transform
     transform = cmds.listRelatives(shape,p=True,type='transform')
     #list all objects in set
@@ -276,6 +278,9 @@ def PublishModelCheckText():
             ctrlObjs = disconnectRig()
             numberOfFiles += exportShaders(publishName,scenePath)
             reconnectRig(ctrlObjs)
+            
+            for ctrl in ctrlObjs:
+                print 'control objects = %s'%ctrl
 
         #alembic
         if doAlembic == 1:
