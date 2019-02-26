@@ -36,6 +36,7 @@ def disconnectRig():
                     outputs = connectedNodes[1::2]
                     for i,item in enumerate(outputs):
                         outputLong = cmds.ls(outputs[i].split('.')[0],l=True)[0]
+                        outputLong = outputLong.split('|',1)[1]
                         outputLong = '%s.%s'%(outputLong,outputs[i].split('.')[1])
                         c = [outputLong,inputs[i]]
                         cmds.disconnectAttr (c[0],c[1])
@@ -59,6 +60,7 @@ def disconnectRig():
 
 #reconnect the rig to the shading network
 def reconnectRig(controls):
+    print controls
     for c in controls:
         #read connections from controler
         connections = cmds.getAttr('%s.connections'%(c)).split(';')
@@ -133,7 +135,7 @@ def makeAlembic(refName, publishString):
         #export .abc
         additionalAttr = ''
         #IO attributes
-        additionalAttributes = ['alembicName','IOID']
+        additionalAttributes = ['alembicName','material','IOID','connections']
         #redshift attributes
         additionalAttributes += ['rsObjectId','rsEnableSubdivision','rsMaxTessellationSubdivs','rsDoSmoothSubdivision','rsMinTessellationLength','rsOutOfFrustumTessellationFactor','rsEnableDisplacement','rsMaxDisplacement','rsDisplacementScale']
         for attr in additionalAttributes:
@@ -162,7 +164,7 @@ def sortFaceShadingGroups(shape,shadingGrp):
 
 
 #publish shaders
-def exportShaders(publishName,scenePath):
+def exportShaders(publishName,scenePath,ctrlObjs):
     
     #get workspace
     workspace = cmds.workspace(q=True,fullName=True)
@@ -215,6 +217,9 @@ def exportShaders(publishName,scenePath):
             shadingGrpsString = ''
             #garbagy json formattring
             for n,shadingGrp in enumerate(shadingGroups):
+
+                #new place to disconnect rig
+
                 faces = ''
                 allFaces = sortFaceShadingGroups(shape,shadingGrp)
                 for c,f in enumerate(allFaces):
@@ -228,7 +233,16 @@ def exportShaders(publishName,scenePath):
                 data += ','
             data += '\n        {\n        "IOID": "%s",\n        "materials": [%s\n        ]\n        }'%(ID[0],shadingGrpsString)
             #data += '\n     {\n     "%s":\n         {\n         "material": [\n             %s\n            ]\n         }\n     }'%(ID[0],shadingGrpsString)
-    data += '\n ]\n}'  
+    
+    #add controls to json data
+    ctrlData = ',\n    "controls":['
+    for n,c in enumerate(ctrlObjs):
+        if n > 0:
+            ctrlData += ','
+        ctrlData += '"%s"'%c
+    ctrlData += ']'
+    
+    data += '\n ]%s\n}'%ctrlData 
     #write connections out to text file    
     WriteToDB('%s/renderData/alembicShaders/%s/%s/'%(workspace,publishName,publishName),data,'w')
     #materials used in our hierachy    
@@ -276,7 +290,7 @@ def PublishModelCheckText():
         #shaders
         if doShaders == 1:
             ctrlObjs = disconnectRig()
-            numberOfFiles += exportShaders(publishName,scenePath)
+            numberOfFiles += exportShaders(publishName,scenePath,ctrlObjs)
             reconnectRig(ctrlObjs)
             
             for ctrl in ctrlObjs:
