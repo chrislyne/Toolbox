@@ -14,7 +14,7 @@ def importAnimation():
         newRootGroup = cmds.group(em=True,n='ANIM')
     
     for abc in selectedABC:
-        grpName = abc.split('/')[-1].split('.')[0]
+        grpName = '%s_GRP'%abc.split('/')[-1].split('.')[0]
         print grpName
     
         newGroup = cmds.group(em=True,n=grpName)
