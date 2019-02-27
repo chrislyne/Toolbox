@@ -4,7 +4,6 @@ import os, sys, time
 from shutil import copyfile
 import platform
 from LlamaIO import addAttribute
-import json
 
 ###    UTILITIES    ###
 

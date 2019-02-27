@@ -19,6 +19,16 @@ def processSelection():
     refs = list(set(refs))
     return (refs,shapes)
 
+def reconnectMatarials(allConnections,namespace):
+    print namespace
+    for c in allConnections:
+        #make connections
+        c = c.replace('"', '')
+        try:
+            cmds.connectAttr(c.split(',')[0],'%s:%s'%(namespace,c.split(',')[1]))
+        except:
+            pass
+
 def assignMaterials():
     materialData = processSelection()
     refs = materialData[0]
@@ -37,6 +47,8 @@ def assignMaterials():
     for ref in refs:
         materialSets = []
         materials = []
+        uniqueMaterials = []
+        allConnections = []
         project = cmds.workspace( q=True, directory=True, rd=True)
         JSONPath = project +'renderData/alembicShaders/%s/%s.json'%(ref,ref)
         with open(JSONPath) as data_file:    
@@ -59,18 +71,38 @@ def assignMaterials():
                                         cmds.sets(objSetf,add=setName)
                                     
                                 materialSets.append([setName,(material.keys()[0])])
+                            #check json for rig connections
+                            try:
+                                allConnections = allConnections + obj["controls"]
+                                uniqueMaterials.append([setName,(material.keys()[0])])
+                            except:
+                                pass
 
-        materialSets = [list(tupl) for tupl in {tuple(item) for item in materialSets }]         
+        materialSets = [list(tupl) for tupl in {tuple(item) for item in materialSets }]  
         
         for m in materialSets:
             materialPath = project +'renderData/alembicShaders/%s/%s_%s.mb'%(ref,ref,m[1])
-            cmds.file(materialPath,i=True,type='mayaBinary',ignoreVersion=True,mergeNamespacesOnClash=True,namespace=ref)
-            materialName = '%s:%s'%(ref,m[1])
+            ns = ref
+
+            for u in uniqueMaterials:
+                if m == u:
+                    print 'should be unique'
+                    count = 0
+                    while cmds.namespace(exists=ns):
+                        count += 1
+                        ns = ref+str(count)
+            cmds.file(materialPath,i=True,type='mayaBinary',ignoreVersion=True,mergeNamespacesOnClash=True,namespace=ns)
+            materialName = '%s:%s'%(ns,m[1])
             try:
-                cmds.sets(cmds.sets( m[0], q=True ),e=True,forceElement=materialName) 
+                cmds.sets(cmds.sets( m[0], q=True ),e=True,forceElement=materialName)
             except:
                 print 'failed to assign %s'%materialName
+            #reconnect rig to shading network
+            try:
+                reconnectMatarials(allConnections,ns)
+            except:
+                pass
             #remove temporary sets
             cmds.delete( m[0])
 
-#assignMaterials()      
+assignMaterials()
