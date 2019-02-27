@@ -29,7 +29,8 @@ def LlamaIOWindow():
     sep2 = cmds.separator( hr=1,style='in' ,height=2)
     
     sceneTitle = cmds.text(fn='boldLabelFont',label="Scene Reconstruction")
-    importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='lio.io_importAnimation.importAnimation()')
+    empty = []
+    importAnim_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Anim',c='lio.io_importAnimation.importAnimation(0,empty)')
     importCam_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importCam.svg',bgc=buttonColour,height=50,width=100,label='Import Camera',c='lio.io_importCamera.importCameraDialog()')
     importMat_btn = cmds.iconTextButton(st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='Import Materials',c='lio.io_importMaterials.assignMaterials()')
     importAll_btn = cmds.iconTextButton(en=False,hlc=[1,1,1],st='iconAndTextVertical',i='io_importAnim.svg',bgc=buttonColour,height=50,width=100,label='I\'m Feeling Lucky',c='')

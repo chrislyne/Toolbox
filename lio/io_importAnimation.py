@@ -1,7 +1,8 @@
 import maya.cmds as cmds
 import maya.mel as mel
+import lio
 
-def importAnimation():
+def importAnimation(silent,selectedABC):
 
     #check if plug is already loaded
     if not cmds.pluginInfo('AbcExport',query=True,loaded=True):
@@ -14,7 +15,7 @@ def importAnimation():
     myAlembics = myWorkspace+'/cache/alembic'
 
     basicFilter = "*.abc"
-    selectedABC = cmds.fileDialog2(fm=4,fileFilter=basicFilter, dir=myAlembics)
+    selectedABC += cmds.fileDialog2(fm=4,fileFilter=basicFilter, dir=myAlembics)
 
     #create top level group
     if cmds.objExists('|ANIM') == 0:
@@ -57,4 +58,5 @@ def importAnimDialog():
     if (filename):
         importAnim(filename[0])
 '''
-#importAnimation();
+#empty = []
+#importAnimation(0,empty);
