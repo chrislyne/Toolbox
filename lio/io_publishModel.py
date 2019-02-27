@@ -4,6 +4,7 @@ import os, sys, time
 from shutil import copyfile
 import platform
 from LlamaIO import addAttribute
+import json
 
 ###    UTILITIES    ###
 
@@ -16,60 +17,6 @@ def WriteToDB(filename,log,mode):
     text_file = open(logFileName, mode)
     text_file.write(log)
     text_file.close()
-
-#disconnects the rig from the shading network for a clean shader export
-def disconnectRig():
-    connections = []
-    ctrlObjects = []
-    additionalAttributes = []
-    nodeTypes = ['file','place2dTexture','animCurveUU','expression','noise','projection','lambert']
-    for nType in nodeTypes:
-        nodes = cmds.ls(typ=nType)
-        for node in nodes:
-            
-            #not sure what this is, maybe some kind of garbagy error check
-            if(node != "<done>"):
-                connectedNodes = cmds.listConnections(node,t='transform',plugs=True,c=True,d=False,s=True)
-                if connectedNodes:                   
-                    #disconnect the nodes
-                    inputs = connectedNodes[0::2]
-                    outputs = connectedNodes[1::2]
-                    for i,item in enumerate(outputs):
-                        outputLong = cmds.ls(outputs[i].split('.')[0],l=True)[0]
-                        outputLong = outputLong.split('|',1)[1]
-                        outputLong = '%s.%s'%(outputLong,outputs[i].split('.')[1])
-                        c = [outputLong,inputs[i]]
-                        cmds.disconnectAttr (c[0],c[1])
-                        connections.append(c)
-                        ctrlObjects.append(c[0].split('.')[0])
-    
-    #list connections and add them to controller              
-    ctrlObjects = set(ctrlObjects) 
-    for ctrlObj in ctrlObjects:
-        objConnections = ''
-        for connection in connections:
-            if connection[0].split('.')[0] == ctrlObj:
-                #ctrlObj = cmds.ls(ctrlObj,l=True)
-                objConnections += ('%s,%s;'%(connection[0],connection[1]))
-        #convert to long path 
-        #ctrlObj = cmds.ls(ctrlObj,l=True)[0]
-        print ctrlObj
-        addAttribute(ctrlObj,'connections',objConnections)
-    #return controllers that affect shading networks
-    return(ctrlObjects)
-
-#reconnect the rig to the shading network
-def reconnectRig(controls):
-    print controls
-    for c in controls:
-        #read connections from controler
-        connections = cmds.getAttr('%s.connections'%(c)).split(';')
-        #make connections
-        for connection in connections:
-            try:
-                cmds.connectAttr(connection.split(',')[0],connection.split(',')[1])
-            except:
-                pass
 
 def reconnectMatarials(allConnections):
     for c in allConnections:
@@ -228,37 +175,43 @@ def exportShaders(publishName,scenePath):
             #garbagy json formattring
             controlData = ''
             for n,shadingGrp in enumerate(shadingGroups):
-            
 
-                #new place to disconnect rig
-                nodes = cmds.listHistory (shadingGrp)
-                for node in nodes:
-                    connections = []
-                    ctrlObjects = []
+                allConnectedNodes = []
             
+                #disconnect rig
+                nodes = cmds.listHistory (shadingGrp)
+
+                for node in nodes:
+                    
                     #not sure what this is, maybe some kind of garbagy error check
                     if(node != "<done>"):
                         connectedNodes = cmds.listConnections(node,t='transform',plugs=True,c=True,d=False,s=True)
-                        if connectedNodes:   
+
+                        if connectedNodes: 
                             inputs = connectedNodes[0::2]
                             outputs = connectedNodes[1::2]
-                            controlData = ',\n        "controls":['
+                            
                             
                             for i,item in enumerate(outputs):
                                 outputLong = cmds.ls(outputs[i].split('.')[0],l=True)[0]
                                 outputLong = outputLong.split('|',1)[1]
                                 outputLong = '%s.%s'%(outputLong,outputs[i].split('.')[1])
-                                c = [outputLong,inputs[i]]
-                                cmds.disconnectAttr (c[0],c[1])
-                                connections.append(c)
-                                ctrlObjects.append(c[0].split('.')[0])
-
-                                if i > 0:
-                                    controlData += ','
-                                controlData += '"%s,%s"'%(outputLong,inputs[i])
+                                #DISCONNECT RIG FROM SHADING NETWORK
+                                cmds.disconnectAttr (outputLong,inputs[i])
+                                #json formating
+                                a = '"%s,%s"'%(outputLong,inputs[i])
+                                print a.encode('ascii', 'ignore')
+                                allConnectedNodes.append(a)
                                 allConections.append('"%s,%s"'%(outputLong,inputs[i]))
-                            controlData += ']'        
-
+      
+                if allConnectedNodes:
+                    controlData = ',\n        "controls":['
+                    for i,cn in enumerate(allConnectedNodes):
+                        if i > 0:
+                            controlData += ','
+                        controlData += cn
+                        
+                    controlData += ']'
                 faces = ''
                 allFaces = sortFaceShadingGroups(shape,shadingGrp)
                 for c,f in enumerate(allFaces):
@@ -322,10 +275,7 @@ def PublishModelCheckText():
         
         #shaders
         if doShaders == 1:
-            #ctrlObjs = disconnectRig()
             numberOfFiles += exportShaders(publishName,scenePath)
-            #reconnectRig(ctrlObjs)
-            
 
         #alembic
         if doAlembic == 1:
