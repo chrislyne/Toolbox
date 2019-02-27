@@ -3,6 +3,13 @@ import maya.mel as mel
 
 def importAnimation():
 
+    #check if plug is already loaded
+    if not cmds.pluginInfo('AbcExport',query=True,loaded=True):
+        try:
+            #load abcExport plugin
+            cmds.loadPlugin( 'AbcExport' )
+        except: cmds.error('Could not load AbcExport plugin')
+
     myWorkspace = cmds.workspace( q=True, fullName=True )
     myAlembics = myWorkspace+'/cache/alembic'
 
@@ -12,7 +19,9 @@ def importAnimation():
     #create top level group
     if cmds.objExists('|ANIM') == 0:
         newRootGroup = cmds.group(em=True,n='ANIM')
-    
+
+    existingObjs = cmds.ls(transforms=True)
+
     for abc in selectedABC:
         grpName = '%s_GRP'%abc.split('/')[-1].split('.')[0]
         print grpName
@@ -21,6 +30,14 @@ def importAnimation():
         cmds.parent(newGroup,'|ANIM')
         command = "AbcImport -reparent \"|ANIM|"+newGroup+"\" -mode import \""+abc+"\""
         mel.eval(command)
+
+    updatedObjs = cmds.ls(transforms=True)
+
+    newObjs = [x for x in updatedObjs if x not in existingObjs]
+    cmds.select(newObjs,r=True)
+
+    #import materials
+    lio.io_importMaterials.assignMaterials()
 
     #remove curves
     
@@ -40,4 +57,4 @@ def importAnimDialog():
     if (filename):
         importAnim(filename[0])
 '''
-#abc_importAnimation();
+#importAnimation();

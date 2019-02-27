@@ -105,4 +105,4 @@ def assignMaterials():
             #remove temporary sets
             cmds.delete( m[0])
 
-assignMaterials()
+#assignMaterials()
