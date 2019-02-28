@@ -1,0 +1,45 @@
+{
+    "root":[
+        "Z:/Job_2","Z:/Job_1","Z:/Job_3/pitch"
+    ],
+    "general":
+        {"folders":["Production/schedule","Production/cost report","Production/quote","To_From/To Agency","To_From/From Agency","OUTPUT","Images/Reference","ASSETS/Artwork"]
+    },
+    "options":
+        {
+        "3D":{
+            "folders":["3D/assets","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/scenes/ANIM/SH0010","3D/scenes/RENDER/SH0010","3D/sourceimages","3D/images","3D/scripts","ASSETS/Playblasts","ASSETS/Renders"],
+            "files":[{"source":"workspace.mel","dest":"3D"}]
+            },
+        "anim":
+            {"folders":["3D/scenes/REF","3D/scenes/ANIM/SH0010","3D/sourceimages","3D/images","3D/scripts","ASSETS/Playblasts/ANIM"]
+            },
+        "FX":
+            {"folders":["3D/scenes/FX/SH0010","ASSETS/Playblasts/FX"]
+            },
+        "render":
+            {"folders":["3D/scenes/REF","3D/renderData","3D/scenes/RENDER/SH0010","3D/sourceimages","3D/images","3D/scripts","ASSETS/Playblasts","ASSETS/3D_RENDERS"]
+            },
+        "tracking":
+            {"folders":["3D/scenes/TRACK/SH0010"]
+            },
+        "Comp":
+            {"folders":["Comp/SH0010","ASSETS/Prerenders","ASSETS/Comp_renders"]
+            },
+        "Edit":
+            {"folders":["Edit","ASSETS/Edit"]
+            },
+        "2D Animation":
+            {"folders":["ASSETS/2D","2D"]
+            },
+        "Live action":
+            {"folders":["ASSETS/Footage/RAW","ASSETS/Prerenders/Footage"]
+            },
+        "Storyboard":
+            {"folders":[""]
+            },
+        "Matte Painting":
+            {"folders":["ASSETS/mattePainting"]
+            }
+    }
+}
