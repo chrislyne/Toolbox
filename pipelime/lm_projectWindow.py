@@ -7,6 +7,7 @@ from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 import os
+import shutil
 
 def makeFolders(folderNames):
 
@@ -16,6 +17,10 @@ def makeFolders(folderNames):
 
 def createButton():
     folderNames = []
+
+    varients = []
+    for v in bwidget.layerWidgets:
+        varients.append(v.variant_lineEdit.text())
 
     parentFolder = lm_projectWin.mainWidget.comboBox_root.currentText()
     clientName = lm_projectWin.mainWidget.lineEdit_client.text()
@@ -36,28 +41,43 @@ def createButton():
     for i in folderStructureDict["general"]["folders"]:
         folderNames.append('%s/%s'%(projectRoot,i))
 
-    #create optional folders from json
+    #perform options
     checkBoxes = [[lm_projectWin.mainWidget.checkBox_3D,'3D'],[lm_projectWin.mainWidget.checkBox_anim,'anim'],[lm_projectWin.mainWidget.checkBox_FX,'FX'],[lm_projectWin.mainWidget.checkBox_track,'tracking'],[lm_projectWin.mainWidget.checkBox_2D,'2D Animation'],[lm_projectWin.mainWidget.checkBox_render,'render'],[lm_projectWin.mainWidget.checkBox_comp,'Comp'],[lm_projectWin.mainWidget.checkBox_edit,'Edit'],[lm_projectWin.mainWidget.checkBox_live,'Live action'],[lm_projectWin.mainWidget.checkBox_board,'Storyboard'],[lm_projectWin.mainWidget.checkBox_matte,'Matte Painting']]
     for c in checkBoxes:
         if c[0].isChecked() == 1:
+            #create folders
             for i in folderStructureDict["options"][c[1]]["folders"]:
-                folderNames.append('%s/%s'%(projectRoot,i))
+                if '<var>' not in i:
+                    folderNames.append('%s/%s'%(projectRoot,i))
+                else:
+                    for v in varients:
+                        vi = i.replace('<var>', v)
+                        folderNames.append('%s/%s'%(projectRoot,vi))
 
     #make all of the folders
     makeFolders(folderNames)
 
-    #variantWidgets = lm_projectWin.mainWidget.VariantsLayout.layerWidgets.findChildren(QtWidgets.QWidget)
+    for c in checkBoxes:
+        if c[0].isChecked() == 1:
+            #copy files
+            try:
+                for i in folderStructureDict["options"][c[1]]["files"]:
+                    sourcePath = 'C:/Users/Admin/Documents/Toolbox/pipelime/files'
+                    sourceFile = '%s/%s'%(sourcePath,i["source"])
+                    destFile = '%s/%s/%s'%(projectRoot,i["dest"],i["source"])
+                    shutil.copyfile(sourceFile, destFile)
+            except:
+                pass
 
-    #print variantWidgets
+    #loop through variants
+    
 
-    #for w in variantWidgets:
-        #print w.variant_lineEdit.text()
 
 def removeWidget():
     print 'delete'
 
 def addButton():
-    widget = VariantWidget(lm_projectWin)
+    bwidget = VariantWidget(lm_projectWin)
 
 class VariantWidget(qtBase.BaseWidget):
 
@@ -83,7 +103,7 @@ def lm_projectWindow():
     window.mainWidget.variant_pushButton.clicked.connect(addButton)
     window.mainWidget.create_pushButton.clicked.connect(createButton)
 
-    widget = VariantWidget(window)
+    
 
     folderStructureDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
     list1 = folderStructureDict["root"]
@@ -94,4 +114,5 @@ def lm_projectWindow():
 
 
 lm_projectWin = lm_projectWindow()
+bwidget = VariantWidget(lm_projectWin)
 
