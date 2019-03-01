@@ -40,6 +40,8 @@ class BaseWindow(MayaQWidgetDockableMixin, QtWidgets.QMainWindow):
     _windowName = 'BaseUI'
     _windowTitle = 'Base UI'
     uiFile = ''
+    pathModify = ''
+    uiFilePath = ''
     
     def __init__(self,parent,uiFile):
         super(BaseWindow, self).__init__(parent)
@@ -54,12 +56,27 @@ class BaseWindow(MayaQWidgetDockableMixin, QtWidgets.QMainWindow):
 
         self.setObjectName(self._windowName)
         self.setWindowTitle(self._windowTitle)
-        self.mainWidget = qtWindow('%s/%s'%(self_path(),self.uiFile))
+        if not self.uiFilePath:
+            self.uiFilePath = self_path()
+        self.mainWidget = qtWindow('%s/%s%s'%(self.uiFilePath,self.pathModify,self.uiFile))
         self.setCentralWidget(self.mainWidget)
 
 class BaseWidget():
     uiFile = ''
     parent = ''
+    pathModify = ''
+    uiFilePath = ''
     def BuildUI(self):
+        if not self.uiFilePath:
+            self.uiFilePath = self_path()
+        self.aWidget = qtWindow('%s/%s%s'%(self.uiFilePath,self.pathModify,self.uiFile))
+        self.parent.addWidget(self.aWidget)
+'''
+class BaseWidget():
+    uiFile = ''
+    parent = ''
+    def BuildUI(self):
+        self.uiFilePath = self_path()
         self.aWidget = qtWindow('%s/%s'%(self_path(),self.uiFile))
         self.parent.addWidget(self.aWidget)
+'''

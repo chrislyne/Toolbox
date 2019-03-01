@@ -8,7 +8,6 @@ import shutil
 
 
 def makeFolders(folderNames):
-
     for f in folderNames:
         if not os.path.exists(f):
             os.makedirs(f)
@@ -17,11 +16,16 @@ def createButton():
     folderNames = []
 
     varients = []
+    
     for v in bwidget.layerWidgets:
-        if v.isHidden() == 0:
-            varients.append(v.variant_lineEdit.text())
+        try:
+            if not v.isHidden():
+                varients.append(v.variant_lineEdit.text())
+        except:
+            pass
     if not varients:
         varients = ['']
+
 
     parentFolder = lm_projectWin.mainWidget.comboBox_root.currentText()
     clientName = lm_projectWin.mainWidget.lineEdit_client.text()
@@ -36,7 +40,7 @@ def createButton():
     elif projectName:
         projectRoot = '%s/%s'%(parentFolder,projectName)
     
-    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
+    folderStructureDict = loadSave.loadDictionary('%s/pipelime/lm_folderStructure.json'%qtBase.self_path())
 
     #create general folders
     for i in folderStructureDict["general"]["folders"]:
@@ -63,7 +67,7 @@ def createButton():
             #copy files
             try:
                 for i in folderStructureDict["options"][c[1]]["files"]:
-                    sourcePath = 'C:/Users/Admin/Documents/Toolbox/pipelime/files'
+                    sourcePath = '%s/files'%qtBase.self_path()
                     sourceFile = '%s/%s'%(sourcePath,i["source"])
                     destFile = '%s/%s/%s'%(projectRoot,i["dest"],i["source"])
                     shutil.copyfile(sourceFile, destFile)
@@ -85,15 +89,17 @@ class VariantWidget(qtBase.BaseWidget):
 
     def __init__(self,parentWindow):
         self.uiFile = 'lm_projectWidget.ui'
+        self.uiFilePath = qtBase.self_path()
+        #self.uiFilePath = 'C:/Users/Admin/Documents/Toolbox'
+        self.pathModify = 'pipelime/'
         self.parent = parentWindow.mainWidget.VariantsLayout
         self.BuildUI()
         self.layerWidgets.append(self.aWidget)
 
         self.aWidget.delete_pushButton.clicked.connect(lambda: deleteWidget(self))
 
-def comboBoxChange(text):
-    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
-    print folderStructureDict["settings"]["resolution"][text][0]
+def resolutionChange(text):
+    folderStructureDict = loadSave.loadDictionary('%s/pipelime/lm_folderStructure.json'%qtBase.self_path())
     lm_projectWin.mainWidget.lineEdit_resW.setText(folderStructureDict["settings"]["resolution"][text][0])
     lm_projectWin.mainWidget.lineEdit_resH.setText(folderStructureDict["settings"]["resolution"][text][1])
 
@@ -109,14 +115,15 @@ def lm_projectWindow():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'lm_projectWindow.ui')
     window._windowTitle = 'Create New Project'
     window._windowName = 'createNewProject'
+    #self.uiFilePath = 'C:/Users/Admin/Documents/Toolbox'
+    window.pathModify = 'pipelime/'
     window.BuildUI()
     window.show(dockable=True)
     #connect buttons
     window.mainWidget.variant_pushButton.clicked.connect(addButton)
     window.mainWidget.create_pushButton.clicked.connect(createButton)
 
-
-    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
+    folderStructureDict = loadSave.loadDictionary('%s/pipelime/lm_folderStructure.json'%qtBase.self_path())
     rootFolders = folderStructureDict["root"]
     window.mainWidget.comboBox_root.clear()
     window.mainWidget.comboBox_root.addItems(rootFolders)
@@ -125,11 +132,19 @@ def lm_projectWindow():
     window.mainWidget.comboBox_resolution.clear()
     window.mainWidget.comboBox_resolution.addItems(resolutions.keys())
 
-    window.mainWidget.comboBox_resolution.currentTextChanged.connect(comboBoxChange)
+    window.mainWidget.comboBox_resolution.currentTextChanged.connect(resolutionChange)
 
     return window
 
+def openProjectWindow():
+    global lm_projectWin
+    global bwidget
+    lm_projectWin = lm_projectWindow()
+    bwidget = VariantWidget(lm_projectWin)
 
-lm_projectWin = lm_projectWindow()
-bwidget = VariantWidget(lm_projectWin)
 
+#import pipelime.lm_projectWindow as lm_projectWindow
+#lm_projectWindow.openProjectWindow()
+
+
+#openProjectWindow()
