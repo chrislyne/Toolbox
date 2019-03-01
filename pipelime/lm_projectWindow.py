@@ -1,13 +1,11 @@
-import maya.cmds as cmds
-import baseIO.loadSave as IO
-import baseIO.sceneVar as sceneVar
 import baseIO.qtBase as qtBase
-import baseIO.getProj as getProj
+import baseIO.loadSave as loadSave
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 import os
 import shutil
+
 
 def makeFolders(folderNames):
 
@@ -20,7 +18,10 @@ def createButton():
 
     varients = []
     for v in bwidget.layerWidgets:
-        varients.append(v.variant_lineEdit.text())
+        if v.isHidden() == 0:
+            varients.append(v.variant_lineEdit.text())
+    if not varients:
+        varients = ['']
 
     parentFolder = lm_projectWin.mainWidget.comboBox_root.currentText()
     clientName = lm_projectWin.mainWidget.lineEdit_client.text()
@@ -35,7 +36,7 @@ def createButton():
     elif projectName:
         projectRoot = '%s/%s'%(parentFolder,projectName)
     
-    folderStructureDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
+    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
 
     #create general folders
     for i in folderStructureDict["general"]["folders"]:
@@ -69,12 +70,11 @@ def createButton():
             except:
                 pass
 
-    #loop through variants
-    
+    #set prefs for project
+    projectDict('%s/.projectData'%projectRoot)
 
-
-def removeWidget():
-    print 'delete'
+def deleteWidget(self):
+        self.aWidget.hide()
 
 def addButton():
     bwidget = VariantWidget(lm_projectWin)
@@ -87,11 +87,23 @@ class VariantWidget(qtBase.BaseWidget):
         self.uiFile = 'lm_projectWidget.ui'
         self.parent = parentWindow.mainWidget.VariantsLayout
         self.BuildUI()
-        #self.aWidget.label.setText(l[0]) 
-        #self.aWidget.lineEdit.setText(l[1]) 
         self.layerWidgets.append(self.aWidget)
 
-        self.aWidget.delete_pushButton.clicked.connect(removeWidget)
+        self.aWidget.delete_pushButton.clicked.connect(lambda: deleteWidget(self))
+
+def comboBoxChange(text):
+    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
+    print folderStructureDict["settings"]["resolution"][text][0]
+    lm_projectWin.mainWidget.lineEdit_resW.setText(folderStructureDict["settings"]["resolution"][text][0])
+    lm_projectWin.mainWidget.lineEdit_resH.setText(folderStructureDict["settings"]["resolution"][text][1])
+
+def projectDict(folder):
+    prefData = []
+    prefData.append(['frameRate','value','%s'%lm_projectWin.mainWidget.comboBox_frameRate.currentText()])
+    prefData.append(['resolutionW','value','%s'%lm_projectWin.mainWidget.lineEdit_resW.text()])
+    prefData.append(['resolutionH','value','%s'%lm_projectWin.mainWidget.lineEdit_resH.text()])
+    loadSave.writePrefsToFile(prefData,'%s/projectPrefs.json'%folder)
+    
 
 def lm_projectWindow():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'lm_projectWindow.ui')
@@ -103,12 +115,17 @@ def lm_projectWindow():
     window.mainWidget.variant_pushButton.clicked.connect(addButton)
     window.mainWidget.create_pushButton.clicked.connect(createButton)
 
-    
 
-    folderStructureDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
-    list1 = folderStructureDict["root"]
+    folderStructureDict = loadSave.loadDictionary('C:/Users/Admin/Documents/Toolbox/pipelime/lm_folderStructure.json')
+    rootFolders = folderStructureDict["root"]
     window.mainWidget.comboBox_root.clear()
-    window.mainWidget.comboBox_root.addItems(list1)
+    window.mainWidget.comboBox_root.addItems(rootFolders)
+
+    resolutions = folderStructureDict["settings"]["resolution"]
+    window.mainWidget.comboBox_resolution.clear()
+    window.mainWidget.comboBox_resolution.addItems(resolutions.keys())
+
+    window.mainWidget.comboBox_resolution.currentTextChanged.connect(comboBoxChange)
 
     return window
 
