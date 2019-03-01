@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>451</width>
-    <height>683</height>
+    <width>449</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -404,14 +404,34 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Cancel</string>
+         <string>Note</string>
         </property>
        </widget>
       </item>
       <item>
+       <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="create_pushButton">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(55, 141, 245, 255), stop:1 rgba(65, 151, 255, 255));
+
+</string>
+        </property>
         <property name="text">
          <string>Create</string>
         </property>
@@ -426,7 +446,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>451</width>
+     <width>449</width>
      <height>21</height>
     </rect>
    </property>
