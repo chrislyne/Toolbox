@@ -31,3 +31,4 @@ def icecreamBot():
     newBot.channel = '#general'
     newBot.send()
 
+#import Tools.toSlack as toSlack;toSlack.icecreamBot()

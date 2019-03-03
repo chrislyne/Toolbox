@@ -1,8 +1,8 @@
-from pymel.all import *
+import os
 import json
 
 def UserPrefPath():
-    userMayaPath = mel.getenv("MAYA_APP_DIR")
+    userMayaPath = os.environ.get('MAYA_APP_DIR')
     userMayaPrefsPath = userMayaPath+'/prefs'  
     userMayaPrefsFile = userMayaPrefsPath+'/IOUserPrefs.json'
     return userMayaPrefsFile
@@ -10,7 +10,7 @@ def UserPrefPath():
 def SaveUserSettings(item):
     global userInitals
     userInitals = item
-    userMayaPath = mel.getenv("MAYA_APP_DIR")
+    userMayaPath = os.environ.get('MAYA_APP_DIR')
     userMayaPrefsPath = userMayaPath+'/prefs'
     if not os.path.exists(userMayaPrefsPath):
         os.makedirs(userMayaPrefsPath)

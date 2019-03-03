@@ -94,4 +94,10 @@ def incrementalSaveUI():
         #create file
         user_install(initials)
         
+'''
+import Tools.incrementalSaveUI as incrementalSaveUI
+from Tools.incrementalSaveUI import *
+incrementalSaveUI()
+'''
+
 #incrementalSaveUI()    
