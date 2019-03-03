@@ -10,8 +10,6 @@ import subprocess
 import os
 import sys
 
-
-
 class LayerWidget(qtBase.BaseWidget):
 
     layerWidgets = []
@@ -19,6 +17,7 @@ class LayerWidget(qtBase.BaseWidget):
 
     def __init__(self,layers,parentWindow):
         self.uiFile = 'submitToFarmWidget.ui'
+        self.pathModify = 'pipelime/'
         self.parent = parentWindow.mainWidget.verticalLayout_3
         self.previousValue = parentWindow.mainWidget.prioritySlider.value()
         for l in layers:
@@ -250,6 +249,7 @@ def submitRenderUI():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'submitToFarm.ui')
     window._windowTitle = 'Submit to Farm'
     window._windowName = 'SubmitToFarm'
+    window.pathModify = 'pipelime/'
     window.BuildUI()
     window.show(dockable=True)
     #hide config panel 
@@ -263,13 +263,13 @@ def submitRenderUI():
     window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
     try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(os.path.dirname(__file__), "gear"))
+        buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(qtBase.self_path(), "gear"))
         window.mainWidget.pushButton_settings.setIcon(buttonIcon)
     except:
         pass
     #merge all dictionaries into one
     comboDict = {}
-    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/globalPrefs.json'%qtBase.self_path()))
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/config/globalPrefs.json'%qtBase.self_path()))
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/projectPrefs.json'%getProj.getProject()))
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
     rangeFromTimeline =  '%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame())
@@ -280,8 +280,19 @@ def submitRenderUI():
     return window
 
 
-window = submitRenderUI()
+def openSubmitWindow():
 
-#get render layers from scene
-layers = sceneVar.getRenderLayers()
-layerWidget = LayerWidget(layers,window)
+    global window
+    global layers
+    global layerWidget
+
+    window = submitRenderUI()
+    #get render layers from scene
+    layers = sceneVar.getRenderLayers()
+    layerWidget = LayerWidget(layers,window)
+
+
+#import pipelime.submitToFarm as submitToFarm
+#submitToFarm.openSubmitWindow()
+
+#openSubmitWindow()
