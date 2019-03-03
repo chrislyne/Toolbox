@@ -1,0 +1,82 @@
+// -- Select Vector Path -- //
+
+global proc select_path(){
+	string $mayaFolder;
+	$mayaFolder = `workspace -fullName`;
+	$imagesFolder = ($mayaFolder +"/scenes");
+	workspace -dir $imagesFolder;
+	fileBrowserDialog -mode 0
+		-fileCommand ( "browseForFolderCallback_v \"" + $mayaFolder + "\"" )
+		-actionName "Select";
+}
+
+global proc browseForFolderCallback_v( string $mayaFolder, string $result, string $type){
+	textFieldButtonGrp -e -text $result pathInput;
+	
+	string $sections[];
+	$numTokens = `tokenize $result "." $sections`;
+
+	string $subSections[];
+	$subTokens = `tokenize $sections[0] "/" $subSections`;
+
+	int $subInt = $subTokens -1;
+	
+	textField -e -text $subSections[$subInt] namespaceInput;
+	
+	workspace -dir $mayaFolder;
+	
+}
+
+global proc doReference(){
+	int $numberOfRefs = `textField -q -text copiesInt `;
+	string $referenceFiles = `textFieldButtonGrp -q -text pathInput`;
+	string $namespace = `textField -q -text namespaceInput`;
+	if (`radioButtonGrp -q -select myRadBtnGrp` == 1) {
+		for ($i=0;$i < $numberOfRefs;$i++){
+			file -r -type "mayaBinary" -gl -loadReferenceDepth "all" -namespace $namespace $referenceFiles;
+		}
+	}else{
+		for ($i=0;$i < $numberOfRefs;$i++){
+			file -import -type "mayaBinary" -ra true -namespace $namespace -pr $referenceFiles;
+		}
+	}
+
+}
+
+// -- Create GUI -- //
+
+global proc multiRef(){
+
+
+	if (`window -ex blur2D_setupWindow` == 1){
+		deleteUI blur2D_setupWindow;
+	} 
+	window -w 180 -rtf true -title "multi importer" blur2D_setupWindow;
+
+	rowColumnLayout -numberOfColumns 2 -columnAttach 1 "right" 0
+    -columnWidth 1 100 -columnWidth 2 300;
+
+	
+	text -label "copies    ";
+	textField -w 50 copiesInt;
+
+
+	text -label "file path    ";
+	textFieldButtonGrp -bc "select_path" -buttonLabel "cl i c k" pathInput;
+	
+	text -label "namespace    ";
+	textField -w 50 namespaceInput;
+	
+	text -label "type   ";
+	radioButtonGrp -numberOfRadioButtons 2 -labelArray2 "reference" "import" -select 1 myRadBtnGrp;
+
+	text -label "";
+	rowLayout -numberOfColumns 3 -columnWidth3 80 80 80;
+	button -w 80 -c doReference -label "Apply";
+	
+	showWindow blur2D_setupWindow;
+	
+
+}
+
+

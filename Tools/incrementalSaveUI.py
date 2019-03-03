@@ -2,25 +2,11 @@ import os
 import time
 import maya.mel as mel
 import maya.cmds as cmds
-from pymel.all import *
+import baseIO.incrementalSave as incrementalSave
+import baseIO.IOuserPref as IOuserPref
 
-
-def importModules(fileName):
-    import imp
-    try:
-        dirname = os.path.dirname(__file__)
-        #parentDir = dirname
-    except:
-        print 'running in test environment'
-        dirname = 'C:/Users/Chris/Dropbox/Projects/Toolbox'
-        #parentDir = os.path.abspath(os.path.join(dirname, os.pardir))
-    
-    fileName = imp.load_source(fileName, (dirname+'/Modules/'+fileName+'.py'))
-    #IOuserPref = imp.load_source('IOuserPref', (dirname+'/Modules/IOuserPref.py'))
-    return fileName
 
 def updateUserPrefs(initials):
-    IOuserPref = importModules('IOuserPref')
     userConfigFile = IOuserPref.UserPrefPath()
     
     fileExists = os.path.isfile(userConfigFile)
@@ -86,8 +72,6 @@ def user_install(initials):
 #user_install()
 
 def incrementalSaveUI():
-    IOuserPref = importModules('IOuserPref')
-    incrementalSave = importModules('incrementalSave')
     userConfigFile = IOuserPref.UserPrefPath()
     initials = ''
     fileExists = os.path.isfile(userConfigFile)

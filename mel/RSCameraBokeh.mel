@@ -1,0 +1,45 @@
+global proc RSCameraBokeh()
+{
+    string $sel[] = `ls -sl`;
+    int $selectionSize = `size $sel`;
+    string $cameraCheck = nodeType(`listRelatives -s $sel`);
+    if ($cameraCheck == "camera" && $selectionSize > 0)
+    {
+        for( $item in $sel)
+        {
+            string $rsBokeh = `shadingNode -asUtility RedshiftBokeh`;
+            string $shapes[] = `listRelatives -s -path $item`;
+            for( $camShape in $shapes)
+            {
+                if (`attributeExists "rsLensShader" $camShape`) 
+                {
+                    connectAttr -force ($rsBokeh+".message") ($item+".rsLensShader");
+                    
+                    //get camera position
+                    float $camPos[] = `xform -q -t -ws $item`;
+                    //create locators
+                    string $focusLocator[] = `spaceLocator -p $camPos[0] $camPos[1] $camPos[2] -n ($item+"_focalPoint")`;
+                    parent $focusLocator[0] $item ;
+                    CenterPivot $focusLocator[0];
+                    setAttr ($focusLocator[0]+".translateZ") -4;
+                    setAttr ($focusLocator[0]+".rotateZ") 0;
+                    setAttr ($focusLocator[0]+".rotateX") 0;
+                    setAttr ($focusLocator[0]+".rotateY") 0;
+                    string $cameraLocator[] = `spaceLocator -p $camPos[0] $camPos[1] $camPos[2]`;
+                    
+                    float $focusLocatorPos[3] = `xform -q -ws -pivots $focusLocator[0]`;
+                    parent $cameraLocator[0] $item ;
+                    //create measure tool
+                    string $measeureTool1 = `distanceDimension -sp $camPos[0] $camPos[1] $camPos[2] -ep $focusLocatorPos[0] $focusLocatorPos[1] $focusLocatorPos[2]` ;
+                    setAttr ($rsBokeh+".dofDeriveFocusDistanceFromCamera") 0;
+                    connectAttr ($measeureTool1+".distance") ($rsBokeh+".dofFocusDistance");
+                }
+            }
+        }
+    }
+    else
+    {
+        error ("no camera selected");
+    }
+}
+//RSCameraBokeh();
