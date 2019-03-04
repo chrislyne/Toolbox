@@ -82,11 +82,13 @@ def assetManagerUI():
     window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
 
     window.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(window.mainWidget.listWidget_assetType.currentItem().text(),projectsDict))
-    pic = window.mainWidget.label_pic
-    
-    pic.setPixmap(QtGui.QPixmap("%s/icons/%s.jpg"%(qtBase.self_path(), "tap")))
-    pic.show()
 
+    try:
+        buttonIcon = QtGui.QIcon("%s/icons/%s.jpg"%(qtBase.self_path(), "tap"))
+        window.mainWidget.pushButton_thumb.setIcon(buttonIcon)
+        window.mainWidget.pushButton_thumb.setText("")
+    except:
+        pass
 
     return window
 

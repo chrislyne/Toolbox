@@ -258,7 +258,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="listWidget_assets"/>
+           <widget class="QListWidget" name="listWidget_assets">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -397,15 +401,27 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_pic">
+       <widget class="QPushButton" name="pushButton_thumb">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>100</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
-          <height>200</height>
+          <width>100</width>
+          <height>100</height>
          </size>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>thumbnail</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>100</width>
+          <height>100</height>
+         </size>
         </property>
        </widget>
       </item>
