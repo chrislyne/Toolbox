@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>673</height>
+    <height>674</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -53,6 +53,9 @@
         <property name="layoutDirection">
          <enum>Qt::LeftToRight</enum>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="tabPosition">
          <enum>QTabWidget::North</enum>
         </property>
@@ -60,7 +63,13 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="elideMode">
          <enum>Qt::ElideMiddle</enum>
@@ -76,10 +85,16 @@
           <string>    User    </string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_user">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <property name="topMargin">
-             <number>50</number>
+             <number>0</number>
             </property>
            </layout>
           </item>
@@ -91,9 +106,12 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_project">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <property name="topMargin">
-             <number>50</number>
+             <number>0</number>
             </property>
            </layout>
           </item>
@@ -105,9 +123,12 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_global">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <property name="topMargin">
-             <number>50</number>
+             <number>0</number>
             </property>
            </layout>
           </item>
@@ -131,16 +152,24 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_buttons">
         <item>
-         <widget class="QPushButton" name="pushButton_accept">
+         <widget class="QPushButton" name="pushButton_cancel">
           <property name="text">
-           <string>Accept</string>
+           <string>Cancel</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_cancel">
+         <widget class="QPushButton" name="pushButton_accept">
+          <property name="styleSheet">
+           <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(55, 141, 245, 255), stop:1 rgba(65, 151, 255, 255));
+
+</string>
+          </property>
           <property name="text">
-           <string>Cancel</string>
+           <string>Accept</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
           </property>
          </widget>
         </item>

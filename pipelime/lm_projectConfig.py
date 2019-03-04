@@ -3,22 +3,31 @@ import baseIO.loadSave as IO
 import baseIO.sceneVar as sceneVar
 import baseIO.qtBase as qtBase
 import baseIO.getProj as getProj
+import baseIO.stringFormat as stringFormat
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
+
 
 class LayerWidget(qtBase.BaseWidget):
 
     layerWidgets = []
 
     def __init__(self,layers,parentWindow):
-        self.uiFile = 'projectConfigWidget.ui'
-        self.parent = parentWindow.mainWidget.tabWidget.verticalLayout_3
+        self.uiFile = 'lm_projectConfigWidget.ui'
+        self.pathModify = 'pipelime/'
+        self.parent = parentWindow
         for l in layers:
-            self.BuildUI()
-            self.aWidget.label.setText(l[0]) 
-            self.aWidget.lineEdit.setText(l[1]) 
-            self.layerWidgets.append(self.aWidget)
+            try:
+                self.BuildUI()
+                #prefName = stringFormat.convertCamel(l[0])
+                self.aWidget.label.setText(l[0]) 
+                
+                self.aWidget.lineEdit.setText(str(l[1])) 
+                self.layerWidgets.append(self.aWidget)
+            except:
+                pass
+            
 
 def submitButton():
     prefData = []
@@ -27,7 +36,7 @@ def submitButton():
         prefData.append([l.label.text(),'value','%s'%l.lineEdit.text()])
     IO.writePrefsToFile(prefData,'%s/data/projectPrefs.json'%getProj.getProject())
 
-def setUiValue(uiObject,value,window):
+def setUiValue(uiObject,value,prefConfigUIWindow):
 
     type = uiObject.metaObject().className()
 
@@ -50,19 +59,29 @@ def mergeDictionaries(dict1,dict2):
         pass
     return dict1
 
-def submitRenderUI():
-    window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'projectConfig.ui')
+def prefConfigUI():
+    window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'lm_projectConfig.ui')
     window._windowTitle = 'Configure Project'
     window._windowName = 'configureProject'
+    window.pathModify = 'pipelime/'
     window.BuildUI()
     window.show(dockable=True)
     #connect buttons
     window.mainWidget.pushButton_accept.clicked.connect(submitButton)
 
     #merge all dictionaries into one
-    comboDict = {}
-    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/globalPrefs.json'%qtBase.self_path()))
-    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/data/projectPrefs.json'%getProj.getProject()))
+    comboDict = {"userName": {"value": ""},"userInitials": {"value": ""},"userSlackID": {"value": "@"}}
+    #comboDict = mergeDictionaries(comboDict,IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/globalPrefs.json'))
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
+    projectDict = IO.loadDictionary('%s/../.projectData/projectPrefs.json'%getProj.getProject())
+    print projectDict
+
+    projectLines = []
+    for key in projectDict:
+        try:
+            projectLines.append([key,projectDict[key]["value"]])
+        except:
+            pass
 
     lines = []
     for key in comboDict:
@@ -72,10 +91,14 @@ def submitRenderUI():
             pass
     #layers = sceneVar.getRenderLayers()
     global prefWidget
-    prefWidget = LayerWidget(lines,window)
+    prefWidget = LayerWidget(lines,window.mainWidget.verticalLayout_user)
+    global projectPrefsWidget
+    prefWidget = LayerWidget(projectLines,window.mainWidget.verticalLayout_project)
+    global globalPrefsWidget
+    prefWidget = LayerWidget(lines,window.mainWidget.verticalLayout_global)
     return window
 
 
-window = submitRenderUI()
-prefWidget 
+prefConfigUIWindow = prefConfigUI()
+#prefWidget 
 #get render layers from scene

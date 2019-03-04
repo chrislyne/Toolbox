@@ -5,3 +5,4 @@ import qtBase
 import metaData
 import incrementalSave
 import IOuserPref
+import stringFormat
