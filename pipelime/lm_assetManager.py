@@ -8,9 +8,47 @@ from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 import os
+import time
 import Tools.screenshot as screenshot
 from stat import S_ISREG, ST_MTIME, ST_MODE
+import baseIO.incrementalSave as incSave
+from lio.io_publishModel import IO_publishModel_window,PublishModelCheckText
 
+def publishModel():
+    lio.io_publishModel.IO_publishModel(0)
+    metaData = []
+    localPrefDict = IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path())
+    metaData.append(['user','value','%s'%localPrefDict["userName"]["value"].strip('\'')])
+    metaData.append(['note','value','%s'%assetManagerUIWindow.mainWidget.textEdit_note.toPlainText()])
+    folderName = getProj.sceneFolder().rsplit('/',1)[1]
+    IO.writePrefsToFile(metaData,'%s/.data/%s_REF.json'%(getProj.sceneFolder(),folderName))
+
+def incrementSceneFile():
+    localPrefDict = IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path())
+    try:
+        userInitials = localPrefDict["userInitials"]["value"].strip('\'')
+    except:
+        userInitials = ''
+    incSave.IncrementCurrentFile(initials=userInitials)
+    writeDataAfterSave()
+
+def saveSceneFile():
+    print 'save scene not done'
+    writeDataAfterSave()
+
+def writeDataAfterSave():
+    metaData = []
+    localPrefDict = IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path())
+    metaData.append(['user','value','%s'%localPrefDict["userName"]["value"].strip('\'')])
+    metaData.append(['note','value','%s'%assetManagerUIWindow.mainWidget.textEdit_note.toPlainText()])
+    IO.writePrefsToFile(metaData,'%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
+
+
+
+def setProjectPth():
+    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    key = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
+    cmds.workspace(projectsDict[key]['projectPath'], openWorkspace=True)
 
 def takeScreenshot(assetName,projectsDict):
     global lch
@@ -49,20 +87,64 @@ def orderByModified(dirpath):
     return recentFiles
 
 def newAsset(projectsDict):
+
+    setProjectPth()
+
     newAssetType = assetManagerUIWindow.mainWidget.lineEdit_newAssetType.text()
     newAssetName = assetManagerUIWindow.mainWidget.lineEdit_newAssetName.text()
-    if not newAssetType:
-        newAssetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
-    project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],newAssetType,newAssetName)
-    print newAssetName
+    if newAssetName:
+        if not newAssetType:
+            newAssetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
+        project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
+        assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],newAssetType,newAssetName)
 
-    if not os.path.exists(assetPath):
-        os.makedirs(assetPath)
-    cmds.file(newFile=True, force=True)
-    cmds.file(rename='%s/%s_v001_cl.mb'%(assetPath,newAssetName))
+        itemsText = []
+        items = []
+        for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assetType.count()):
+            items.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index))
+            itemsText.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index).text())
+
+        if newAssetType not in itemsText:
+            #add item to type list
+            itm = QtWidgets.QListWidgetItem(newAssetType)
+            assetManagerUIWindow.mainWidget.listWidget_assetType.addItem(itm)
+            assetManagerUIWindow.mainWidget.listWidget_assets.clear()
+            if not os.path.exists(assetPath):
+                os.makedirs(assetPath)
+
+        else:
+            for i in items:
+                if newAssetType == i.text():
+                    itm = i
+            setType(newAssetType,projectsDict)
+        itm.setSelected(True)
+        
+        #add item to asset list
+        itm = QtWidgets.QListWidgetItem(QtGui.QIcon('C:/Users/Admin/Documents/Toolbox/icons/lightRed.png'),newAssetName);
+        assetManagerUIWindow.mainWidget.listWidget_assets.addItem(itm);
+        itm.setSelected(True)
+        #create folder and file
+        if not os.path.exists(assetPath):
+            os.makedirs(assetPath)
+        #create new file
+        cmds.file(newFile=True, force=True)
+        cmds.file(rename='%s/%s_v001_cl.mb'%(assetPath,newAssetName))
+        #set settings from project config file
+        try:
+            configFolder = '%s../.projectData'%getProj.getProject()
+            projectsDict = IO.loadDictionary('%s/projectPrefs.json'%configFolder)
+            cmds.setAttr("defaultResolution.width",int(projectsDict["resolutionW"]["value"]))
+            cmds.setAttr("defaultResolution.height",int(projectsDict["resolutionH"]["value"]))
+            fps = '%sfps'%(projectsDict["frameRate"]["value"])
+            cmds.currentUnit(time=fps)
+        except:
+            pass
+
 
 def editAsset(assetName,projectsDict):
+    #set project
+    setProjectPth()
+    #read asset
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],assetType,assetName)
@@ -77,6 +159,12 @@ def editAsset(assetName,projectsDict):
         cmds.file(newFile=True, force=True)
         cmds.file(rename='%s/%s_v001_cl.mb'%(assetPath,assetName))
 
+    #remove list selection
+    items = []
+    for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assets.count()):
+        assetManagerUIWindow.mainWidget.listWidget_assets.item(index).setSelected(False)
+    #clear note
+    assetManagerUIWindow.mainWidget.textEdit_note.setText('')
 
 
 def referenceAsset(assetName,projectsDict,imp):
@@ -99,10 +187,17 @@ def setAsset(assetName,projectsDict):
 
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    assetPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+    thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
 
     try:
-        buttonIcon = QtGui.QIcon(assetPath)
+        refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDict[project]["projectPath"],assetType,assetName)
+        dateModified = time.strftime('%d/%m/%Y - %a %I:%M %p', time.localtime(os.path.getmtime(refPath)))
+        assetManagerUIWindow.mainWidget.label_date.setText(dateModified)
+    except:
+        assetManagerUIWindow.mainWidget.label_date.setText('')
+
+    try:
+        buttonIcon = QtGui.QIcon(thumbPath)
         assetManagerUIWindow.mainWidget.pushButton_thumb.setIcon(buttonIcon)
         assetManagerUIWindow.mainWidget.pushButton_thumb.setText("")
         #assetManagerUIWindow.mainWidget.pushButton_thumb.setMaximumWidth(300)
@@ -150,6 +245,19 @@ def setProject(key,projectsDict):
     assetManagerUIWindow.mainWidget.listWidget_assetType.clear()
     assetManagerUIWindow.mainWidget.listWidget_assetType.addItems(assetTypeFolders)
 
+    #select first item in list
+    try:
+        items = []
+        for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assetType.count()):
+            items.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index))
+
+        items[0].setSelected(True)
+        assetManagerUIWindow.mainWidget.listWidget_assetType.setCurrentItem(items[0])
+        setType(items[0].text(),projectsDict)
+    except:
+        pass
+
+
     #assetManagerUIWindow.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text(),path))
 
 
@@ -162,7 +270,6 @@ def assetManagerUI():
     window.show(dockable=True)
 
     projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
-    print projectsDict
 
     projectLines = []
     for key in projectsDict:
@@ -186,6 +293,21 @@ def assetManagerUI():
         window.mainWidget.pushButton_edit.setIcon(buttonIcon)
     except:
         pass
+    try:
+        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "save"))
+        window.mainWidget.pushButton_save.setIcon(buttonIcon)
+    except:
+        pass
+    try:
+        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "incrementalSave"))
+        window.mainWidget.pushButton_increment.setIcon(buttonIcon)
+    except:
+        pass
+    try:
+        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "io_publishModel"))
+        window.mainWidget.pushButton_publish.setIcon(buttonIcon)
+    except:
+        pass
 
     window.mainWidget.project_comboBox.addItems(projectLines)
     window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
@@ -203,6 +325,12 @@ def assetManagerUI():
     window.mainWidget.pushButton_edit.clicked.connect(lambda: editAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
     #thumbnail button
     window.mainWidget.pushButton_thumb.clicked.connect(lambda: takeScreenshot(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
+    #save button
+    window.mainWidget.pushButton_save.clicked.connect(saveSceneFile)
+    #increment button
+    window.mainWidget.pushButton_increment.clicked.connect(incrementSceneFile)
+    #publish button
+    window.mainWidget.pushButton_publish.clicked.connect(publishModel)
 
     return window
 

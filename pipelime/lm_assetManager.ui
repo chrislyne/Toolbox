@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>639</height>
+    <width>773</width>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -206,6 +206,25 @@
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButton_new">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>New</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pushButton_reference">
             <property name="minimumSize">
              <size>
@@ -287,25 +306,6 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_new">
-            <property name="minimumSize">
-             <size>
-              <width>30</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>30</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>New</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Edit</string>
@@ -349,6 +349,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
         <property name="topMargin">
          <number>0</number>
         </property>
@@ -385,6 +388,9 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_6">
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <property name="topMargin">
@@ -392,21 +398,186 @@
             </property>
             <item>
              <widget class="QLabel" name="label_5">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
-               <string>Last Artist:</string>
+               <string>Artist:</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>User Name</string>
+               <string>-</string>
               </property>
              </widget>
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Date:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_date">
+              <property name="text">
+               <string>-</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="textEdit_note">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>200</height>
+             </size>
+            </property>
+            <property name="placeholderText">
+             <string>Notes</string>
+            </property>
+           </widget>
+          </item>
          </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Current File</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_save">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>60</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_increment">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Increment</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_publish">
+          <property name="minimumSize">
+           <size>
+            <width>104</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Publish</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>60</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -415,10 +586,13 @@
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>200</height>
          </size>
         </property>
        </spacer>
@@ -432,7 +606,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>490</width>
+     <width>773</width>
      <height>21</height>
     </rect>
    </property>
@@ -448,11 +622,11 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>809</x>
-     <y>246</y>
+     <x>749</x>
+     <y>120</y>
     </hint>
     <hint type="destinationlabel">
-     <x>311</x>
+     <x>221</x>
      <y>109</y>
     </hint>
    </hints>
@@ -464,11 +638,11 @@
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>796</x>
-     <y>249</y>
+     <x>736</x>
+     <y>123</y>
     </hint>
     <hint type="destinationlabel">
-     <x>518</x>
+     <x>488</x>
      <y>112</y>
     </hint>
    </hints>
