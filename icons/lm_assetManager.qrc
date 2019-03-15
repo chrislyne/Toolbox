@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>io_publishModel.svg</file>
+    <file>save.svg</file>
+    <file>io_Llama.svg</file>
+    <file>multiRef.svg</file>
+    <file>incrementalSave.svg</file>
+  </qresource>
+</RCC>

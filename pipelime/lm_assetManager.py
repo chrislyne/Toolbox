@@ -12,10 +12,12 @@ import time
 import Tools.screenshot as screenshot
 from stat import S_ISREG, ST_MTIME, ST_MODE
 import baseIO.incrementalSave as incSave
-from lio.io_publishModel import IO_publishModel_window,PublishModelCheckText
+from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishModelCheckText
+import pipelime.resources.lm_resources
+
 
 def publishModel():
-    lio.io_publishModel.IO_publishModel(0)
+    IO_publishModel(0)
     metaData = []
     localPrefDict = IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path())
     metaData.append(['user','value','%s'%localPrefDict["userName"]["value"].strip('\'')])
@@ -188,14 +190,27 @@ def setAsset(assetName,projectsDict):
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
-
+    #find and display date
     try:
         refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDict[project]["projectPath"],assetType,assetName)
         dateModified = time.strftime('%d/%m/%Y - %a %I:%M %p', time.localtime(os.path.getmtime(refPath)))
         assetManagerUIWindow.mainWidget.label_date.setText(dateModified)
     except:
         assetManagerUIWindow.mainWidget.label_date.setText('')
-
+    #find and display username
+    try:
+        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+        assetDict = IO.loadDictionary(namePath)
+        assetManagerUIWindow.mainWidget.label_userName.setText(assetDict["user"]["value"])
+    except:
+        assetManagerUIWindow.mainWidget.label_userName.setText('')
+    #find and display note
+    try:
+        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+        assetDict = IO.loadDictionary(namePath)
+        assetManagerUIWindow.mainWidget.textEdit_note.setText(assetDict["note"]["value"])
+    except:
+        assetManagerUIWindow.mainWidget.textEdit_note.setText('')
     try:
         buttonIcon = QtGui.QIcon(thumbPath)
         assetManagerUIWindow.mainWidget.pushButton_thumb.setIcon(buttonIcon)
@@ -228,6 +243,18 @@ def setType(key,projectsDict):
             itm = QtWidgets.QListWidgetItem(QtGui.QIcon('C:/Users/Admin/Documents/Toolbox/icons/lightGreen.png'),assets);
 
         assetManagerUIWindow.mainWidget.listWidget_assets.addItem(itm);
+
+    #select first item in list
+    try:
+        items = []
+        for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assets.count()):
+            items.append(assetManagerUIWindow.mainWidget.listWidget_assets.item(index))
+
+        items[0].setSelected(True)
+        assetManagerUIWindow.mainWidget.listWidget_assets.setCurrentItem(items[0])
+        setAsset(items[0].text(),projectsDict)
+    except:
+        pass
 
 
 def setProject(key,projectsDict):
@@ -277,7 +304,7 @@ def assetManagerUI():
             projectLines.append(key)
         except:
             pass
-
+    '''
     try:
         buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "multiRef"))
         window.mainWidget.pushButton_reference.setIcon(buttonIcon)
@@ -308,7 +335,7 @@ def assetManagerUI():
         window.mainWidget.pushButton_publish.setIcon(buttonIcon)
     except:
         pass
-
+    '''
     window.mainWidget.project_comboBox.addItems(projectLines)
     window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
 
@@ -334,6 +361,10 @@ def assetManagerUI():
 
     return window
 
-assetManagerUIWindow = assetManagerUI()
+def openAssetManagertWindow():
+    global assetManagerUIWindow
+    assetManagerUIWindow = assetManagerUI()
+
+openAssetManagertWindow() 
 #prefWidget 
 #get render layers from scene

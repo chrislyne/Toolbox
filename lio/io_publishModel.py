@@ -38,7 +38,10 @@ def makeRef(refName,publishString):
     cmds.setAttr ('%s.outlinerColorG'%(publishString),0.8)
     cmds.setAttr ('%s.outlinerColorB'%(publishString),0.25)
     #refresh outliner
-    mel.eval("AEdagNodeCommonRefreshOutliners();")
+    try:
+        mel.eval("AEdagNodeCommonRefreshOutliners();")
+    except:
+        pass
     #add attribute to node for re-publishing
     addAttribute(publishString,'publishName',refName)
     

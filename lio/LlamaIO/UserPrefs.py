@@ -2,7 +2,6 @@ import os
 import time
 import maya.mel as mel
 import maya.cmds as cmds
-from pymel.all import *
 import json
 
 #load user settings from disk
