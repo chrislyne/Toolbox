@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>712</height>
+    <width>800</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -811,7 +811,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>878</width>
+           <width>778</width>
            <height>240</height>
           </rect>
          </property>
@@ -865,6 +865,33 @@ background-image: url(/icon/io_ANIMOUT.png);
         </item>
         <item>
          <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Stagger (sec)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_stagger">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>60</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_8">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1123,7 +1150,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
+     <width>800</width>
      <height>21</height>
     </rect>
    </property>

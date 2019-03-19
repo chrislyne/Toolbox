@@ -185,10 +185,11 @@ def submitButton():
             if window.mainWidget.checkBox_paused.isChecked() == 1:
                 submitString += ' -Paused'
             submitString += ' -Creator %s'%window.mainWidget.lineEdit_name.text()
+            submitString += ' -StaggerStart %s'%window.mainWidget.lineEdit_stagger.text()
             submitString += ' -Note %s'%window.mainWidget.lineEdit_note.text()
             if window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
-            submitString += ' -CPUs 0 -GPUs 1 -RAM 0 -DistributeMode 0'
+            submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
             try:
                 #send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
                 send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
