@@ -35,7 +35,7 @@ def incrementSceneFile():
     writeDataAfterSave()
 
 def saveSceneFile():
-    print 'save scene not done'
+    cmds.file(save=True)
     writeDataAfterSave()
 
 def writeDataAfterSave():

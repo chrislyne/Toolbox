@@ -220,12 +220,7 @@
              </size>
             </property>
             <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>:/icons/icons/io_CAMIN.png</normaloff>
-              <normalon>:/icon/incrementalSave.svg</normalon>:/icons/icons/io_CAMIN.png</iconset>
+             <string>New</string>
             </property>
             <property name="iconSize">
              <size>
@@ -234,7 +229,7 @@
              </size>
             </property>
             <property name="flat">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
