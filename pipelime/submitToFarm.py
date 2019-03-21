@@ -58,13 +58,11 @@ class LayerWidget(qtBase.BaseWidget):
         parentWindow.mainWidget.scrollAreaWidgetContents.setMinimumHeight(height)
         
         
-        
     #widget functions
     
     def slide01(self,value):
         difference = self.previousValue - value
         for layer in self.layerWidgets:
-            #print addValue
             layer.layerPrioritySlider.setValue(layer.layerPrioritySlider.value()-difference)
         self.previousValue = value
 
@@ -84,42 +82,38 @@ class LayerWidget(qtBase.BaseWidget):
         for layer in self.layerWidgets:
             layer.checkBox_layerEnable.setChecked(value)
 
-    
-
 
 def globalDict():
-    #print 'global'
     prefData = []
-    prefData.append(['pathToRenderExe','value','\'%s\''%window.mainWidget.lineEdit_render.text()])
-    prefData.append(['pathToSubmitExe','value','\'%s\''%window.mainWidget.lineEdit_submitExe.text()])
+    prefData.append(['pathToRenderExe','value','\'%s\''%stf_window.mainWidget.lineEdit_render.text()])
+    prefData.append(['pathToSubmitExe','value','\'%s\''%stf_window.mainWidget.lineEdit_submitExe.text()])
     IO.writePrefsToFile(prefData,'%s/globalPrefs.json'%qtBase.self_path())
 
 def projectDict():
     prefData = []
-    prefData.append(['pathToRenderExe','value','\'%s\''%window.mainWidget.lineEdit_render.text()])
-    prefData.append(['trelloBoard','value','\'%s\''%window.mainWidget.lineEdit_trelloBoard.text()])
+    prefData.append(['pathToRenderExe','value','\'%s\''%stf_window.mainWidget.lineEdit_render.text()])
+    prefData.append(['trelloBoard','value','\'%s\''%stf_window.mainWidget.lineEdit_trelloBoard.text()])
     IO.writePrefsToFile(prefData,'%s/data/projectPrefs.json'%getProj.getProject())
 
 def localDict():
     prefData = []
-    prefData.append(['userName','value','\'%s\''%window.mainWidget.lineEdit_name.text()])
-    prefData.append(['userSlackID','value','\'%s\''%window.mainWidget.lineEdit_slack.text()])
-    prefData.append(['checkBox_Paused','value',window.mainWidget.checkBox_paused.isChecked()])
-    prefData.append(['prioritySlider','value',window.mainWidget.prioritySlider.value()])
-    prefData.append(['comboBox_pool','value','\'%s\''%window.mainWidget.comboBox_pool.currentText()])
-    prefData.append(['spinBox_packetSize','value',window.mainWidget.spinBox_packetSize.value()])
+    prefData.append(['userName','value','\'%s\''%stf_window.mainWidget.lineEdit_name.text()])
+    prefData.append(['userSlackID','value','\'%s\''%stf_window.mainWidget.lineEdit_slack.text()])
+    prefData.append(['checkBox_Paused','value',stf_window.mainWidget.checkBox_paused.isChecked()])
+    prefData.append(['prioritySlider','value',stf_window.mainWidget.prioritySlider.value()])
+    prefData.append(['comboBox_pool','value','\'%s\''%stf_window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['spinBox_packetSize','value',stf_window.mainWidget.spinBox_packetSize.value()])
     IO.writePrefsToFile(prefData,'%s/localPrefs.json'%qtBase.local_path())
 
 def fileDict():
     prefData = []
-    prefData.append(['window.mainWidget.prioritySlider','setValue',window.mainWidget.prioritySlider.value()])
-    prefData.append(['window.mainWidget.lineEdit_range','setText','\'%s\''%window.mainWidget.lineEdit_range.text()])
-    prefData.append(['window.mainWidget.lineEdit_note','setText','\'%s\''%window.mainWidget.lineEdit_note.text()])
-    prefData.append(['window.mainWidget.spinBox_packetSize','setValue',window.mainWidget.spinBox_packetSize.value()])
-    prefData.append(['window.mainWidget.comboBox_pool','setCurrentText','\'%s\''%window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['prioritySlider','value',stf_window.mainWidget.prioritySlider.value()])
+    prefData.append(['comboBox_pool','value','\'%s\''%stf_window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['spinBox_packetSize','value',stf_window.mainWidget.spinBox_packetSize.value()])
+    prefData.append(['staggerStart','value',stf_window.mainWidget.lineEdit_stagger.text()])
 
-
-    IO.writePrefsToFile(prefData,'%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
+    versionlessSceneName = ''.join([c for c in getProj.sceneName() if c not in "1234567890"])
+    IO.writePrefsToFile(prefData,'%s/.data/%s.json'%(getProj.sceneFolder(),versionlessSceneName))
 
 def layerDict(l):
     prefData = []
@@ -132,24 +126,26 @@ def layerDict(l):
     prefData.append(['img','imgname',filename])
     prefData.append(['user','trelloID','name'])
     prefData.append(['user','trelloAddress','name'])
-    prefData.append(['user','name',window.mainWidget.lineEdit_name.text()])
-    prefData.append(['user','slackID',window.mainWidget.lineEdit_slack.text()])
+    prefData.append(['user','name',stf_window.mainWidget.lineEdit_name.text()])
+    prefData.append(['user','slackID',stf_window.mainWidget.lineEdit_slack.text()])
 
     IO.writePrefsToFile(prefData,'%s/.data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),l))
 
 #button functions
 def selectSubmitExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
-    window.mainWidget.lineEdit_submitExe.setText(filename[0])
+    stf_window.mainWidget.lineEdit_submitExe.setText(filename[0])
 
 def selectRenderExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
-    window.mainWidget.lineEdit_render.setText(filename[0])
+    stf_window.mainWidget.lineEdit_render.setText(filename[0])
 
 def submitButton():
     print 'submit'
-    
+
+    #loop through layers in layerWidget
     for l in layerWidget.layerWidgets:
+
         if l.checkBox_layerEnable.isChecked() == 1:
             widgets = l.findChildren(QtWidgets.QWidget)
             for w in widgets:
@@ -171,7 +167,7 @@ def submitButton():
 
             #create string
             submitString = ''
-            submitString += '%s '%window.mainWidget.lineEdit_submitExe.text()
+            submitString += '%s '%stf_window.mainWidget.lineEdit_submitExe.text()
             submitString += ' -Type Redshift for Maya'
             submitString += ' -Scene %s'%getProj.filepath()
             submitString += ' -Project %s'%getProj.getProject()
@@ -181,13 +177,13 @@ def submitButton():
             submitString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
             submitString += ' -Pool %s'%l.comboBox_layerPool.currentText()
             submitString += ' -Range %s'%l.lineEdit_layerRange.text()
-            submitString += ' -Executable %s'%window.mainWidget.lineEdit_render.text()
-            if window.mainWidget.checkBox_paused.isChecked() == 1:
+            submitString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
+            if stf_window.mainWidget.checkBox_paused.isChecked() == 1:
                 submitString += ' -Paused'
-            submitString += ' -Creator %s'%window.mainWidget.lineEdit_name.text()
-            submitString += ' -StaggerStart %s'%window.mainWidget.lineEdit_stagger.text()
-            submitString += ' -Note %s'%window.mainWidget.lineEdit_note.text()
-            if window.mainWidget.checkBox_errors.isChecked() == 1:
+            submitString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
+            submitString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
+            submitString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+            if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
             submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
             try:
@@ -231,7 +227,8 @@ def setOptions(data,window):
                     [window.mainWidget.prioritySlider,"prioritySlider"],
                     [window.mainWidget.comboBox_pool,"comboBox_pool"],
                     [window.mainWidget.spinBox_packetSize,"spinBox_packetSize"],
-                    [window.mainWidget.lineEdit_range,"lineEdit_range"]
+                    [window.mainWidget.lineEdit_range,"lineEdit_range"],
+                    [window.mainWidget.lineEdit_stagger,"staggerStart"]
                 ]
     for d in UIinputs:
         try:
@@ -247,25 +244,25 @@ def mergeDictionaries(dict1,dict2):
     return dict1
 
 def submitRenderUI():
-    window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'submitToFarm.ui')
-    window._windowTitle = 'Submit to Farm'
-    window._windowName = 'SubmitToFarm'
-    window.pathModify = 'pipelime/'
-    window.BuildUI()
-    window.show(dockable=True)
+    stf_window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'submitToFarm.ui')
+    stf_window._windowTitle = 'Submit to Farm'
+    stf_window._windowName = 'SubmitToFarm'
+    stf_window.pathModify = 'pipelime/'
+    stf_window.BuildUI()
+    stf_window.show(dockable=True)
     #hide config panel 
-    window.mainWidget.configPanel.setVisible(False)
+    stf_window.mainWidget.configPanel.setVisible(False)
     #connect buttons
-    window.mainWidget.submitButton.clicked.connect(submitButton)
-    window.mainWidget.pushButton_globals.clicked.connect(globalDict)
-    window.mainWidget.pushButton_project.clicked.connect(projectDict)
-    window.mainWidget.pushButton_user.clicked.connect(localDict)
-    window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
-    window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
+    stf_window.mainWidget.submitButton.clicked.connect(submitButton)
+    stf_window.mainWidget.pushButton_globals.clicked.connect(globalDict)
+    stf_window.mainWidget.pushButton_project.clicked.connect(projectDict)
+    stf_window.mainWidget.pushButton_user.clicked.connect(localDict)
+    stf_window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
+    stf_window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
     #icon on button
     try:
         buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(qtBase.self_path(), "gear"))
-        window.mainWidget.pushButton_settings.setIcon(buttonIcon)
+        stf_window.mainWidget.pushButton_settings.setIcon(buttonIcon)
     except:
         pass
     #merge all dictionaries into one
@@ -275,22 +272,30 @@ def submitRenderUI():
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/localPrefs.json'%qtBase.local_path()))
     rangeFromTimeline =  '%s-%s'%(sceneVar.getStartFrame(),sceneVar.getEndFrame())
     comboDict = mergeDictionaries(comboDict,{"lineEdit_range": {"value":rangeFromTimeline}})
-    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName())))
+    versionlessSceneName = ''.join([c for c in getProj.sceneName() if c not in "1234567890"])
+    comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/.data/%s.json'%(getProj.sceneFolder(),versionlessSceneName)))
 
-    setOptions(comboDict,window)
-    return window
+    setOptions(comboDict,stf_window)
+    return stf_window
 
 
 def openSubmitWindow():
 
-    global window
+    try:
+        del stf_window
+        del layers
+        del layerWidget
+    except:
+        pass
+
+    global stf_window
     global layers
     global layerWidget
 
-    window = submitRenderUI()
+    stf_window = submitRenderUI()
     #get render layers from scene
     layers = sceneVar.getRenderLayers()
-    layerWidget = LayerWidget(layers,window)
+    layerWidget = LayerWidget(layers,stf_window)
 
 
 #import pipelime.submitToFarm as submitToFarm
