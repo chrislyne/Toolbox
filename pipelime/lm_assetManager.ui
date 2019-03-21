@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>841</height>
+    <width>871</width>
+    <height>871</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -592,22 +592,28 @@
          <widget class="QPushButton" name="pushButton_save">
           <property name="minimumSize">
            <size>
-            <width>30</width>
-            <height>30</height>
+            <width>50</width>
+            <height>50</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>30</width>
-            <height>30</height>
+            <height>50</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">background-image: url(:/icon/save.svg);
+background-repeat: no-repeat;
+background-position: middle center;
+text-align: bottom center;</string>
+          </property>
           <property name="text">
-           <string/>
+           <string>Save</string>
           </property>
           <property name="iconSize">
            <size>
-            <width>60</width>
+            <width>30</width>
             <height>30</height>
            </size>
           </property>
@@ -620,7 +626,7 @@
          <widget class="QPushButton" name="pushButton_increment">
           <property name="minimumSize">
            <size>
-            <width>90</width>
+            <width>56</width>
             <height>50</height>
            </size>
           </property>
@@ -698,7 +704,7 @@ text-align: bottom center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>837</width>
+     <width>871</width>
      <height>21</height>
     </rect>
    </property>

@@ -339,6 +339,9 @@ def assetManagerUI():
     window.mainWidget.project_comboBox.addItems(projectLines)
     window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
 
+    
+    
+
     window.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(window.mainWidget.listWidget_assetType.currentItem().text(),projectsDict))
 
     window.mainWidget.listWidget_assets.currentTextChanged.connect(lambda: setAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
@@ -359,11 +362,22 @@ def assetManagerUI():
     #publish button
     window.mainWidget.pushButton_publish.clicked.connect(publishModel)
 
+    #set project in menu
+    
     return window
 
 def openAssetManagertWindow():
     global assetManagerUIWindow
     assetManagerUIWindow = assetManagerUI()
+
+    #set project dropdown to current project
+    currentProject = cmds.workspace(fullName=True)
+    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    for d in projectsDict:
+        if currentProject == projectsDict[d]['projectPath']:
+            print d
+            assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(d)
+            setProject(d,projectsDict)
 
 openAssetManagertWindow() 
 #prefWidget 
