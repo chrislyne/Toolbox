@@ -304,43 +304,9 @@ def assetManagerUI():
             projectLines.append(key)
         except:
             pass
-    '''
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "multiRef"))
-        window.mainWidget.pushButton_reference.setIcon(buttonIcon)
-    except:
-        pass
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "parentShape"))
-        window.mainWidget.pushButton_import.setIcon(buttonIcon)
-    except:
-        pass
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "io_Llama"))
-        window.mainWidget.pushButton_edit.setIcon(buttonIcon)
-    except:
-        pass
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "save"))
-        window.mainWidget.pushButton_save.setIcon(buttonIcon)
-    except:
-        pass
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "incrementalSave"))
-        window.mainWidget.pushButton_increment.setIcon(buttonIcon)
-    except:
-        pass
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.svg"%(qtBase.self_path(), "io_publishModel"))
-        window.mainWidget.pushButton_publish.setIcon(buttonIcon)
-    except:
-        pass
-    '''
+
     window.mainWidget.project_comboBox.addItems(projectLines)
     window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
-
-    
-    
 
     window.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(window.mainWidget.listWidget_assetType.currentItem().text(),projectsDict))
 

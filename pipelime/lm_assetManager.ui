@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>871</width>
+    <width>870</width>
     <height>871</height>
    </rect>
   </property>
@@ -293,6 +293,10 @@
             </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons/lm_assetManager.qrc">
+              <normaloff>:/icon/importREF.svg</normaloff>:/icon/importREF.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -699,7 +703,7 @@ text-align: bottom center;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>871</width>
+     <width>870</width>
      <height>21</height>
     </rect>
    </property>

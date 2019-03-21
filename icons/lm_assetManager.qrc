@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icon">
+    <file>importREF.svg</file>
     <file>io_publishModel.svg</file>
     <file>save.svg</file>
     <file>io_Llama.svg</file>
