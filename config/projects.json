@@ -1,17 +1,17 @@
 {
-	"Alpenliebe Jelly TVC": {
-		"projectPath": "Z:/Job_2/Alpenliebe Jelly TVC/maya"
-	},
-	"Alpenliebe Thematic": {
-		"projectPath": "Z:/Job_2/Alpenliebe Thematic/Maya"
-	},
-	"Amstel": {
-		"projectPath": "Z:/Job_2/Amstel/maya"
-	},
-	"Default": {
-		"projectPath": "C:/Users/Admin/Documents/maya/projects/default"
-	},
-	"MyMilk": {
-		"projectPath": "Z:/Job_2/MyMilk/maya"
-	}
+    "Alpenliebe Jelly TVC": {
+        "projectPath": "Z:/Job_2/Alpenliebe Jelly TVC/maya"
+    }, 
+    "Alpenliebe Thematic": {
+        "projectPath": "Z:/Job_2/Alpenliebe Thematic/Maya"
+    }, 
+    "Amstel": {
+        "projectPath": "Z:/Job_2/Amstel/maya"
+    }, 
+    "Default": {
+        "projectPath": "C:/Users/Admin/Documents/maya/projects/default"
+    }, 
+    "TVshow": {
+        "projectPath": "Z:/Job_1/TVshow/maya"
+    }
 }

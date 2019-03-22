@@ -2,7 +2,7 @@
 
 # Resource object code
 #
-# Created: Thu Mar 7 12:42:42 2019
+# Created: Fri Mar 22 11:54:54 2019
 #      by: The Resource Compiler for PySide2 (Qt v5.6.1)
 #
 # WARNING! All changes made in this file will be lost!
@@ -10,6 +10,147 @@
 from PySide2 import QtCore
 
 qt_resource_data = b"\
+\x00\x00\x03\x9e\
+<\
+svg xmlns=\x22http:\
+//www.w3.org/200\
+0/svg\x22 viewBox=\x22\
+0 0 32 32\x22><titl\
+e>incrementalSav\
+e</title><g id=\x22\
+Layer_2\x22 data-na\
+me=\x22Layer 2\x22><pa\
+th d=\x22M6.41,31,1\
+,25.59V6A5,5,0,0\
+,1,6,1H26a5,5,0,\
+0,1,5,5V26a5,5,0\
+,0,1-5,5Z\x22 fill=\
+\x22#d8d8d8\x22/><path\
+ d=\x22M26,2a4,4,0,\
+0,1,4,4V26a4,4,0\
+,0,1-4,4H6.83L2,\
+25.17V6A4,4,0,0,\
+1,6,2H26m0-2H6A6\
+,6,0,0,0,0,6V26l\
+6,6H26a6,6,0,0,0\
+,6-6V6a6,6,0,0,0\
+-6-6Z\x22 fill=\x22#42\
+4242\x22/></g><g id\
+=\x22Layer_24\x22 data\
+-name=\x22Layer 24\x22\
+><polyline point\
+s=\x226.92 0.45 6.9\
+2 15.08 25 14.83\
+ 25 0\x22 fill=\x22non\
+e\x22 stroke=\x22#4242\
+42\x22 stroke-miter\
+limit=\x2210\x22 strok\
+e-width=\x222\x22/><re\
+ct x=\x229.82\x22 y=\x221\
+9.94\x22 width=\x2212.\
+17\x22 height=\x227.96\
+\x22 fill=\x22#424242\x22\
+/><rect x=\x2211.9\x22\
+ y=\x2221.88\x22 width\
+=\x222.04\x22 height=\x22\
+4.04\x22 fill=\x22#d8d\
+8d8\x22/><line x1=\x22\
+24.53\x22 y1=\x220.82\x22\
+ x2=\x2224.53\x22 y2=\x22\
+14.26\x22 fill=\x22non\
+e\x22 stroke=\x22#fca3\
+06\x22 stroke-miter\
+limit=\x2210\x22 strok\
+e-width=\x224\x22/><li\
+ne x1=\x2231.25\x22 y1\
+=\x227.54\x22 x2=\x2217.8\
+2\x22 y2=\x227.54\x22 fil\
+l=\x22none\x22 stroke=\
+\x22#fca306\x22 stroke\
+-miterlimit=\x2210\x22\
+ stroke-width=\x224\
+\x22/></g></svg>\
+\x00\x00\x034\
+<\
+svg xmlns=\x22http:\
+//www.w3.org/200\
+0/svg\x22 viewBox=\x22\
+0 0 32 32\x22><titl\
+e>addRefs</title\
+><g id=\x22Layer_2\x22\
+ data-name=\x22Laye\
+r 2\x22><rect width\
+=\x2232\x22 height=\x2232\
+\x22 rx=\x226\x22 style=\x22\
+fill:#94b500\x22/><\
+/g><g id=\x22Layer_\
+8\x22 data-name=\x22La\
+yer 8\x22><rect x=\x22\
+6.28\x22 y=\x226.28\x22 w\
+idth=\x2219.44\x22 hei\
+ght=\x2219.44\x22 tran\
+sform=\x22translate\
+(-6.63 16) rotat\
+e(-45)\x22 style=\x22f\
+ill:#c8def3\x22/><p\
+olygon points=\x221\
+6 2.26 2.26 16 1\
+6 16 16 2.26\x22 st\
+yle=\x22fill:none\x22/\
+><polygon points\
+=\x2229.74 16 16 2.\
+26 16 16 29.74 1\
+6\x22 style=\x22fill:#\
+8bb2d5\x22/><polygo\
+n points=\x2216 29.\
+74 29.74 16 16 1\
+6 16 29.74\x22 styl\
+e=\x22fill:#3f7eb0\x22\
+/><polygon point\
+s=\x2216 16 2.26 16\
+ 16 29.74 16 16\x22\
+ style=\x22fill:#5d\
+96bf\x22/><rect x=\x22\
+21.7\x22 y=\x221.17\x22 w\
+idth=\x223.97\x22 heig\
+ht=\x2213.08\x22 style\
+=\x22fill:#424242\x22/\
+><rect x=\x2221.7\x22 \
+y=\x221.17\x22 width=\x22\
+3.97\x22 height=\x2213\
+.08\x22 transform=\x22\
+translate(31.4 -\
+15.97) rotate(90\
+)\x22 style=\x22fill:#\
+424242\x22/></g></s\
+vg>\
+\x00\x00\x01\x8f\
+<\
+svg xmlns=\x22http:\
+//www.w3.org/200\
+0/svg\x22 viewBox=\x22\
+0 0 32 32\x22><titl\
+e>importREF</tit\
+le><g id=\x22Layer_\
+25\x22 data-name=\x22L\
+ayer 25\x22><rect y\
+=\x220.06\x22 width=\x223\
+2\x22 height=\x2232\x22 r\
+x=\x226\x22 style=\x22fil\
+l:#94b500\x22/><pat\
+h d=\x22M16.06,28.4\
+5,4.55,16.62s5.0\
+8.07,6.64,0C11.3\
+,8,6.42,6.87,6.4\
+2,6.87S21.18,4.3\
+,20.94,16.62c1.7\
+3,0,6.64,0,6.64,\
+0Z\x22 style=\x22fill:\
+#3d7ca6;stroke:#\
+3d7ca6;stroke-li\
+necap:round;stro\
+ke-linejoin:roun\
+d\x22/></g></svg>\
 \x00\x00\x11\x88\
 <\
 svg xmlns=\x22http:\
@@ -293,6 +434,52 @@ A2.19,2.19,0,0,1\
 6,18.27,16Z\x22 fil\
 l=\x22#38332f\x22/></g\
 ></svg>\
+\x00\x00\x02\xc0\
+<\
+svg xmlns=\x22http:\
+//www.w3.org/200\
+0/svg\x22 viewBox=\x22\
+0 0 32 32\x22><titl\
+e>save</title><g\
+ id=\x22Layer_2\x22 da\
+ta-name=\x22Layer 2\
+\x22><path d=\x22M6.41\
+,31,1,25.59V6A5,\
+5,0,0,1,6,1H26a5\
+,5,0,0,1,5,5V26a\
+5,5,0,0,1-5,5Z\x22 \
+style=\x22fill:#d8d\
+8d8\x22/><path d=\x22M\
+26,2a4,4,0,0,1,4\
+,4V26a4,4,0,0,1-\
+4,4H6.83L2,25.17\
+V6A4,4,0,0,1,6,2\
+H26m0-2H6A6,6,0,\
+0,0,0,6V26l6,6H2\
+6a6,6,0,0,0,6-6V\
+6a6,6,0,0,0-6-6Z\
+\x22 style=\x22fill:#4\
+24242\x22/></g><g i\
+d=\x22Layer_24\x22 dat\
+a-name=\x22Layer 24\
+\x22><polyline poin\
+ts=\x226.92 0.45 6.\
+92 15.08 25 14.8\
+3 25 0\x22 style=\x22f\
+ill:none;stroke:\
+#424242;stroke-m\
+iterlimit:10;str\
+oke-width:2px\x22/>\
+<rect x=\x229.82\x22 y\
+=\x2219.94\x22 width=\x22\
+12.17\x22 height=\x227\
+.96\x22 style=\x22fill\
+:#424242\x22/><rect\
+ x=\x2211.9\x22 y=\x2221.\
+88\x22 width=\x222.04\x22\
+ height=\x224.04\x22 s\
+tyle=\x22fill:#d8d8\
+d8\x22/></g></svg>\
 \x00\x00\x16\x14\
 <\
 svg xmlns=\x22http:\
@@ -649,164 +836,6 @@ linecap=\x22round\x22 \
 stroke-linejoin=\
 \x22round\x22/></g></s\
 vg>\
-\x00\x00\x03\x9e\
-<\
-svg xmlns=\x22http:\
-//www.w3.org/200\
-0/svg\x22 viewBox=\x22\
-0 0 32 32\x22><titl\
-e>incrementalSav\
-e</title><g id=\x22\
-Layer_2\x22 data-na\
-me=\x22Layer 2\x22><pa\
-th d=\x22M6.41,31,1\
-,25.59V6A5,5,0,0\
-,1,6,1H26a5,5,0,\
-0,1,5,5V26a5,5,0\
-,0,1-5,5Z\x22 fill=\
-\x22#d8d8d8\x22/><path\
- d=\x22M26,2a4,4,0,\
-0,1,4,4V26a4,4,0\
-,0,1-4,4H6.83L2,\
-25.17V6A4,4,0,0,\
-1,6,2H26m0-2H6A6\
-,6,0,0,0,0,6V26l\
-6,6H26a6,6,0,0,0\
-,6-6V6a6,6,0,0,0\
--6-6Z\x22 fill=\x22#42\
-4242\x22/></g><g id\
-=\x22Layer_24\x22 data\
--name=\x22Layer 24\x22\
-><polyline point\
-s=\x226.92 0.45 6.9\
-2 15.08 25 14.83\
- 25 0\x22 fill=\x22non\
-e\x22 stroke=\x22#4242\
-42\x22 stroke-miter\
-limit=\x2210\x22 strok\
-e-width=\x222\x22/><re\
-ct x=\x229.82\x22 y=\x221\
-9.94\x22 width=\x2212.\
-17\x22 height=\x227.96\
-\x22 fill=\x22#424242\x22\
-/><rect x=\x2211.9\x22\
- y=\x2221.88\x22 width\
-=\x222.04\x22 height=\x22\
-4.04\x22 fill=\x22#d8d\
-8d8\x22/><line x1=\x22\
-24.53\x22 y1=\x220.82\x22\
- x2=\x2224.53\x22 y2=\x22\
-14.26\x22 fill=\x22non\
-e\x22 stroke=\x22#fca3\
-06\x22 stroke-miter\
-limit=\x2210\x22 strok\
-e-width=\x224\x22/><li\
-ne x1=\x2231.25\x22 y1\
-=\x227.54\x22 x2=\x2217.8\
-2\x22 y2=\x227.54\x22 fil\
-l=\x22none\x22 stroke=\
-\x22#fca306\x22 stroke\
--miterlimit=\x2210\x22\
- stroke-width=\x224\
-\x22/></g></svg>\
-\x00\x00\x02\xc0\
-<\
-svg xmlns=\x22http:\
-//www.w3.org/200\
-0/svg\x22 viewBox=\x22\
-0 0 32 32\x22><titl\
-e>save</title><g\
- id=\x22Layer_2\x22 da\
-ta-name=\x22Layer 2\
-\x22><path d=\x22M6.41\
-,31,1,25.59V6A5,\
-5,0,0,1,6,1H26a5\
-,5,0,0,1,5,5V26a\
-5,5,0,0,1-5,5Z\x22 \
-style=\x22fill:#d8d\
-8d8\x22/><path d=\x22M\
-26,2a4,4,0,0,1,4\
-,4V26a4,4,0,0,1-\
-4,4H6.83L2,25.17\
-V6A4,4,0,0,1,6,2\
-H26m0-2H6A6,6,0,\
-0,0,0,6V26l6,6H2\
-6a6,6,0,0,0,6-6V\
-6a6,6,0,0,0-6-6Z\
-\x22 style=\x22fill:#4\
-24242\x22/></g><g i\
-d=\x22Layer_24\x22 dat\
-a-name=\x22Layer 24\
-\x22><polyline poin\
-ts=\x226.92 0.45 6.\
-92 15.08 25 14.8\
-3 25 0\x22 style=\x22f\
-ill:none;stroke:\
-#424242;stroke-m\
-iterlimit:10;str\
-oke-width:2px\x22/>\
-<rect x=\x229.82\x22 y\
-=\x2219.94\x22 width=\x22\
-12.17\x22 height=\x227\
-.96\x22 style=\x22fill\
-:#424242\x22/><rect\
- x=\x2211.9\x22 y=\x2221.\
-88\x22 width=\x222.04\x22\
- height=\x224.04\x22 s\
-tyle=\x22fill:#d8d8\
-d8\x22/></g></svg>\
-\x00\x00\x03\x12\
-<\
-svg xmlns=\x22http:\
-//www.w3.org/200\
-0/svg\x22 viewBox=\x22\
-0 0 32 32\x22><titl\
-e>multiRef</titl\
-e><g id=\x22Layer_2\
-\x22 data-name=\x22Lay\
-er 2\x22><rect widt\
-h=\x2232\x22 height=\x223\
-2\x22 rx=\x226\x22 ry=\x226\x22\
- fill=\x22#94b500\x22/\
-></g><g id=\x22Laye\
-r_8\x22 data-name=\x22\
-Layer 8\x22><rect x\
-=\x226.28\x22 y=\x226.28\x22\
- width=\x2219.44\x22 h\
-eight=\x2219.44\x22 tr\
-ansform=\x22transla\
-te(-6.63 16) rot\
-ate(-45)\x22 fill=\x22\
-#c8def3\x22/><polyg\
-on points=\x2216 2.\
-26 2.26 16 16 16\
- 16 2.26\x22 fill=\x22\
-none\x22/><polygon \
-points=\x2229.74 16\
- 16 2.26 16 16 2\
-9.74 16\x22 fill=\x22#\
-8bb2d5\x22/><polygo\
-n points=\x2216 29.\
-74 29.74 16 16 1\
-6 16 29.74\x22 fill\
-=\x22#3f7eb0\x22/><pol\
-ygon points=\x2216 \
-16 2.26 16 16 29\
-.74 16 16\x22 fill=\
-\x22#5d96bf\x22/><path\
- d=\x22M28.52,10.83\
-l-2.8-1.76.1,3.3\
-4H23.37l.13-3.34\
--2.83,1.76-1.2-2\
-.11,2.94-1.54L19\
-.47,5.63l1.2-2.1\
-4L23.5,5.28l-.13\
--3.34h2.45l-.1,3\
-.34,2.8-1.79,1.2\
-3,2.14-3,1.55,3,\
-1.54Z\x22 fill=\x22#42\
-4242\x22/></g></svg\
->\
 "
 
 qt_resource_name = b"\
@@ -814,38 +843,43 @@ qt_resource_name = b"\
 \x00\x06\xfa^\
 \x00i\
 \x00c\x00o\x00n\
-\x00\x0c\
-\x0a:\xdc\x87\
-\x00i\
-\x00o\x00_\x00L\x00l\x00a\x00m\x00a\x00.\x00s\x00v\x00g\
-\x00\x13\
-\x0d\xf5\x17\xa7\
-\x00i\
-\x00o\x00_\x00p\x00u\x00b\x00l\x00i\x00s\x00h\x00M\x00o\x00d\x00e\x00l\x00.\x00s\
-\x00v\x00g\
 \x00\x13\
 \x01[j\x87\
 \x00i\
 \x00n\x00c\x00r\x00e\x00m\x00e\x00n\x00t\x00a\x00l\x00S\x00a\x00v\x00e\x00.\x00s\
 \x00v\x00g\
+\x00\x0b\
+\x0b\x1d\x09\xc7\
+\x00a\
+\x00d\x00d\x00R\x00e\x00f\x00s\x00.\x00s\x00v\x00g\
+\x00\x0d\
+\x06\x17\x88'\
+\x00i\
+\x00m\x00p\x00o\x00r\x00t\x00R\x00E\x00F\x00.\x00s\x00v\x00g\
+\x00\x0c\
+\x0a:\xdc\x87\
+\x00i\
+\x00o\x00_\x00L\x00l\x00a\x00m\x00a\x00.\x00s\x00v\x00g\
 \x00\x08\
 \x08\xc8U\xe7\
 \x00s\
 \x00a\x00v\x00e\x00.\x00s\x00v\x00g\
-\x00\x0c\
-\x06!/\x07\
-\x00m\
-\x00u\x00l\x00t\x00i\x00R\x00e\x00f\x00.\x00s\x00v\x00g\
+\x00\x13\
+\x0d\xf5\x17\xa7\
+\x00i\
+\x00o\x00_\x00p\x00u\x00b\x00l\x00i\x00s\x00h\x00M\x00o\x00d\x00e\x00l\x00.\x00s\
+\x00v\x00g\
 "
 
 qt_resource_struct = b"\
 \x00\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x01\
-\x00\x00\x00\x00\x00\x02\x00\x00\x00\x05\x00\x00\x00\x02\
-\x00\x00\x00X\x00\x00\x00\x00\x00\x01\x00\x00'\xa4\
-\x00\x00\x00\x9a\x00\x00\x00\x00\x00\x01\x00\x00.\x0a\
-\x00\x00\x00\x84\x00\x00\x00\x00\x00\x01\x00\x00+F\
+\x00\x00\x00\x00\x00\x02\x00\x00\x00\x06\x00\x00\x00\x02\
 \x00\x00\x00\x0e\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\
-\x00\x00\x00,\x00\x00\x00\x00\x00\x01\x00\x00\x11\x8c\
+\x00\x00\x00V\x00\x00\x00\x00\x00\x01\x00\x00\x06\xda\
+\x00\x00\x00\x94\x00\x00\x00\x00\x00\x01\x00\x00\x19\xf9\
+\x00\x00\x00v\x00\x00\x00\x00\x00\x01\x00\x00\x08m\
+\x00\x00\x00:\x00\x00\x00\x00\x00\x01\x00\x00\x03\xa2\
+\x00\x00\x00\xaa\x00\x00\x00\x00\x00\x01\x00\x00\x1c\xbd\
 "
 
 def qInitResources():

@@ -14,6 +14,31 @@ from stat import S_ISREG, ST_MTIME, ST_MODE
 import baseIO.incrementalSave as incSave
 from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishModelCheckText
 import pipelime.resources.lm_resources
+import json
+
+def selectFolder():
+    filename = QtWidgets.QFileDialog.getExistingDirectory()
+    projectName = filename.split('/')[-2]
+    projectPath = filename
+    projectData = []
+    projectData.append([projectName,'projectPath',projectPath])
+    IO.writePrefsToFile(projectData,'C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    assetManagerUIWindow.mainWidget.project_comboBox.addItems([projectName])
+    assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(projectName)
+
+#removes project from project combobox
+def removeProject():
+    #read curent project from dropdown menu
+    currentProject = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
+    #load project dictionary
+    projectDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    #remove current project from dictionary
+    del projectDict[currentProject]
+    #write out to json file
+    with open('C:/Users/Admin/Documents/Toolbox/config/projects.json', mode='w') as feedsjson:
+        json.dump(projectDict, feedsjson, indent=4, sort_keys=True)
+    #remove text from dropdown menu
+    assetManagerUIWindow.mainWidget.project_comboBox.removeItem(assetManagerUIWindow.mainWidget.project_comboBox.currentIndex())
 
 
 def publishModel():
@@ -44,7 +69,6 @@ def writeDataAfterSave():
     metaData.append(['user','value','%s'%localPrefDict["userName"]["value"].strip('\'')])
     metaData.append(['note','value','%s'%assetManagerUIWindow.mainWidget.textEdit_note.toPlainText()])
     IO.writePrefsToFile(metaData,'%s/.data/%s.json'%(getProj.sceneFolder(),getProj.sceneName()))
-
 
 
 def setProjectPth():
@@ -185,6 +209,21 @@ def referenceAsset(assetName,projectsDict,imp):
         except:
             print 'unable to load reference %s'%assetPath
 
+def setVersion(assetName,projectsDict):
+    #read asset
+    assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
+    project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
+    assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],assetType,assetName)
+    #find latest version
+    workingFiles = orderByModified(assetPath)
+    assetManagerUIWindow.mainWidget.tableWidget_assetVersions.clearContents()
+    assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setRowCount(0)
+    for i,f in enumerate(workingFiles):
+        print f
+        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.insertRow(i)
+        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,0, QtWidgets.QTableWidgetItem(f))
+
+
 def setAsset(assetName,projectsDict):
 
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
@@ -193,8 +232,12 @@ def setAsset(assetName,projectsDict):
     #find and display date
     try:
         refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDict[project]["projectPath"],assetType,assetName)
-        dateModified = time.strftime('%d/%m/%Y - %a %I:%M %p', time.localtime(os.path.getmtime(refPath)))
-        assetManagerUIWindow.mainWidget.label_date.setText(dateModified)
+        dateModified = time.strftime('%d/%m/%Y', time.localtime(os.path.getmtime(refPath)))
+        currentDate = time.strftime("%d/%m/%Y", time.localtime())
+        if dateModified == currentDate:
+            dateModified = 'Today'
+        timeModified = time.strftime('%a %I:%M %p', time.localtime(os.path.getmtime(refPath)))
+        assetManagerUIWindow.mainWidget.label_date.setText('%s - %s'%(dateModified,timeModified))
     except:
         assetManagerUIWindow.mainWidget.label_date.setText('')
     #find and display username
@@ -215,12 +258,10 @@ def setAsset(assetName,projectsDict):
         buttonIcon = QtGui.QIcon(thumbPath)
         assetManagerUIWindow.mainWidget.pushButton_thumb.setIcon(buttonIcon)
         assetManagerUIWindow.mainWidget.pushButton_thumb.setText("")
-        #assetManagerUIWindow.mainWidget.pushButton_thumb.setMaximumWidth(300)
-        #assetManagerUIWindow.mainWidget.pushButton_thumb.setMaximumHeight(300)
-        #assetManagerUIWindow.mainWidget.pushButton_thumb.setIconSize(QtCore.QSize(300,300))
         
     except:
         pass
+    setVersion(assetName,projectsDict)
 
 def setType(key,projectsDict):
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
@@ -257,7 +298,9 @@ def setType(key,projectsDict):
         pass
 
 
-def setProject(key,projectsDict):
+def setProject(key):
+    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    print projectsDict
     projectPath = projectsDict[key]["projectPath"]
 
     assetTypeFolders = []
@@ -306,10 +349,15 @@ def assetManagerUI():
             pass
 
     window.mainWidget.project_comboBox.addItems(projectLines)
-    window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText(),projectsDict))
+    window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText()))
 
     window.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(window.mainWidget.listWidget_assetType.currentItem().text(),projectsDict))
 
+    #add project button
+    window.mainWidget.pushButton_addProject.clicked.connect(selectFolder)
+    #remove project button
+    window.mainWidget.pushButton_removeProject.clicked.connect(removeProject)
+    #change asset selection
     window.mainWidget.listWidget_assets.currentTextChanged.connect(lambda: setAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
     #reference button
     window.mainWidget.pushButton_reference.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),projectsDict,0))
@@ -343,7 +391,7 @@ def openAssetManagertWindow():
         if currentProject == projectsDict[d]['projectPath']:
             print d
             assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(d)
-            setProject(d,projectsDict)
+            setProject(d)
 
 openAssetManagertWindow() 
 #prefWidget 

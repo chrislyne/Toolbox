@@ -1,10 +1,10 @@
 <RCC>
   <qresource prefix="icon">
-    <file>importREF.svg</file>
     <file>io_publishModel.svg</file>
+    <file>importREF.svg</file>
     <file>save.svg</file>
     <file>io_Llama.svg</file>
-    <file>multiRef.svg</file>
     <file>incrementalSave.svg</file>
+    <file>addRefs.svg</file>
   </qresource>
 </RCC>
