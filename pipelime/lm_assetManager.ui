@@ -617,7 +617,7 @@
          <enum>QAbstractItemView::SelectRows</enum>
         </property>
         <property name="showGrid">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="gridStyle">
          <enum>Qt::DotLine</enum>
@@ -625,11 +625,14 @@
         <property name="sortingEnabled">
          <bool>true</bool>
         </property>
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
         <attribute name="horizontalHeaderCascadingSectionResizes">
          <bool>true</bool>
         </attribute>
         <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>200</number>
+         <number>150</number>
         </attribute>
         <attribute name="horizontalHeaderHighlightSections">
          <bool>true</bool>
@@ -670,6 +673,9 @@
          <property name="text">
           <string>Date</string>
          </property>
+         <property name="textAlignment">
+          <set>AlignLeading|AlignVCenter</set>
+         </property>
         </column>
         <item row="0" column="0">
          <property name="text">
@@ -684,6 +690,9 @@
         <item row="0" column="2">
          <property name="text">
           <string>sd</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignTrailing|AlignVCenter</set>
          </property>
         </item>
         <item row="1" column="0">

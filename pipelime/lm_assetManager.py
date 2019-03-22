@@ -16,6 +16,7 @@ from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishMo
 import pipelime.resources.lm_resources
 import json
 
+
 def selectFolder():
     filename = QtWidgets.QFileDialog.getExistingDirectory()
     projectName = filename.split('/')[-2]
@@ -109,7 +110,8 @@ def orderByModified(dirpath):
     
     for cdate, path in sorted(entries):
         #print time.ctime(cdate), os.path.basename(path)
-        recentFiles.append(os.path.basename(path))
+        dateModified = time.strftime('%Y/%m/%d - %I:%M %p', time.localtime(os.path.getmtime(path)))
+        recentFiles.append([os.path.basename(path),'Artist Name',dateModified])
     return recentFiles
 
 def newAsset(projectsDict):
@@ -178,7 +180,7 @@ def editAsset(assetName,projectsDict):
     workingFiles = orderByModified(assetPath)
     if workingFiles:
         #open existing file
-        latestFilePath = '%s/%s'%(assetPath,workingFiles[-1])
+        latestFilePath = '%s/%s'%(assetPath,workingFiles[-1][0])
         cmds.file(latestFilePath, open=True, ignoreVersion=True, force=True)
     else:
         #create new file
@@ -219,10 +221,17 @@ def setVersion(assetName,projectsDict):
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.clearContents()
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setRowCount(0)
     for i,f in enumerate(workingFiles):
-        print f
         assetManagerUIWindow.mainWidget.tableWidget_assetVersions.insertRow(i)
-        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,0, QtWidgets.QTableWidgetItem(f))
+        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,0, QtWidgets.QTableWidgetItem(f[0]))
 
+        nameItem = QtWidgets.QTableWidgetItem(f[1])
+        nameItem.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter)
+        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,1, nameItem)
+
+        dateItem = QtWidgets.QTableWidgetItem(f[2])
+        dateItem.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter)
+        assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,2, dateItem)
+        
 
 def setAsset(assetName,projectsDict):
 
