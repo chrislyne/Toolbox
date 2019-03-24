@@ -16,6 +16,9 @@ from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishMo
 import pipelime.resources.lm_resources
 import json
 
+def doubleClicked():
+    print 'double clicked'
+    assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(1)
 
 def selectFolder():
     filename = QtWidgets.QFileDialog.getExistingDirectory()
@@ -111,7 +114,15 @@ def orderByModified(dirpath):
     for cdate, path in sorted(entries):
         #print time.ctime(cdate), os.path.basename(path)
         dateModified = time.strftime('%Y/%m/%d - %I:%M %p', time.localtime(os.path.getmtime(path)))
-        recentFiles.append([os.path.basename(path),'Artist Name',dateModified])
+        
+        fileDictPath = '%s/.data/%s.json'%(path.rsplit('\\',1)[0],path.split('\\')[-1].rsplit('.',1)[0])
+        fileDict = IO.loadDictionary(fileDictPath)
+        artistName = ''
+        try:
+            artistName = fileDict["user"]["value"]
+        except:
+            pass
+        recentFiles.append([os.path.basename(path),artistName,dateModified])
     return recentFiles
 
 def newAsset(projectsDict):
@@ -225,7 +236,6 @@ def setVersion(assetName,projectsDict):
         assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,0, QtWidgets.QTableWidgetItem(f[0]))
 
         nameItem = QtWidgets.QTableWidgetItem(f[1])
-        nameItem.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter)
         assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,1, nameItem)
 
         dateItem = QtWidgets.QTableWidgetItem(f[2])
@@ -270,6 +280,7 @@ def setAsset(assetName,projectsDict):
         
     except:
         pass
+    assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(0)
     setVersion(assetName,projectsDict)
 
 def setType(key,projectsDict):
@@ -368,6 +379,7 @@ def assetManagerUI():
     window.mainWidget.pushButton_removeProject.clicked.connect(removeProject)
     #change asset selection
     window.mainWidget.listWidget_assets.currentTextChanged.connect(lambda: setAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
+    window.mainWidget.listWidget_assets.doubleClicked.connect(doubleClicked)
     #reference button
     window.mainWidget.pushButton_reference.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),projectsDict,0))
     #import button
