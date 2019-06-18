@@ -41,7 +41,7 @@ def RemoveButton(shelfName,iconName):
             #Assert that this is a shelfButton
             if cmds.objectTypeUI(btn,isType='shelfButton'):
 
-                label = cmds.shelfButton(btn,q=True,image=True)
+                label = cmds.shelfButton(btn,q=True,label=True)
 
                 #If this button has the label we're looking for,
                 #delete the button.
@@ -120,8 +120,7 @@ def AddIcons(shelfName):
                     #try to download file
                     DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
                     if ii == 0:
-                        shelfString += ',i1=\''+ico+'\''
-            
+                        shelfString += ',i1=\''+ico+'\''  
         except:
             print ('file not available')
             #set icon to default button because image can not be downloaded
@@ -168,8 +167,8 @@ def AddIcons(shelfName):
         shelfString += ',w=32,h=32,p=\''+shelfName+'\')'
         
         #remove old button
-        #for ico in icon:
-        #    RemoveButton(shelfName,ico)
+        if label:
+            RemoveButton(shelfName,label)
 
         #add icons to shelf
         currentButton = eval (shelfString)
