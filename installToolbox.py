@@ -103,6 +103,7 @@ def AddIcons(shelfName):
     #resize progress bar
     cmds.progressBar('progressControl', edit=True,vis=True, maxValue=len(buttons)-1)
 
+    #loop through dictionary
     for i, btn in enumerate(buttons):
         shelfElements = buttons[i]
         shelfString = 'cmds.shelfButton(rpt=True'
@@ -116,12 +117,15 @@ def AddIcons(shelfName):
                     print 'seperator'
                     shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
                 else:
+                    #try to download file
                     DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
                     if ii == 0:
                         shelfString += ',i1=\''+ico+'\''
             
         except:
             print ('file not available')
+            #set icon to default button because image can not be downloaded
+            shelfString += ',i1=\'commandButton.png\''
         #update progress
         cmds.progressBar('progressControl', edit=True, step=1)
         #download script from github
@@ -164,8 +168,8 @@ def AddIcons(shelfName):
         shelfString += ',w=32,h=32,p=\''+shelfName+'\')'
         
         #remove old button
-        for ico in icon:
-            RemoveButton(shelfName,ico)
+        #for ico in icon:
+        #    RemoveButton(shelfName,ico)
 
         #add icons to shelf
         currentButton = eval (shelfString)

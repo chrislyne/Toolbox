@@ -171,6 +171,12 @@
 			"stp":"mel"
 		},
 		{
+			"label":"Check Out Yeti Licence",
+			"script":"Cache/SmedgeBifrostCache.mel",
+			"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";",
+			"stp":"mel"
+		},
+		{
 			"icon":"cacheBifrost.svg",
 			"label":"Cache Bifrost on Smedge",
 			"script":"Cache/SmedgeBifrostCache.mel",
