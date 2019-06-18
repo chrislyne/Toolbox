@@ -48,12 +48,19 @@ def RemoveButton(shelfName,iconName):
                 if iconName == label:
                     cmds.deleteUI(btn)
 
-def DownloadFile(remote, local):
+def downloadFile(remote, local):
 
     
     u = urllib2.urlopen(remote)
     h = u.info()
     totalSize = int(h["Content-Length"])
+
+    filePath = local.rsplit('/',1)
+
+    #make folder
+    if len(filePath) > 1:
+        if not os.path.exists('%s'%(filePath[0])):
+            os.makedirs('%s'%(filePath[0]))
     
     print "Downloading %s bytes..." % totalSize,
     fp = open(local, 'wb')
@@ -118,7 +125,7 @@ def AddIcons(shelfName):
                     shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
                 else:
                     #try to download file
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
+                    downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
                     if ii == 0:
                         shelfString += ',i1=\''+ico+'\''  
         except:
@@ -131,8 +138,9 @@ def AddIcons(shelfName):
         if scriptsMenuI > 1:
             try:
                 script = buttons[i]['script']
-                fileName = script.split('/')
-                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
+
+                downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+script))
+                #DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
             except:
                 print ('file not available')
         #download modules from github
@@ -140,11 +148,8 @@ def AddIcons(shelfName):
             try:
                 modules = buttons[i]['modules']
                 for mod in modules:
-                    fileName = mod.split('/')
-                    #make folder
-                    if not os.path.exists('%s/%s'%(localScriptsPath,fileName[0])):
-                        os.makedirs('%s/%s'%(localScriptsPath,fileName[0]))
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
+
+                    downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
             except:
                 print ('file not available')
         try:

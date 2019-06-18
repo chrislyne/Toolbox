@@ -1,10 +1,12 @@
 {
+	"dependencies":[
+	],
 	"buttons": [
 		{
 			"icon":"incrementalSave.svg",
 			"label":"Incremental Save",
-			"script":"Core/incrementalSaveUI.py",
-			"modules": ["Modules/incrementalSave.py","Modules/IOuserPref.py"],
+			"script":"Tools/incrementalSaveUI.py",
+			"modules": ["baseIO/incrementalSave.py","baseIO/IOuserPref.py"],
 			"command":"import incrementalSaveUI;from incrementalSaveUI import *;incrementalSaveUI()",
 			"stp":"python"
 		},
@@ -38,7 +40,7 @@
 		{
 			"icon":"clearPlugins.svg",
 			"label":"clears plugins from scene",
-			"script":"Core/clearPlugins.mel",
+			"script":"mel/clearPlugins.mel",
 			"command":"source clearPlugins;clearPlugins(0);",
 			"menuItem":[
 				{
@@ -65,7 +67,7 @@
 			"icon":"loopBox.svg",
 			"label":"loops through attributes",
 			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};",
-			"script":"Core/loopBox.mel",
+			"script":"mel/loopBox.mel",
 			"command":"source loopBox;loopBox;",
 			"stp":"mel"
 		},
@@ -78,7 +80,7 @@
 		{
 			"icon":"assignNewShader.svg",
 			"label":"assign new shader to selected object",
-			"script":"Core/assignNewShader.mel",
+			"script":"mel/assignNewShader.mel",
 			"command":"source assignNewShader;assignNewShader(\"lambert\");",
 			"stp":"mel",
 			"menuItem":[
@@ -102,7 +104,7 @@
 		{
 			"icon":"edgeToCurve.svg",
 			"label":"select edges on object to make curve",
-			"script":"Core/edgeToCurve.mel",
+			"script":"mel/edgeToCurve.mel",
 			"command":"source edgeToCurve;edgeToCurve(0);",
 			"menuItem":[
 				{
@@ -121,14 +123,14 @@
 		{
 			"icon":"removeNamespaces.svg",
 			"label":"Remove namespaces from selected objects or from whole scene",
-			"script":"Core/removeNamespaces.mel",
+			"script":"mel/removeNamespaces.mel",
 			"command":"source removeNamespaces;removeNamespaces;",
 			"stp":"mel"
 		},
 		{
 			"icon":"OpenRenderFolder.svg",
 			"label":"Open project folders",
-			"script":"Core/OpenRenderFolder.py",
+			"script":"Tools/OpenRenderFolder.py",
 			"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(0)",
 			"stp":"python",
 			"menuItem":[
@@ -149,14 +151,14 @@
 		{
 			"icon":"multiRef.svg",
 			"label":"reference or import multiple files at once",
-			"script":"Core/multiRef.mel",
+			"script":"mel/multiRef.mel",
 			"command":"source multiRef;multiRef;",
 			"stp":"mel"
 		},
 		{
 			"icon":"exportForTexturing.svg",
 			"label":"Export geo and UV maps for texturing",
-			"script":"Core/exportForTexturing.mel",
+			"script":"mel/exportForTexturing.mel",
 			"command":"source exportForTexturing;exportForTexturing;",
 			"stp":"mel"
 		},
@@ -166,19 +168,29 @@
 		{
 			"icon":"cacheYetiFur.svg",
 			"label":"Cache yeti fur",
-			"script":"Cache/cacheYetiFur.mel",
+			"script":"mel/cacheYetiFur.mel",
 			"command":"source cacheYetiFur;cacheYetiFur;",
 			"stp":"mel"
 		},
 		{
 			"label":"Check Out Yeti Licence",
 			"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";",
-			"stp":"mel"
+			"stp":"mel",
+			"menuItem":[
+				{
+					"label":"Check Out Licence",
+					"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";"
+				},
+				{
+					"label":"Release Licence",
+					"command":"pgYetiCommand -returnLicense;putenv \"YETI_INTERACTIVE_LICENSE\" \"0\";"
+				}
+			]
 		},
 		{
 			"icon":"cacheBifrost.svg",
 			"label":"Cache Bifrost on Smedge",
-			"script":"Cache/SmedgeBifrostCache.mel",
+			"script":"mel/SmedgeBifrostCache.mel",
 			"command":"source SmedgeBifrostCache;SmedgeBifrostCache;",
 			"stp":"mel"
 		},
@@ -197,7 +209,10 @@
 			"lio/io_publishCamera.py",
 			"lio/io_publishModel.py",
 			"lio/io_publishToNewScene.py",
-			"lio/__init__.py"
+			"lio/__init__.py",
+			"lio/LlamaIO/LlamaUtil.py",
+			"lio/LlamaIO/UserPrefs.py",
+			"lio/LlamaIO/__init__.py"
 			],
 			"command":"import lio;from lio.llamaIO import LlamaIOWindow;lio.llamaIO.LlamaIO()",
 			"stp":"python"
@@ -208,14 +223,14 @@
 		{
 			"icon":"RSTessellate.svg",
 			"label":"Adds tesselsation to redshift objects",
-			"script":"Redshift/RSTessellate.mel",
+			"script":"mel/RSTessellate.mel",
 			"command":"source RSTessellate;RSTessellate;",
 			"stp":"mel"
 		},
 		{
 			"icon":"RSObjectId.svg",
 			"label":"Adds object ID to redshift objects",
-			"script":"Redshift/RSObjectId.mel",
+			"script":"mel/RSObjectId.mel",
 			"command":"source RSObjectId;RSObjectId;",
 			"stp":"mel"
 		},
@@ -228,14 +243,14 @@
 		{
 			"icon":"RSFresnel.svg",
 			"label":"Create redshift fresnel / occlusion material",
-			"script":"Redshift/RSFresnel.mel",
+			"script":"mel/RSFresnel.mel",
 			"command":"source RSFresnel;RSFresnel;",
 			"stp":"mel"
 		},
 		{
 			"icon":"RSCameraBokeh.svg",
 			"label":"Adds redshift bokeh to camera",
-			"script":"Redshift/RSCameraBokeh.mel",
+			"script":"mel/RSCameraBokeh.mel",
 			"command":"source RSCameraBokeh;RSCameraBokeh;",
 			"stp":"mel"
 		},
@@ -245,7 +260,7 @@
 		{
 			"icon":"playblastTemp.svg",
 			"label":"playblast with presets",
-			"script":"Core/playblastTemp.mel",
+			"script":"mel/playblastTemp.mel",
 			"command":"source playblastTemp;playblastTemp(0);",
 			"menuItem":[
 				{
@@ -271,15 +286,26 @@
 		{
 			"icon":"preFlightChecks.svg",
 			"label":"Pre render checks",
-			"script":"Core/preFlightChecks.mel",
+			"script":"mel/preFlightChecks.mel",
 			"command":"source preFlightChecks;preFlightChecks;",
 			"stp":"mel"
 		},
 		{
 			"icon":"smedgeRender.svg",
 			"label":"Submit render to smedge",
-			"script":"Core/smedgeRender.mel",
+			"script":"mel/smedgeRender.mel",
 			"command":"source smedgeRender;smedgeRender;",
+			"modules":[
+				"pipelime/__init__.py",
+				"pipelime/submitToFarm.py",
+				"pipelime/submitToFarm.ui",
+				"pipelime/submitToFarmWidget.ui",
+				"baseIO/loadSave.py",
+				"baseIO/sceneVar.py",
+				"baseIO/qtBase.py",
+				"baseIO/getProj.py",
+				"icons/gear.png"
+			],
 			"stp":"mel"
 		},
 		{
@@ -288,8 +314,9 @@
 		{
 			"icon":"icecream.svg",
 			"label":"icecream?",
-			"script":"toSlack.py",
+			"script":"Tools/toSlack.py",
 			"command":"import toSlack;toSlack.icecreamBot()",
+			"modules": ["Tools/__init__.py"],
 			"stp":"python"
 		},
 		{
