@@ -1,23 +1,25 @@
+import os
 import maya.cmds as cmds
+import subprocess
 
-def submitToSmedge:
+def submitToSmedge(packetSize,priority,sim,foam,mesh):
+
     #Query values from UI
-    packetSize = 4
-    priority = 100
-    sim = 1
-    mesh = 1
 
     submit = 'C:/Program Files/Smedge/Submit.exe'
-    dir = dirname submit
+    dir = submit.rsplit('/',1)[0]
+
     #set the working dir and PATH to the directory
-    chdir dir
-    putenv "PATH" dir
+    os.chdir(dir)
+    os.putenv("PATH",dir)
     #now set submit to just the basename of the executable
-    submit = `basename $submit ""`;
+    submit = submit.rsplit('/',1)[1]
 
     #get start and end frames from timeline
-    startFrame = cmds.playbackOptions(q=True,minTime=True)
-    endFrame = cmds.playbackOptions(q=True,maxTime=True)
+    startFrameFloat = cmds.playbackOptions(q=True,minTime=True)
+    startFrame = str('{0:g}'.format(startFrameFloat))
+    endFrameFloat = cmds.playbackOptions(q=True,maxTime=True)
+    endFrame = str('{0:g}'.format(endFrameFloat))
 
     #set naming
     filename = cmds.file(q=True,sn=True)
@@ -25,92 +27,47 @@ def submitToSmedge:
     smedgeName = 'bifrost: %s'%shortname.split('.')[0]
     extentionType = ''
     extra = ''
+    jobID = ''
 
     #check what to do
-    if sim == 1:
-        smedgeName += ' - SIM'  
-        extentionType = '.sim'
+    if sim == 1: 
         extra = '-UsageLimit 1 -DistributeMode \"Forward\"'
-    if mesh == 1:
-        smedgeName += ' - MESH'  
-        extentionType = '.mesh'
+        #set variables on bifrost nodes
+        #turn mesh off
+        #turn evaluate on
+        #evaluation type to simulation
+        #clear all cache variables
+
+        #save file
+        cmds.file(rename='%s%s'%(filename.rsplit('.',1)[0],extentionType))
+        cmds.file(save=True)
+        #submit string
+        cmd = '%s Script -Type \"Generic Script\" -Name \"%s - SIM\" -Priority %s %s -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \"%s-%s\" -PacketSize %s -Command \\\"C:\\Program Files\\Autodesk\\Maya2019\\bin\\mayabatch.exe\\\" \\\"%s.sim.mb\\\" \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),%s,%s,%s)\\\"'%(submit,smedgeName,priority,extra,startFrame,endFrame,packetSize,filename.rsplit('.',1)[0],sim,foam,mesh)
+        print cmd
+        #do it
+        jobID = subprocess.check_output(cmd,stdin=None,stderr=None,shell=False)
+        print jobID.split(' ')[-1]
+        
+    if mesh == 1: 
+        extra = '-WaitForJobID %s -WaitForWholeJob 0'%jobID.split(' ')[-1]
         if sim == 1:
-            extra = 'wait for sim to finish'
+            print 'wait for sim to finish'
+            #extra = 'wait for sim to finish'
+        cmds.file(rename='%s%s'%(filename.rsplit('.',1)[0],extentionType))
+        cmds.file(save=True)
+        #submit string
+        cmd = '%s Script -Type \"Generic Script\" -Paused -Name \"%s - MESH\" -Priority %s %s -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \"%s-%s\" -PacketSize %s -Command \\\"C:\\Program Files\\Autodesk\\Maya2019\\bin\\mayabatch.exe\\\" \\\"%s.mesh.mb\\\" \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),%s,%s,%s)\\\"'%(submit,smedgeName,priority,extra,startFrame,endFrame,packetSize,filename.rsplit('.',1)[0],sim,foam,mesh)
+        print cmd
+        #do it
+        result = subprocess.check_output(cmd,stdin=None,stderr=None,shell=False)
 
-    #make folder
-    #sysFile -makeDir ("Z:/Job_2/Amstel/maya/cache/bifrost/"+$buffer[0]); // Windows
-
-    #save file
-    cmds.file(rename='%s%s')%(filename,extentionType)
-    cmds.file(save=True)
+    #set filename back      
     cmds.file(rename=filename) 
     cmds.file(save=True)
 
-    #command to submit
-    cmd = '%s Script -Type \"Generic Script\" -Status \"Paused\" -Name %s -Priority %s %s -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \"%s-%s\" -PacketSize %s'%(submit,smedgeName,priority,extra,startFrame,endFrame,packetSize)
-    cmd = $submit + " Script -Type \"Generic Script\" -Status \"Paused\" -Name "+$smedgeName+" -Priority "+$priority+" "+$extra+" -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2018\\bin\\mayabatch.exe\\\" \\\""+$filename+$extentionType+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$sim+","+$foam+","+$mesh+")\\\"";
-    
+submitToSmedge(4,100,1,0,1)
 
 
-global proc SubmitToSmedge()
-{
-    //Query values from UI
-    int $packetSize = `intSliderGrp -q -value slider1`;
-    int $priority = `intSliderGrp -q -value slider2`;
-    int $sim = `checkBox -q -value check3`;
-    int $foam = `checkBox -q -value check2`;
-    int $mesh = `checkBox -q -value check1`;
-    
-    string $submit = "C:/Program Files/Smedge/Submit.exe";
-    string $dir = `dirname $submit`;
-    // set the working dir and PATH to the directory
-    chdir $dir;
-    putenv "PATH" $dir;
-    // now set submit to just the basename of the executable
-    $submit = `basename $submit ""`;
-    
-    float $startFrame = `playbackOptions -q -minTime`;
-    float $endFrame = `playbackOptions -q -maxTime`;
-    
-    string $filename = `file -q -sn`;
-    string $shortname = `file -q -sn -shn`;
-    string $buffer[];
-    tokenize $shortname "." $buffer;
-    string $smedgeName = "bifrost: "+$buffer[0];
-    string $extentionType = "";
-    string $extra = "";
-    if($sim == 1)
-    {
-        $smedgeName += " - SIM";  
-        $extentionType = ".sim";
-        $extra = "-UsageLimit 1 -DistributeMode \"Forward\"";
-    }
-    if($mesh == 1)
-    {
-        $smedgeName += " - MESH";  
-        $extentionType = ".mesh";
-    }
-    if($foam == 1)
-    {
-        $smedgeName += " - FOAM"; 
-        $extentionType = ".foam"; 
-    }
-
-    //make folder
-    sysFile -makeDir ("Z:/Job_2/Amstel/maya/cache/bifrost/"+$buffer[0]); // Windows
-
-    //save file
-    file -rename ($filename+$extentionType); 
-    file -save;
-    file -rename $filename; 
-    file -save;
-
-    string $cmd = $submit + " Script -Type \"Generic Script\" -Status \"Paused\" -Name "+$smedgeName+" -Priority "+$priority+" "+$extra+" -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2018\\bin\\mayabatch.exe\\\" \\\""+$filename+$extentionType+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$sim+","+$foam+","+$mesh+")\\\"";
-    
-    // Do it!
-    print( "// smedgeRender is executing system command:\n// " + $cmd + "\n" );
-    string $result = `system $cmd`;
-}
 
 global proc SmedgeBifrostCache()
 {
