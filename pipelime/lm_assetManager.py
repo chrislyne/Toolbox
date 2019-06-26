@@ -16,8 +16,6 @@ from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishMo
 import pipelime.resources.lm_resources
 import json
 
-projectsDictG = {}
-
 def doubleClicked():
     print 'double clicked'
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(1)
