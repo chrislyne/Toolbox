@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>838</height>
+    <width>818</width>
+    <height>848</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -811,7 +811,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>778</width>
+           <width>796</width>
            <height>240</height>
           </rect>
          </property>
@@ -1150,7 +1150,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>818</width>
      <height>21</height>
     </rect>
    </property>
@@ -1173,12 +1173,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>662</x>
-     <y>380</y>
+     <x>562</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
-     <x>698</x>
-     <y>379</y>
+     <x>605</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -1189,12 +1189,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>698</x>
-     <y>379</y>
+     <x>605</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
-     <x>662</x>
-     <y>380</y>
+     <x>562</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -1205,8 +1205,8 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>878</x>
-     <y>42</y>
+     <x>796</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -1221,12 +1221,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>647</x>
-     <y>267</y>
+     <x>780</x>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
-     <x>670</x>
-     <y>295</y>
+     <x>780</x>
+     <y>367</y>
     </hint>
    </hints>
   </connection>

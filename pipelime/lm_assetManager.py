@@ -26,7 +26,7 @@ def selectFolder():
     projectPath = filename
     projectData = []
     projectData.append([projectName,'projectPath',projectPath])
-    IO.writePrefsToFile(projectData,'C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    IO.writePrefsToFile(projectData,'%s/projects.json'%qtBase.local_path())
     assetManagerUIWindow.mainWidget.project_comboBox.addItems([projectName])
     assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(projectName)
 
@@ -35,11 +35,11 @@ def removeProject():
     #read curent project from dropdown menu
     currentProject = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     #load project dictionary
-    projectDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    projectDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     #remove current project from dictionary
     del projectDict[currentProject]
     #write out to json file
-    with open('C:/Users/Admin/Documents/Toolbox/config/projects.json', mode='w') as feedsjson:
+    with open('%s/projects.json'%qtBase.local_path(), mode='w') as feedsjson:
         json.dump(projectDict, feedsjson, indent=4, sort_keys=True)
     #remove text from dropdown menu
     assetManagerUIWindow.mainWidget.project_comboBox.removeItem(assetManagerUIWindow.mainWidget.project_comboBox.currentIndex())
@@ -76,7 +76,7 @@ def writeDataAfterSave():
 
 
 def setProjectPth():
-    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     key = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     cmds.workspace(projectsDict[key]['projectPath'], openWorkspace=True)
 
@@ -319,7 +319,7 @@ def setType(key,projectsDict):
 
 
 def setProject(key):
-    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     print projectsDict
     projectPath = projectsDict[key]["projectPath"]
 
@@ -359,7 +359,7 @@ def assetManagerUI():
     window.BuildUI()
     window.show(dockable=True)
 
-    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
 
     projectLines = []
     for key in projectsDict:
@@ -407,7 +407,7 @@ def openAssetManagertWindow():
 
     #set project dropdown to current project
     currentProject = cmds.workspace(fullName=True)
-    projectsDict = IO.loadDictionary('C:/Users/Admin/Documents/Toolbox/config/projects.json')
+    projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     for d in projectsDict:
         if currentProject == projectsDict[d]['projectPath']:
             print d
