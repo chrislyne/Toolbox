@@ -16,6 +16,8 @@ from lio.io_publishModel import IO_publishModel,IO_publishModel_window,PublishMo
 import pipelime.resources.lm_resources
 import json
 
+projectsDictG = {}
+
 def doubleClicked():
     print 'double clicked'
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(1)
@@ -29,6 +31,9 @@ def selectFolder():
     IO.writePrefsToFile(projectData,'%s/projects.json'%qtBase.local_path())
     assetManagerUIWindow.mainWidget.project_comboBox.addItems([projectName])
     assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(projectName)
+    
+    global projectsDictG
+    projectsDictG = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
 
 #removes project from project combobox
 def removeProject():
@@ -285,7 +290,7 @@ def setAsset(assetName,projectsDict):
 
 def setType(key,projectsDict):
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    typePath = '%s/scenes/REF/%s'%(projectsDict[project]["projectPath"],key)
+    typePath = '%s/scenes/REF/%s'%(projectsDictG[project]["projectPath"],key)
 
     assetFolders = []
     files = os.listdir(typePath)
@@ -313,7 +318,7 @@ def setType(key,projectsDict):
 
         items[0].setSelected(True)
         assetManagerUIWindow.mainWidget.listWidget_assets.setCurrentItem(items[0])
-        setAsset(items[0].text(),projectsDict)
+        setAsset(items[0].text(),projectsDictG)
     except:
         pass
 
@@ -399,21 +404,38 @@ def assetManagerUI():
 
     #set project in menu
     
+    
     return window
 
 def openAssetManagertWindow():
     global assetManagerUIWindow
+    global projectsDictG
     assetManagerUIWindow = assetManagerUI()
 
     #set project dropdown to current project
     currentProject = cmds.workspace(fullName=True)
     projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
+    projectsDictG = projectsDict
+    print currentProject
+    print projectsDict
+    foundProject = 0
     for d in projectsDict:
+        print d
+        print projectsDict[d]['projectPath']
         if currentProject == projectsDict[d]['projectPath']:
-            print d
+            print 'key = %s'%d
             assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(d)
             setProject(d)
+            foundProject = 1
+    if foundProject == 0:
+        #print 
+        try:
+            setProject(assetManagerUIWindow.mainWidget.project_comboBox.currentText())
+        except:
+            pass
+        
 
-openAssetManagertWindow() 
-#prefWidget 
-#get render layers from scene
+#openAssetManagertWindow() 
+
+#import pipelime.lm_assetManager as lm_assetManager
+#lm_assetManager.openAssetManagertWindow() 
