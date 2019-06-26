@@ -3,43 +3,43 @@
         "Z:/Job_2","Z:/Job_1","Z:/Job_3/pitch"
     ],
     "general":
-        {"folders":[".projectData","Production/schedule","Production/cost report","Production/quote","To_From/To Agency","To_From/From Agency","OUTPUT","Images/Reference","Images/Concept Art","ASSETS/Artwork"]
+        {"folders":[".projectData","Production/schedule","Production/cost report","Production/quote","To_From/To Agency","To_From/From Agency","OUTPUT","Images/Reference","Images/Concept Art","Elements/Artwork","WIP"]
     },
     "options":
         {
         "3D":{
-            "folders":["3D/assets","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/sourceimages/<var>","3D/images","3D/scripts","ASSETS/Playblasts"],
+            "folders":["3D/Elements","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/sourceimages/<var>","3D/images","3D/scripts","Elements/Playblasts"],
             "files":[{"source":"workspace.mel","dest":"3D"}]
             },
         "anim":
-            {"folders":["3D/scenes/REF","3D/scenes/ANIM/<var>/SH0010","3D/sourceimages","3D/images","3D/scripts","ASSETS/Playblasts/ANIM/<var>"]
+            {"folders":["3D/scenes/REF","3D/scenes/ANIM/<var>/SH0010","3D/sourceimages","3D/images","3D/scripts","Elements/Playblasts/ANIM/<var>"]
             },
         "FX":
-            {"folders":["3D/scenes/FX/<var>/SH0010","ASSETS/Playblasts/FX/<var>"]
+            {"folders":["3D/scenes/FX/<var>/SH0010","Elements/Playblasts/FX/<var>"]
             },
         "render":
-            {"folders":["3D/scenes/REF","3D/renderData","3D/scenes/RENDER/<var>/SH0010","3D/images","3D/scripts","ASSETS/Playblasts/<var>","ASSETS/3D_RENDERS/<var>"]
+            {"folders":["3D/scenes/REF","3D/renderData","3D/scenes/RENDER/<var>/SH0010","3D/images","3D/scripts","Elements/Playblasts/<var>","Elements/3D_RENDERS/<var>"]
             },
         "tracking":
             {"folders":["3D/scenes/TRACK/SH0010"]
             },
         "Comp":
-            {"folders":["Comp/<var>/SH0010","ASSETS/Prerenders/<var>","ASSETS/Comp_renders/<var>"]
+            {"folders":["Comp/<var>/SH0010","Elements/Prerenders/<var>","Elements/Comp_renders/<var>"]
             },
         "Edit":
-            {"folders":["Edit","ASSETS/Edit"]
+            {"folders":["Edit","Elements/Edit"]
             },
         "2D Animation":
-            {"folders":["ASSETS/2D","2D"]
+            {"folders":["Elements/2D","2D"]
             },
         "Live action":
-            {"folders":["ASSETS/Footage/RAW","ASSETS/Prerenders/Footage"]
+            {"folders":["Elements/Footage/RAW","Elements/Prerenders/Footage"]
             },
         "Storyboard":
             {"folders":[""]
             },
         "Matte Painting":
-            {"folders":["ASSETS/mattePainting"]
+            {"folders":["Elements/mattePainting"]
             }
     },
     "settings":
