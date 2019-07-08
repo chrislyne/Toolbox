@@ -28,9 +28,28 @@ def submitToSmedge(packetSize,priority,sim,foam,mesh):
     extra = ''
     jobID = ''
 
+    #mesh cache
+    cmds.setAttr('%s.liquidmeshCacheControl'%bifrostLiquidContainer,0)
+    cmds.setAttr('%s.enableLiquidMeshCache'%bifrostLiquidContainer,0)
+    cmds.setAttr('%s.liquidmeshCachePath'%bifrostLiquidContainer,'',type="string")
+    cmds.setAttr('%s.liquidmeshCacheFileName'%bifrostLiquidContainer,'',type="string")
+
     #check what to do
     if sim == 1: 
         extra = '-UsageLimit 1 -DistributeMode \"Forward\"'
+        #clear cache inputs
+        if mesh == 1:
+            #liquid cache
+            cmds.setAttr('%s.enableLiquidCache'%bifrostLiquidContainer,0)
+            cmds.setAttr('%s.liquidCacheControl'%bifrostLiquidContainer,0)
+            cmds.setAttr('%s.liquidCachePath'%bifrostLiquidContainer,'',type="string")
+            cmds.setAttr('%s.liquidCacheFileName'%bifrostLiquidContainer,'',type="string")
+            #solid cache
+            cmds.setAttr('%s.enableSolidCache'%bifrostLiquidContainer,0)
+            cmds.setAttr('%s.solidCacheControl'%bifrostLiquidContainer,0)
+            cmds.setAttr('%s.solidCachePath'%bifrostLiquidContainer,'',type="string")
+            cmds.setAttr('%s.solidCacheFileName'%bifrostLiquidContainer,'',type="string")
+        
         #set variables on bifrost nodes
         #turn mesh off
         #turn evaluate on
@@ -64,4 +83,4 @@ def submitToSmedge(packetSize,priority,sim,foam,mesh):
     cmds.file(rename=filename) 
     cmds.file(save=True)
 
-#submitToSmedge(4,100,1,0,1)
+submitToSmedge(4,100,1,0,1)

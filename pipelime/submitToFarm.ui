@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>848</height>
+    <width>779</width>
+    <height>797</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -363,6 +363,13 @@ background-image: url(/icon/io_ANIMOUT.png);
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Get Pools</string>
+               </property>
+              </widget>
              </item>
              <item>
               <spacer name="verticalSpacer_4">
@@ -811,7 +818,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>796</width>
+           <width>757</width>
            <height>240</height>
           </rect>
          </property>
@@ -892,6 +899,20 @@ background-image: url(/icon/io_ANIMOUT.png);
         </item>
         <item>
          <widget class="Line" name="line_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Half Res</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_9">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1150,7 +1171,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
+     <width>779</width>
      <height>21</height>
     </rect>
    </property>

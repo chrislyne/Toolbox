@@ -30,8 +30,8 @@ def selectFolder():
     assetManagerUIWindow.mainWidget.project_comboBox.addItems([projectName])
     assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(projectName)
     
-    global projectsDictG
-    projectsDictG = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
+    global projectsDictGlobal
+    projectsDictGlobal = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
 
 #removes project from project combobox
 def removeProject():
@@ -83,12 +83,12 @@ def setProjectPth():
     key = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     cmds.workspace(projectsDict[key]['projectPath'], openWorkspace=True)
 
-def takeScreenshot(assetName,projectsDict):
+def takeScreenshot(assetName):
     global lch
     #assetName = assetManagerUIWindow.mainWidget.listWidget_assets.currentItem().text()
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],assetType,assetName)
+    assetPath = '%s/scenes/REF/%s/%s'%(projectsDictGlobal[project]["projectPath"],assetType,assetName)
 
     lch = screenshot.ScreenShot()
     imageFileName = '%s/.data/%s_thumb.jpg'%(assetPath,assetName)
@@ -128,7 +128,7 @@ def orderByModified(dirpath):
         recentFiles.append([os.path.basename(path),artistName,dateModified])
     return recentFiles
 
-def newAsset(projectsDict):
+def newAsset():
 
     setProjectPth()
 
@@ -138,7 +138,7 @@ def newAsset(projectsDict):
         if not newAssetType:
             newAssetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
         project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-        assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],newAssetType,newAssetName)
+        assetPath = '%s/scenes/REF/%s/%s'%(projectsDictGlobal[project]["projectPath"],newAssetType,newAssetName)
 
         itemsText = []
         items = []
@@ -158,7 +158,7 @@ def newAsset(projectsDict):
             for i in items:
                 if newAssetType == i.text():
                     itm = i
-            setType(newAssetType,projectsDict)
+            setType(newAssetType)
         itm.setSelected(True)
         
         #add item to asset list
@@ -183,13 +183,13 @@ def newAsset(projectsDict):
             pass
 
 
-def editAsset(assetName,projectsDict):
+def editAsset(assetName):
     #set project
     setProjectPth()
     #read asset
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],assetType,assetName)
+    assetPath = '%s/scenes/REF/%s/%s'%(projectsDictGlobal[project]["projectPath"],assetType,assetName)
     #find latest version
     workingFiles = orderByModified(assetPath)
     if workingFiles:
@@ -209,13 +209,13 @@ def editAsset(assetName,projectsDict):
     assetManagerUIWindow.mainWidget.textEdit_note.setText('')
 
 
-def referenceAsset(assetName,projectsDict,imp):
+def referenceAsset(assetName,imp):
     #loop through selection
     for item in assetName:
         name = item.text()
         assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
         project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-        assetPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDict[project]["projectPath"],assetType,name)
+        assetPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDictGlobal[project]["projectPath"],assetType,name)
         #try to load the asset file
         try:
             if imp != 1:
@@ -225,11 +225,11 @@ def referenceAsset(assetName,projectsDict,imp):
         except:
             print 'unable to load reference %s'%assetPath
 
-def setVersion(assetName,projectsDict):
+def setVersion(assetName):
     #read asset
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    assetPath = '%s/scenes/REF/%s/%s'%(projectsDict[project]["projectPath"],assetType,assetName)
+    assetPath = '%s/scenes/REF/%s/%s'%(projectsDictGlobal[project]["projectPath"],assetType,assetName)
     #find latest version
     workingFiles = orderByModified(assetPath)
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.clearContents()
@@ -246,14 +246,16 @@ def setVersion(assetName,projectsDict):
         assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setItem(i,2, dateItem)
         
 
-def setAsset(assetName,projectsDict):
+def setAsset():
+
+    assetName = assetManagerUIWindow.mainWidget.listWidget_assets.currentItem().text()
 
     assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+    thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDictGlobal[project]["projectPath"],assetType,assetName,assetName)
     #find and display date
     try:
-        refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDict[project]["projectPath"],assetType,assetName)
+        refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDictGlobal[project]["projectPath"],assetType,assetName)
         dateModified = time.strftime('%d/%m/%Y', time.localtime(os.path.getmtime(refPath)))
         currentDate = time.strftime("%d/%m/%Y", time.localtime())
         if dateModified == currentDate:
@@ -264,14 +266,14 @@ def setAsset(assetName,projectsDict):
         assetManagerUIWindow.mainWidget.label_date.setText('')
     #find and display username
     try:
-        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDictGlobal[project]["projectPath"],assetType,assetName,assetName)
         assetDict = IO.loadDictionary(namePath)
         assetManagerUIWindow.mainWidget.label_userName.setText(assetDict["user"]["value"])
     except:
         assetManagerUIWindow.mainWidget.label_userName.setText('')
     #find and display note
     try:
-        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDict[project]["projectPath"],assetType,assetName,assetName)
+        namePath = '%s/scenes/REF/%s/%s/.data/%s_REF.json'%(projectsDictGlobal[project]["projectPath"],assetType,assetName,assetName)
         assetDict = IO.loadDictionary(namePath)
         assetManagerUIWindow.mainWidget.textEdit_note.setText(assetDict["note"]["value"])
     except:
@@ -284,11 +286,13 @@ def setAsset(assetName,projectsDict):
     except:
         pass
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(0)
-    setVersion(assetName,projectsDict)
+    setVersion(assetName)
 
-def setType(key,projectsDict):
+def setType():
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    typePath = '%s/scenes/REF/%s'%(projectsDictG[project]["projectPath"],key)
+    key = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
+
+    typePath = '%s/scenes/REF/%s'%(projectsDictGlobal[project]["projectPath"],key)
 
     assetFolders = []
     files = os.listdir(typePath)
@@ -316,14 +320,15 @@ def setType(key,projectsDict):
 
         items[0].setSelected(True)
         assetManagerUIWindow.mainWidget.listWidget_assets.setCurrentItem(items[0])
-        setAsset(items[0].text(),projectsDictG)
+        #setAsset()
     except:
         pass
 
 
-def setProject(key):
+def setProject():
     projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     print projectsDict
+    key = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     projectPath = projectsDict[key]["projectPath"]
 
     assetTypeFolders = []
@@ -344,9 +349,9 @@ def setProject(key):
         for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assetType.count()):
             items.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index))
 
-        items[0].setSelected(True)
-        assetManagerUIWindow.mainWidget.listWidget_assetType.setCurrentItem(items[0])
-        setType(items[0].text(),projectsDict)
+        #items[0].setSelected(True)
+        #assetManagerUIWindow.mainWidget.listWidget_assetType.setCurrentItem(items[0])
+        #setType()
     except:
         pass
 
@@ -372,27 +377,27 @@ def assetManagerUI():
             pass
 
     window.mainWidget.project_comboBox.addItems(projectLines)
-    window.mainWidget.project_comboBox.currentTextChanged.connect(lambda: setProject(window.mainWidget.project_comboBox.currentText()))
+    window.mainWidget.project_comboBox.currentTextChanged.connect(setProject)
 
-    window.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(window.mainWidget.listWidget_assetType.currentItem().text(),projectsDict))
+    window.mainWidget.listWidget_assetType.currentTextChanged.connect(setType)
 
     #add project button
     window.mainWidget.pushButton_addProject.clicked.connect(selectFolder)
     #remove project button
     window.mainWidget.pushButton_removeProject.clicked.connect(removeProject)
     #change asset selection
-    window.mainWidget.listWidget_assets.currentTextChanged.connect(lambda: setAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
+    window.mainWidget.listWidget_assets.currentTextChanged.connect(setAsset)
     window.mainWidget.listWidget_assets.doubleClicked.connect(doubleClicked)
     #reference button
-    window.mainWidget.pushButton_reference.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),projectsDict,0))
+    window.mainWidget.pushButton_reference.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),0))
     #import button
-    window.mainWidget.pushButton_import.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),projectsDict,1))
+    window.mainWidget.pushButton_import.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),1))
     #new button
-    window.mainWidget.pushButton_new.clicked.connect(lambda: newAsset(projectsDict))
+    window.mainWidget.pushButton_new.clicked.connect(newAsset)
     #edit button
-    window.mainWidget.pushButton_edit.clicked.connect(lambda: editAsset(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
+    window.mainWidget.pushButton_edit.clicked.connect(lambda: editAsset(window.mainWidget.listWidget_assets.currentItem().text()))
     #thumbnail button
-    window.mainWidget.pushButton_thumb.clicked.connect(lambda: takeScreenshot(window.mainWidget.listWidget_assets.currentItem().text(),projectsDict))
+    window.mainWidget.pushButton_thumb.clicked.connect(lambda: takeScreenshot(window.mainWidget.listWidget_assets.currentItem().text()))
     #save button
     window.mainWidget.pushButton_save.clicked.connect(saveSceneFile)
     #increment button
@@ -407,13 +412,13 @@ def assetManagerUI():
 
 def openAssetManagertWindow():
     global assetManagerUIWindow
-    global projectsDictG
+    global projectsDictGlobal
     assetManagerUIWindow = assetManagerUI()
 
     #set project dropdown to current project
     currentProject = cmds.workspace(fullName=True)
     projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
-    projectsDictG = projectsDict
+    projectsDictGlobal = projectsDict
     print currentProject
     print projectsDict
     foundProject = 0
@@ -423,17 +428,17 @@ def openAssetManagertWindow():
         if currentProject == projectsDict[d]['projectPath']:
             print 'key = %s'%d
             assetManagerUIWindow.mainWidget.project_comboBox.setCurrentText(d)
-            setProject(d)
+            setProject()
             foundProject = 1
     if foundProject == 0:
         #print 
         try:
-            setProject(assetManagerUIWindow.mainWidget.project_comboBox.currentText())
+            setProject()
         except:
             pass
         
 
-#openAssetManagertWindow() 
+openAssetManagertWindow() 
 
 #import pipelime.lm_assetManager as lm_assetManager
 #lm_assetManager.openAssetManagertWindow() 
