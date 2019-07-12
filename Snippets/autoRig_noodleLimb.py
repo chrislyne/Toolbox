@@ -52,6 +52,15 @@ def locatorChild(obj,hierarchy):
     if hierarchy:
         cmds.parent(newLocator[0],obj)
     return newLocator[0]
+    
+def createSquareCtrl(pos,ctrlName):
+    #make circle
+    ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=ctrlName)
+    cmds.xform(ctrl,ro=[0,0,45],t=pos)
+    #freeze transformations
+    cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+    
+    return ctrl
 
 def createPlusCtrl(pos,ctrlName):
     #make circle
@@ -127,8 +136,8 @@ cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
 #add attributes
 cmds.addAttr(newIKControl,ln='bendy',at='double',min=0,max=10,dv=0)
 cmds.setAttr('%s.bendy'%newIKControl[0],e=True,keyable=True)
-cmds.addAttr(newIKControl,ln='extend',at='double',min=0,max=10,dv=0)
-cmds.setAttr('%s.extend'%newIKControl[0],e=True,keyable=True)
+cmds.addAttr(newIKControl,ln='stretchy',at='double',min=0,max=10,dv=0)
+cmds.setAttr('%s.stretchy'%newIKControl[0],e=True,keyable=True)
 cmds.addAttr(newIKControl,ln='length1',at='double')
 cmds.setAttr('%s.length1'%newIKControl[0],e=True,keyable=True)
 cmds.addAttr(newIKControl,ln='length2',at='double')
@@ -146,6 +155,11 @@ cmds.connectAttr('%s.worldPosition[0]'%startLoc,'%s.point1'%distanceNode)
 cmds.connectAttr('%s.worldPosition[0]'%endLoc,'%s.point2'%distanceNode)
 #math nodes
 floatComp = cmds.shadingNode('floatComposite',asUtility=True)
+stretchMultiply = cmds.shadingNode('floatComposite',asUtility=True)
+cmds.setAttr('%s.operation'%stretchMultiply,3)
+cmds.setAttr('%s.floatB'%stretchMultiply,0.1)
+cmds.connectAttr('%s.stretchy'%newIKControl[0],'%s.floatA'%stretchMultiply)
+cmds.connectAttr('%s.outFloat'%stretchMultiply,'%s.factor'%floatComp)
 cmds.setAttr('%s.operation'%floatComp,2)
 restDistance = 0
 for i,j in enumerate(ikJoints):
