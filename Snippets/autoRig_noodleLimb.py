@@ -7,6 +7,97 @@
 #
 import maya.cmds as cmds
 
+class MakeCtrlCurve:
+    
+    ctrlName = 'newCtrl'
+    pos = [0,0,0]
+    ctrlColour = []
+    thickness = 2
+    
+    #set colour
+    def setColour(self,ctrl):
+        if self.ctrlColour:
+            curveShapes = cmds.listRelatives(ctrl,s=True)
+            #set colours of curve shapes
+            for s in curveShapes:
+                cmds.setAttr('%s.overrideEnabled'%s,1) 
+                cmds.setAttr('%s.overrideRGBColors'%s,1) 
+                cmds.setAttr('%s.overrideColorRGB'%s,self.ctrlColour[0],self.ctrlColour[1],self.ctrlColour[2])
+            
+    def setThickness(self,ctrl):
+        #find shape nodes
+        curveShapes = cmds.listRelatives(ctrl,s=True)
+        for s in curveShapes:
+            #set curve thickness
+            cmds.setAttr( '%s.lineWidth'%s,self.thickness)
+       
+            
+    def makeSquare(self):
+        #make circle
+        ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+        cmds.xform(ctrl,ro=[0,0,45],t=self.pos)
+        return ctrl
+        
+    def makePlus(self):
+        #make circle
+        ctrl = cmds.circle(r=0.3,s=12,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+        cmds.xform(ctrl,ro=[0,0,15],t=self.pos)
+        #shape plus
+        cvs = ['%s.cv[1]'%ctrl[0],'%s.cv[10]'%ctrl[0],'%s.cv[7]'%ctrl[0],'%s.cv[4]'%ctrl[0]]
+        cmds.scale(0.361464,0.361464,0.361464,cvs,r=True,) 
+        return ctrl
+        
+    def makeStar(self):
+        #make circle
+        ctrl = cmds.circle(r=0.3,s=8,ut=0,d=0,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+        cmds.xform(ctrl,t=self.pos)
+        #shape star
+        cvs = ['%s.cv[0]'%ctrl[0],'%s.cv[2]'%ctrl[0],'%s.cv[4]'%ctrl[0],'%s.cv[6]'%ctrl[0]]
+        cmds.scale(0.0876642,0.0876642,0.0876642,cvs,r=True,) 
+        return ctrl
+        
+    def makeCircle(self):
+        #make circle
+        ctrl = cmds.circle(r=0.3,s=8,ut=0,d=0,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+        cmds.xform(ctrl,t=self.pos)
+        return ctrl
+        
+    def makeCross(self):
+        ctrl = cmds.nurbsSquare(c=[0,0,0],nr=[0,1,0],sl1=1,sl2=1,sps=1,d=3,ch=0,n=self.ctrlName)
+        children = cmds.listRelatives(ctrl[0],c=True,pa=True)
+        #move curves into place
+        cmds.xform(children[0],t=[0,0,-0.5])
+        cmds.xform(children[1],t=[0.5,0,0])
+        cmds.xform(children[2],t=[0,0,0.5],ro=[0,0,90])
+        #parent childrens shapes to top transform
+        cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+        cmds.parent(cmds.listRelatives(children[0],s=True,pa=True),cmds.listRelatives(children[1],s=True,pa=True),cmds.listRelatives(children[2],s=True,pa=True),ctrl[0],add=True,s=True)
+        #clean up original transforms
+        cmds.delete(children)
+        #set position
+        cmds.xform(ctrl,t=self.pos)
+
+        return ctrl
+
+
+    
+    def makeCtrl(self,ctrl):
+        #freeze transformations
+        cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+        
+        self.setColour(ctrl)
+        self.setThickness(ctrl)
+        
+        return ctrl
+    
+
+    
+#newCtrl = MakeCtrlCurve()
+#newCtrl.ctrlName = 'bar'
+#newCtrl.ctrlColour = [1,0,1]
+#newCtrl.makeCtrl(newCtrl.makeCross())
+
+
 def midpoint(p1,p2):
     #return midpoint 
     m1 = []
@@ -53,38 +144,6 @@ def locatorChild(obj,hierarchy):
         cmds.parent(newLocator[0],obj)
     return newLocator[0]
     
-def createSquareCtrl(pos,ctrlName):
-    #make circle
-    ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=ctrlName)
-    cmds.xform(ctrl,ro=[0,0,45],t=pos)
-    #freeze transformations
-    cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
-    
-    return ctrl
-
-def createPlusCtrl(pos,ctrlName):
-    #make circle
-    ctrl = cmds.circle(r=0.3,s=12,ut=0,d=1,ch=0,sw=360,tol=0.01,n=ctrlName)
-    cmds.xform(ctrl,ro=[0,0,15],t=pos)
-    #shape plus
-    cvs = ['%s.cv[1]'%ctrl[0],'%s.cv[10]'%ctrl[0],'%s.cv[7]'%ctrl[0],'%s.cv[4]'%ctrl[0]]
-    cmds.scale(0.361464,0.361464,0.361464,cvs,r=True,) 
-    #freeze position
-    cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
-    
-    return ctrl
-    
-def createStarCtrl(pos,ctrlName):
-    #make circle
-    ctrl = cmds.circle(r=0.3,s=8,ut=0,d=0,ch=0,sw=360,tol=0.01,n=ctrlName)
-    cmds.xform(ctrl,t=pos)
-    #shape plus
-    cvs = ['%s.cv[0]'%ctrl[0],'%s.cv[2]'%ctrl[0],'%s.cv[4]'%ctrl[0],'%s.cv[6]'%ctrl[0]]
-    cmds.scale(0.0876642,0.0876642,0.0876642,cvs,r=True,) 
-    #freeze position
-    cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
-    
-    return ctrl
 
 
 #list joints
@@ -105,7 +164,14 @@ bendJoints = createJoints('bend',0)
 middleIndex = (len(guideJoints) - 1)/2
 mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
 
-fkIkCtrl = createPlusCtrl(mPos,'IKFK_%s_switch_CTRL_%s'%(type,side))
+fkIkCtrl = MakeCtrlCurve()
+fkIkCtrl.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
+fkIkCtrl.pos = mPos
+fkIkCtrl.ctrlColour = [1,0,1]
+fkIkCtrl = fkIkCtrl.makeCtrl(fkIkCtrl.makePlus())
+
+
+#fkIkCtrl = createPlusCtrl(mPos,'IKFK_%s_switch_CTRL_%s'%(type,side))
 cmds.addAttr(fkIkCtrl,ln='IKFK',at='double',min=0,max=10,dv=0)
 cmds.setAttr('%s.IKFK'%fkIkCtrl[0],e=True,keyable=True)
 #connect fkIk switch control
@@ -128,7 +194,11 @@ for i,j in enumerate(blendJoints):
 #create controller
 ikjPos = cmds.xform(ikJoints[-1],q=True,t=True,ws=True)
 ikjRot = cmds.xform(ikJoints[-1],q=True,ro=True,ws=True)
-newIKControl = cmds.circle(n='IK_%s_CTRL_%s'%(type,side),ch=0,r=0.3)
+newIKControl = MakeCtrlCurve()
+newIKControl.ctrlName = 'IK_%s_CTRL_%s'%(type,side)
+newIKControl.ctrlColour = [1,0,1]
+newIKControl = newIKControl.makeCtrl(newIKControl.makeCircle())
+#newIKControl = cmds.circle(n='IK_%s_CTRL_%s'%(type,side),ch=0,r=0.3)
 cmds.xform(newIKControl,ro=[0,-90,0])
 cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
 cmds.xform(newIKControl,t=ikjPos,ro=ikjRot,ws=True)
@@ -208,9 +278,12 @@ curveCVs = cmds.ls('{0}.cv[:]'.format(ikCurve), fl=True)
 bendGrp = cmds.group(em=True,n='bend_leg_GRP_%s'%side)
 for i,cv in enumerate(curveCVs):
     newCluster = cmds.cluster(cv)
+    #make control
     cPos = cmds.xform(newCluster[1],q=True,piv=True,ws=True)
-    bendCtrl = createStarCtrl([0,0,0],'%s_bend_CTRL_%s'%(type,side))
-    #bendCtrl = cmds.circle(n='bend_leg_CTRL_%s'%side,ch=0,r=0.3)
+    newStarCtrl = MakeCtrlCurve()
+    newStarCtrl.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
+    newStarCtrl.ctrlColour = [1,0.7,0]
+    bendCtrl = newStarCtrl.makeCtrl(newStarCtrl.makeStar())
     cmds.xform(bendCtrl,ro=[0,-90,0],s=[restDistance/4,restDistance/4,restDistance/4])
     cmds.makeIdentity(apply=True,r=True)
     bendCtrlGrp = cmds.group(bendCtrl,n='bend_leg_CTRL_GRP_%s'%side)
