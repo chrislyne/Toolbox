@@ -11,6 +11,7 @@ class MakeCtrlCurve:
     
     ctrlName = 'newCtrl'
     pos = [0,0,0]
+    rot = [0,0,0]
     ctrlColour = []
     thickness = 2
     
@@ -83,6 +84,8 @@ class MakeCtrlCurve:
     
     def makeCtrl(self,ctrl):
         #freeze transformations
+        cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+        cmds.xform(ctrl,ro=self.rot)
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
         
         self.setColour(ctrl)
@@ -166,6 +169,9 @@ bendJoints = createJoints('bend',0)
 middleIndex = (len(guideJoints) - 1)/2
 mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
 
+    
+
+#fkIk control
 fkIkCtrl = MakeCtrlCurve()
 fkIkCtrl.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
 fkIkCtrl.pos = mPos
@@ -192,7 +198,32 @@ for i,j in enumerate(blendJoints):
     cmds.connectAttr('%s.outputX'%revNode,'%s.%sW1'%(pconst[0],ikJoints[i]))
     jPos = cmds.xform(j,q=True,t=True,ws=True)
     curvePoints.append(tuple(jPos))
+    
+#fk control
+fkParent = ''
+nextInt = 0
+for i,j in enumerate(fkJoints):
+    if i == nextInt:
+        print j
+        fkJpos = cmds.xform(j,q=True,t=True,ws=True)
+        fkCtrl = MakeCtrlCurve()
+        fkCtrl.ctrlName = 'FK_%s_CTRL_%s'%(j.split('_')[0],side)
+        fkCtrl.pos = fkJpos
+        fkCtrl.rot = [0,90,0]
+        fkCtrl.ctrlColour = [0,0,1]
+        fkCtrl = fkCtrl.makeCtrl(fkCtrl.makeSquare())
+        fkCtrlGrp = cmds.group(fkCtrl,name='%s_GRP'%fkCtrl[0])
+        fkjRot = cmds.xform(j,q=True,ro=True,ws=True)
+        cmds.xform(fkCtrlGrp,ro=fkjRot)
+        fkCtrl = '%s|%s'%(fkCtrlGrp,fkCtrl[0])
+        cmds.parentConstraint(fkCtrl,j)
+        nextInt += 2
+        if fkParent:
+            cmds.parent(fkCtrlGrp,fkParent)
+        fkParent = fkCtrl
+            
 
+#ik control
 #create controller
 ikjPos = cmds.xform(ikJoints[-1],q=True,t=True,ws=True)
 ikjRot = cmds.xform(ikJoints[-1],q=True,ro=True,ws=True)
