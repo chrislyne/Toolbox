@@ -108,10 +108,15 @@ def midpoint(p1,p2):
     
 def createJoints(jointType,lockMidJoints):
     newJoints = []
+    parentJRot = [0,0,0]
     for i,j in enumerate(guideJoints):
         #get joint position
         jPos = cmds.xform(j,q=True,t=True,ws=True)
-        jRot = cmds.xform(j,q=True,ro=True,ws=True)
+        jRotWs = cmds.xform(j,q=True,ro=True,os=False,ws=True)
+            
+        jRot = [parentJRot[0]*-1 + jRotWs[0],parentJRot[1]*-1 + jRotWs[1],parentJRot[2]*-1 + jRotWs[2] ]
+
+        parentJRot = jRotWs
 
     
         if guideJoints[i-1] and i > 0:
@@ -127,10 +132,7 @@ def createJoints(jointType,lockMidJoints):
                  cmds.setAttr('%s.rz'%newJoint,lock=True)
         #create new joint
         newJointName = j.replace('guide',jointType)
-        if i == 0:
-            newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]],o=[jRot[0],jRot[1],jRot[2]])
-        else:
-            newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]])
+        newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]],o=[jRot[0],jRot[1],jRot[2]])
         newJoints.append(newJoint)
     return newJoints
     
@@ -232,7 +234,7 @@ cmds.connectAttr('%s.stretchy'%newIKControl[0],'%s.floatA'%stretchMultiply)
 cmds.connectAttr('%s.outFloat'%stretchMultiply,'%s.factor'%floatComp)
 cmds.setAttr('%s.operation'%floatComp,2)
 restDistance = 0
-for i,j in enumerate(ikJoints):
+for i,j in enumerate(guideJoints):
     if i > 0:
         restDistance += cmds.getAttr('%s.translateX'%j)
 cmds.setAttr('%s.floatB'%floatComp,restDistance)
