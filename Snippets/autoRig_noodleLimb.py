@@ -109,7 +109,8 @@ def midpoint(p1,p2):
     m1.append((p1[2] + p2[2])/2)
     return m1
     
-def createJoints(jointType,lockMidJoints):
+def createJoints(type,jointType,lockMidJoints):
+    cmds.select(cl=True)
     newJoints = []
     parentJRot = [0,0,0]
     for i,j in enumerate(guideJoints):
@@ -137,6 +138,11 @@ def createJoints(jointType,lockMidJoints):
         newJointName = j.replace('guide',jointType)
         newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]],o=[jRot[0],jRot[1],jRot[2]])
         newJoints.append(newJoint)
+    #group joints
+    groupPiv = cmds.xform(newJoints[0],q=True,t=True,ws=True)
+    jointGrp = cmds.group(newJoints[0],n='%s_%sJoint_GRP'%(type,jointType))
+    cmds.xform(jointGrp,piv=groupPiv)
+    
     return newJoints
     
 def locatorChild(obj,hierarchy):
@@ -153,17 +159,20 @@ def locatorChild(obj,hierarchy):
 
 #list joints
 guideJoints = cmds.ls(sl=True)
+
+restDistance = 0
+for i,j in enumerate(guideJoints):
+    if i > 0:
+        restDistance += cmds.getAttr('%s.translateX'%j)
+
 side = guideJoints[0][-1]
 type = 'arm'
 
-cmds.select(cl=True)
-blendJoints = createJoints('blend',0)
-cmds.select(cl=True)
-fkJoints = createJoints('FK',1)
-cmds.select(cl=True)
-ikJoints = createJoints('IK',1)
-cmds.select(cl=True)
-bendJoints = createJoints('bend',0)
+#create joints
+blendJoints = createJoints(type,'blend',0)
+fkJoints = createJoints(type,'FK',1)
+ikJoints = createJoints(type,'IK',1)
+bendJoints = createJoints(type,'bend',0)
 
 #create fkIk switch control
 middleIndex = (len(guideJoints) - 1)/2
@@ -212,6 +221,8 @@ for i,j in enumerate(fkJoints):
         fkCtrl.rot = [0,90,0]
         fkCtrl.ctrlColour = [0,0,1]
         fkCtrl = fkCtrl.makeCtrl(fkCtrl.makeSquare())
+        cmds.xform(fkCtrl,s=[restDistance/4,restDistance/4,restDistance/4])
+        cmds.makeIdentity(apply=True,r=True,s=True)
         fkCtrlGrp = cmds.group(fkCtrl,name='%s_GRP'%fkCtrl[0])
         fkjRot = cmds.xform(j,q=True,ro=True,ws=True)
         cmds.xform(fkCtrlGrp,ro=fkjRot)
@@ -236,6 +247,8 @@ cmds.xform(newIKControl,ro=[0,-90,0])
 cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
 cmds.xform(newIKControl,t=ikjPos,ro=ikjRot,ws=True)
 cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
+#orient constrain end ikJoint to ik CTRL
+cmds.orientConstraint(newIKControl[0],ikJoints[-1],mo=True)
 #add attributes
 cmds.addAttr(newIKControl,ln='bendy',at='double',min=0,max=10,dv=0)
 cmds.setAttr('%s.bendy'%newIKControl[0],e=True,keyable=True)
@@ -248,7 +261,7 @@ cmds.setAttr('%s.length2'%newIKControl[0],e=True,keyable=True)
 #create IK handle 
 newIkHandle = cmds.ikHandle(sj=ikJoints[0],ee=ikJoints[-1])
 cmds.parent(newIkHandle[0],newIKControl)
-
+print ikJoints
 
 #create distance
 startLoc = locatorChild(ikJoints[0],0)
@@ -264,10 +277,7 @@ cmds.setAttr('%s.floatB'%stretchMultiply,0.1)
 cmds.connectAttr('%s.stretchy'%newIKControl[0],'%s.floatA'%stretchMultiply)
 cmds.connectAttr('%s.outFloat'%stretchMultiply,'%s.factor'%floatComp)
 cmds.setAttr('%s.operation'%floatComp,2)
-restDistance = 0
-for i,j in enumerate(guideJoints):
-    if i > 0:
-        restDistance += cmds.getAttr('%s.translateX'%j)
+
 cmds.setAttr('%s.floatB'%floatComp,restDistance)
 cmds.connectAttr('%s.distance'%distanceNode,'%s.floatA'%floatComp)
 multNode = cmds.shadingNode('multiplyDivide',asUtility=True)
@@ -286,9 +296,9 @@ cmds.connectAttr('%s.input2X'%multNode,'%s.secondTerm'%condishNode)
 cmds.setAttr('%s.operation'%condishNode,2)
 cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
 #group IK parts
-groupPiv = cmds.xform(startLoc,q=True,t=True,ws=True)
-IKGrp = cmds.group([startLoc,ikJoints[0]],n='%s_IK_RIG_%s'%(ikJoints[0].split('_')[0],side))
-cmds.xform(IKGrp,piv=groupPiv)
+#groupPiv = cmds.xform(startLoc,q=True,t=True,ws=True)
+#IKGrp = cmds.group([startLoc,ikJoints[0]],n='%s_IK_RIG_%s'%(ikJoints[0].split('_')[0],side))
+#cmds.xform(IKGrp,piv=groupPiv)
 
 
 #create curve
@@ -318,14 +328,16 @@ for i,cv in enumerate(curveCVs):
     newStarCtrl.ctrlColour = [1,0.7,0]
     bendCtrl = newStarCtrl.makeCtrl(newStarCtrl.makeStar())
     cmds.xform(bendCtrl,ro=[0,-90,0],s=[restDistance/4,restDistance/4,restDistance/4])
-    cmds.makeIdentity(apply=True,r=True)
+    cmds.makeIdentity(apply=True,r=True,s=True)
     bendCtrlGrp = cmds.group(bendCtrl,n='bend_leg_CTRL_GRP_%s'%side)
     cmds.xform(bendCtrlGrp,t=[cPos[0],cPos[1],cPos[2]],ws=True)
     cmds.makeIdentity(bendCtrlGrp,apply=True,t=1)
     cmds.parent(newCluster[1],'%s|%s'%(bendCtrlGrp,bendCtrl[0]))
     cmds.parentConstraint(blendJoints[i],bendCtrlGrp,mo=True)
     cmds.parent(bendCtrlGrp,bendGrp)
-    
+
+#connect end last bendJoint orientation to last bendJoint
+cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
 for i,j in enumerate(ikJoints):
     if i < len(ikJoints)-1:
