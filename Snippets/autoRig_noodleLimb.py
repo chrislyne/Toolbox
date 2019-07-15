@@ -39,6 +39,12 @@ class MakeCtrlCurve:
         cmds.xform(ctrl,ro=[0,0,45],t=self.pos)
         return ctrl
         
+    def makeDiamond(self):
+        #make circle
+        ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+        cmds.xform(ctrl,t=self.pos)
+        return ctrl
+        
     def makePlus(self):
         #make circle
         ctrl = cmds.circle(r=0.3,s=12,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
@@ -140,7 +146,7 @@ def createJoints(type,jointType,lockMidJoints):
         newJoints.append(newJoint)
     #group joints
     groupPiv = cmds.xform(newJoints[0],q=True,t=True,ws=True)
-    jointGrp = cmds.group(newJoints[0],n='%s_%sJoint_GRP'%(type,jointType))
+    jointGrp = cmds.group(newJoints[0],n='%s_%sJoint_GRP_%s'%(type,jointType,guideJoints[0][-1]))
     cmds.xform(jointGrp,piv=groupPiv)
     
     return newJoints
@@ -174,6 +180,26 @@ fkJoints = createJoints(type,'FK',1)
 ikJoints = createJoints(type,'IK',1)
 bendJoints = createJoints(type,'bend',0)
 
+#create main CTRL
+#get position
+startPos = cmds.xform(guideJoints[0],q=True,t=True,ws=True)
+mainCtrl = MakeCtrlCurve()
+mainCtrl.ctrlName = '%s_CTRL_%s'%(type,side)
+mainCtrl.pos = startPos
+mainCtrl.rot = [0,90,0]
+mainCtrl.ctrlColour = [0,1,0]
+mainCtrl = mainCtrl.makeCtrl(mainCtrl.makeDiamond())
+
+cmds.parentConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
+
+
+cmds.xform(mainCtrl,s=[restDistance/2,restDistance/2,restDistance/2])
+cmds.makeIdentity(mainCtrl,apply=True,r=True,s=True)
+mainCtrlGrp = cmds.group(mainCtrl,name='%s_CTRL_GRP_%s'%(type,side))
+guideJRot = cmds.xform(guideJoints[0],q=True,ro=True,ws=True)
+cmds.xform(mainCtrlGrp,ro=guideJRot)
+mainCtrl = '%s|%s'%(mainCtrlGrp,mainCtrl[0])
+
 #create fkIk switch control
 middleIndex = (len(guideJoints) - 1)/2
 mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
@@ -181,12 +207,15 @@ mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
     
 
 #fkIk control
-fkIkCtrl = MakeCtrlCurve()
-fkIkCtrl.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
-fkIkCtrl.pos = mPos
-fkIkCtrl.ctrlColour = [1,0,1]
-fkIkCtrl = fkIkCtrl.makeCtrl(fkIkCtrl.makePlus())
-
+fkIkCtrl0 = MakeCtrlCurve()
+fkIkCtrl0.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
+fkIkCtrl0.pos = mPos
+fkIkCtrl0.ctrlColour = [0,1,0]
+fkIkCtrl = fkIkCtrl0.makeCtrl(fkIkCtrl0.makePlus())
+print mainCtrl
+print fkIkCtrl[0]
+#cmds.parent(fkIkCtrl[0],mainCtrl)
+#fkIkCtrl = ['%s|%s'%(mainCtrl,fkIkCtrl[0])]
 
 #fkIkCtrl = createPlusCtrl(mPos,'IKFK_%s_switch_CTRL_%s'%(type,side))
 cmds.addAttr(fkIkCtrl,ln='IKFK',at='double',min=0,max=10,dv=0)
@@ -198,6 +227,22 @@ cmds.setAttr('%s.operation'%multNode,1)
 cmds.setAttr('%s.input2X'%multNode,0.1)
 revNode = cmds.shadingNode('reverse',asUtility=True)
 cmds.connectAttr('%s.outputX'%multNode,'%s.inputX'%revNode)
+#make visibility switches
+fkVisCondition = cmds.shadingNode('condition',asUtility=True)
+cmds.setAttr('%s.secondTerm'%fkVisCondition,0.5) 
+cmds.setAttr('%s.operation'%fkVisCondition,2) 
+cmds.setAttr('%s.colorIfTrueR'%fkVisCondition,1) 
+cmds.setAttr('%s.colorIfFalseR'%fkVisCondition,0) 
+cmds.connectAttr('%s.IKFK'%fkIkCtrl[0],'%s.firstTerm'%fkVisCondition)
+
+ikVisCondition = cmds.shadingNode('condition',asUtility=True)
+cmds.setAttr('%s.secondTerm'%ikVisCondition,9.5) 
+cmds.setAttr('%s.operation'%ikVisCondition,4) 
+cmds.setAttr('%s.colorIfTrueR'%ikVisCondition,1)
+cmds.setAttr('%s.colorIfFalseR'%ikVisCondition,0) 
+cmds.connectAttr('%s.IKFK'%fkIkCtrl[0],'%s.firstTerm'%ikVisCondition)
+
+
 
 
 curvePoints = []
@@ -213,7 +258,6 @@ fkParent = ''
 nextInt = 0
 for i,j in enumerate(fkJoints):
     if i == nextInt:
-        print j
         fkJpos = cmds.xform(j,q=True,t=True,ws=True)
         fkCtrl = MakeCtrlCurve()
         fkCtrl.ctrlName = 'FK_%s_CTRL_%s'%(j.split('_')[0],side)
@@ -232,7 +276,12 @@ for i,j in enumerate(fkJoints):
         if fkParent:
             cmds.parent(fkCtrlGrp,fkParent)
         fkParent = fkCtrl
-            
+        if i == 0:
+            #connect ikfk switch to group visibility
+            cmds.connectAttr('%s.outColorR'%fkVisCondition,'%s.visibility'%fkCtrlGrp)
+
+            cmds.parent(fkCtrlGrp,mainCtrl)
+         
 
 #ik control
 #create controller
@@ -240,7 +289,7 @@ ikjPos = cmds.xform(ikJoints[-1],q=True,t=True,ws=True)
 ikjRot = cmds.xform(ikJoints[-1],q=True,ro=True,ws=True)
 newIKControl = MakeCtrlCurve()
 newIKControl.ctrlName = 'IK_%s_CTRL_%s'%(type,side)
-newIKControl.ctrlColour = [1,0,1]
+newIKControl.ctrlColour = [1,0,0]
 newIKControl = newIKControl.makeCtrl(newIKControl.makeCircle())
 #newIKControl = cmds.circle(n='IK_%s_CTRL_%s'%(type,side),ch=0,r=0.3)
 cmds.xform(newIKControl,ro=[0,-90,0])
@@ -261,10 +310,11 @@ cmds.setAttr('%s.length2'%newIKControl[0],e=True,keyable=True)
 #create IK handle 
 newIkHandle = cmds.ikHandle(sj=ikJoints[0],ee=ikJoints[-1])
 cmds.parent(newIkHandle[0],newIKControl)
-print ikJoints
+
 
 #create distance
 startLoc = locatorChild(ikJoints[0],0)
+cmds.parent(startLoc,mainCtrl)
 endLoc = locatorChild(newIKControl[0],1)
 distanceNode = cmds.shadingNode('distanceBetween',asUtility=True)
 cmds.connectAttr('%s.worldPosition[0]'%startLoc,'%s.point1'%distanceNode)
@@ -301,6 +351,11 @@ cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
 #cmds.xform(IKGrp,piv=groupPiv)
 
 
+ikCtrlGrp = cmds.group(newIKControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
+cmds.xform(ikCtrlGrp,piv=startPos,ws=True)
+cmds.connectAttr('%s.outColorR'%ikVisCondition,'%s.visibility'%ikCtrlGrp)
+
+
 #create curve
 ikCurve = cmds.curve(d=3,p=curvePoints,n='%s_ikSpline_curve_%s'%(type,side))
 #attach joints
@@ -310,6 +365,8 @@ cmds.setAttr('%s.operation'%splineMultNode,2)
 cmds.setAttr('%s.input2X'%splineMultNode,cmds.arclen(ikCurve))
 curveInfoNode = cmds.arclen(ikCurve, ch=True)
 cmds.connectAttr('%s.arcLength'%curveInfoNode,'%s.input1X'%splineMultNode)
+#group ikSpline parts
+ikSpline_GRP = cmds.group(ikCurve,ikSplineHandle[0],n='%s_ikSpline_GRP_%s'%(type,side))
 
 for i,j in enumerate(bendJoints):
     if i < len(bendJoints)-1:
@@ -319,6 +376,7 @@ for i,j in enumerate(bendJoints):
 curveCVs = cmds.ls('{0}.cv[:]'.format(ikCurve), fl=True)
 #create clusters
 bendGrp = cmds.group(em=True,n='bend_%s_GRP_%s'%(type,side))
+cmds.xform(bendGrp,piv=startPos,ws=True)
 for i,cv in enumerate(curveCVs):
     newCluster = cmds.cluster(cv)
     #make control
@@ -336,11 +394,22 @@ for i,cv in enumerate(curveCVs):
     cmds.parentConstraint(blendJoints[i],bendCtrlGrp,mo=True)
     cmds.parent(bendCtrlGrp,bendGrp)
 
+cmds.parent(fkIkCtrl[0],mainCtrl)
+
 #connect end last bendJoint orientation to last bendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
 for i,j in enumerate(ikJoints):
     if i < len(ikJoints)-1:
         cmds.connectAttr('%s.outColorR'%condishNode,'%s.scaleX'%j)
+
+#final grouping
+CTRL_constraint_GRP = cmds.group(mainCtrlGrp,ikCtrlGrp,n='%s_CTRL_constraint_GRP_%s'%(type,side))
+cmds.xform(CTRL_constraint_GRP,piv=[0,0,0],ws=True)
+CTRL_GRP = cmds.group(CTRL_constraint_GRP,bendGrp,n='%s_CTRL_GRP_%s'%(type,side))
+joint_GRP = cmds.group(cmds.listRelatives(ikJoints[0],p=True),cmds.listRelatives(fkJoints[0],p=True),cmds.listRelatives(blendJoints[0],p=True),cmds.listRelatives(bendJoints[0],p=True),n='%s_joint_GRP_%s'%(type,side))
+cmds.group(ikSpline_GRP,CTRL_GRP,joint_GRP,n='%s_RIG_%s'%(type,side))
+
+
 
 
