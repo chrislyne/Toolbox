@@ -318,7 +318,7 @@ for i,j in enumerate(bendJoints):
 #get curve cvs
 curveCVs = cmds.ls('{0}.cv[:]'.format(ikCurve), fl=True)
 #create clusters
-bendGrp = cmds.group(em=True,n='bend_leg_GRP_%s'%side)
+bendGrp = cmds.group(em=True,n='bend_%s_GRP_%s'%(type,side))
 for i,cv in enumerate(curveCVs):
     newCluster = cmds.cluster(cv)
     #make control
@@ -329,7 +329,7 @@ for i,cv in enumerate(curveCVs):
     bendCtrl = newStarCtrl.makeCtrl(newStarCtrl.makeStar())
     cmds.xform(bendCtrl,ro=[0,-90,0],s=[restDistance/4,restDistance/4,restDistance/4])
     cmds.makeIdentity(apply=True,r=True,s=True)
-    bendCtrlGrp = cmds.group(bendCtrl,n='bend_leg_CTRL_GRP_%s'%side)
+    bendCtrlGrp = cmds.group(bendCtrl,n='bend_%s_CTRL_GRP_%s'%(type,side))
     cmds.xform(bendCtrlGrp,t=[cPos[0],cPos[1],cPos[2]],ws=True)
     cmds.makeIdentity(bendCtrlGrp,apply=True,t=1)
     cmds.parent(newCluster[1],'%s|%s'%(bendCtrlGrp,bendCtrl[0]))
