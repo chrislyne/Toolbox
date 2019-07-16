@@ -303,10 +303,13 @@ cmds.addAttr(newIKControl,ln='bendy',at='double',min=0,max=10,dv=0)
 cmds.setAttr('%s.bendy'%newIKControl[0],e=True,keyable=True)
 cmds.addAttr(newIKControl,ln='stretchy',at='double',min=0,max=10,dv=0)
 cmds.setAttr('%s.stretchy'%newIKControl[0],e=True,keyable=True)
-cmds.addAttr(newIKControl,ln='length1',at='double')
-cmds.setAttr('%s.length1'%newIKControl[0],e=True,keyable=True)
-cmds.addAttr(newIKControl,ln='length2',at='double')
-cmds.setAttr('%s.length2'%newIKControl[0],e=True,keyable=True)
+cmds.addAttr(newIKControl,ln='preserveVol',at='double')
+cmds.setAttr('%s.preserveVol'%newIKControl[0],e=True,keyable=True)
+for i,j in enumerate(guideJoints[:-1]):
+    i = i+1
+    cmds.addAttr(newIKControl,ln='length%s'%i,at='double')
+    cmds.setAttr('%s.length%s'%(newIKControl[0],i),e=True,keyable=True)
+    
 #create IK handle 
 newIkHandle = cmds.ikHandle(sj=ikJoints[0],ee=ikJoints[-1])
 cmds.parent(newIkHandle[0],newIKControl)
@@ -395,6 +398,25 @@ for i,cv in enumerate(curveCVs):
     cmds.parent(bendCtrlGrp,bendGrp)
 
 cmds.parent(fkIkCtrl[0],mainCtrl)
+
+#volume preservation
+preserveVolFloatMath = cmds.shadingNode('floatMath',asUtility=True)
+cmds.setAttr('%s.floatB'%preserveVolFloatMath,0.1)
+cmds.setAttr('%s.operation'%preserveVolFloatMath,2)
+cmds.connectAttr('%s.preserveVol'%newIKControl[0],'%s.floatA'%preserveVolFloatMath)
+preserveVolCompNode = cmds.shadingNode('floatComposite',asUtility=True)
+cmds.setAttr('%s.operation'%preserveVolCompNode,6)
+cmds.connectAttr('%s.outFloat'%preserveVolFloatMath,'%s.floatA'%preserveVolCompNode)
+for i,j in enumerate(bendJoints[1:-1]):
+    floatMathNode = cmds.shadingNode('floatMath',asUtility=True)
+    cmds.setAttr('%s.operation'%floatMathNode,3)
+    cmds.connectAttr('%s.scaleX'%j,'%s.floatB'%floatMathNode)
+    clampNode = cmds.shadingNode('clamp',asUtility=True)
+    cmds.setAttr('%s.maxR'%clampNode,1)
+    cmds.connectAttr('%s.outFloat'%preserveVolCompNode,'%s.minR'%clampNode)
+    cmds.connectAttr('%s.outFloat'%floatMathNode,'%s.inputR'%clampNode)
+    cmds.connectAttr('%s.outputR'%clampNode,'%s.scaleY'%j)
+    cmds.connectAttr('%s.outputR'%clampNode,'%s.scaleZ'%j)
 
 #connect end last bendJoint orientation to last bendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
