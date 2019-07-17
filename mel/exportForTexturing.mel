@@ -1,0 +1,260 @@
+//returns workspace
+global proc string relativeWorkspace(string $publishName)
+{
+    //get workspace
+    string $workspace = `workspace -q -fullName`;
+    string $workspaceBuffer[];
+    clear $workspaceBuffer;
+    $numTokens2 = `tokenize $workspace "/" $workspaceBuffer`;
+    int $workspaceSize = `size $workspaceBuffer`+1;
+    
+    //get filename
+    string $filename = `file -q -sn`;
+    string $buffer[];
+    $numTokens = `tokenize $filename "/" $buffer`;
+    
+    //get relative path
+
+    string $relativePath = ($buffer[`size $buffer`-2]+"/");
+    string $exportPath = ($workspace+"/sourceimages/"+$relativePath+$publishName);
+    return ($exportPath);
+}
+
+//export image
+global proc int exportImage(string $publishName, string $resolution, int $singleFile)
+{
+    int $numberOfFiles = 0;
+    if ($singleFile == 1)
+    {
+        //get workspace and source images path
+        string $exportPath = relativeWorkspace($publishName+"UV.iff");
+        uvSnapshot -aa -n $exportPath -xr ((int)$resolution) -yr ((int)$resolution) -r 255 -g 255 -b 255 -o -ff iff;
+        $numberOfFiles += 1;
+    }
+    else
+    {
+        //multiple files
+        string $sel[] = `ls -sl`;
+        for( $item in $sel)
+        {
+            string $exportPath = relativeWorkspace($publishName+"_"+$item+"UV.iff");
+            uvSnapshot -aa -n $exportPath -xr ((int)$resolution) -yr ((int)$resolution) -r 255 -g 255 -b 255 -o -ff iff $item;
+            $numberOfFiles += 1;
+        };
+    }
+    return ($numberOfFiles);
+}
+//export fbx
+global proc int exportfbx(string $publishName, int $smoothIterations, int $singleFile)
+{
+    int $numberOfFiles = 0;
+    //initilise smooth array
+    string $smooths[];
+    clear $smooths;
+    
+    string $sel[] = `ls -sl`;
+    //add poly smooth
+    for ($item in $sel)
+    {
+        string $smoothNode[] = `polySmooth  -mth 0 -sdt 2 -ovb 1 -ofb 3 -ofc 0 -ost 1 -ocr 0 -dv $smoothIterations -bnr 1 -c 1 -kb 1 -ksb 1 -khe 0 -kt 1 -kmb 1 -suv 1 -peh 0 -sl 1 -dpe 1 -ps 0.1 -ro 1 -ch 1 $item`;
+        for($node in $smoothNode)
+        {
+            $smooths[`size $smooths`] = $node;
+        }
+    }
+    select -r $sel;
+    
+    if ($singleFile == 1)
+    { 
+        //single file
+        //get workspace and source images path
+        string $exportPath = relativeWorkspace($publishName+".fbx");
+        file -force -options "v=0;" -constraints 0 -typ "FBX export" -pr -es $exportPath;
+        $numberOfFiles += 1;
+    }
+    else
+    {
+        //multiple files
+        for ($item in $sel)
+        {
+            select -r $item;
+            string $exportPath = relativeWorkspace($publishName+"_"+$item+".fbx");
+            file -force -options "v=0;" -constraints 0 -typ "FBX export" -pr -es $exportPath;
+            $numberOfFiles += 1;
+        }
+    }
+    
+    //remove smooths
+    for ($item in $smooths)
+    {
+        delete $item;
+    }
+    return($numberOfFiles);
+}
+
+//update name and run
+global proc CheckText()
+{
+   $publishName = `textField -q -text nameText`;
+   int $textureOn = `checkBox -q -v textureOn`;
+   
+   int $fbxOn = `checkBox -q -v fbxOn`;
+   string $outputResolution = `optionMenu -q -v resolution`;
+   
+   int $numberOfFiles = 0;
+   
+   if($textureOn == 1)
+   {
+       int $singleTexture = `checkBox -q -v singleTextureBox`;
+       $numberOfFiles += exportImage($publishName, $outputResolution, $singleTexture);
+   }
+   if($fbxOn == 1)
+   {
+       int $smoothIterations = `intSliderGrp -q -v smoothSlider`;
+       int $singleFBX = `checkBox -q -v singleFbxBox`;
+       $numberOfFiles += exportfbx($publishName , $smoothIterations,$singleFBX);
+   }
+   completeDialog($numberOfFiles);
+   
+   
+}
+
+global proc setText()
+{
+    string $publishName = "";
+    
+    //get filename
+    string $filename = `file -q -sn -shn`;
+    string $buffer[];
+    $numTokens = `tokenize $filename "." $buffer`;
+    
+    //set text
+    string $sel[] = `ls -sl`;
+    string $selectionString = "";
+    for ($item in $sel)
+    {
+        string $fullNameSplit[];
+        $numTokens = `tokenize $item ":" $fullNameSplit`;
+        int $size = (`size $fullNameSplit`)-1;
+        $selectionString += (($fullNameSplit[$size]));
+    }
+    textField -edit -tx ($selectionString) nameText;
+    showWindow texturingExportWindow;
+}
+
+//Complete Dialog
+global proc completeDialog(int $numberOfFiles)
+{
+    //nice display message
+    string $message = "Exported " + $numberOfFiles + " files";
+    if($numberOfFiles == 1)
+    {
+        $message = "Exported " + $numberOfFiles + " file";
+    }
+    
+    //create dialog
+    $response = `confirmDialog -title "Completed!" 
+                          -message $message
+                          -button "Open Folder" 
+                          -button "Close"
+                          -defaultButton "Open Folder"
+                          -cancelButton "Close"
+                          -dismissString "Close"`;
+        
+    // check response     
+    if( $response == "Open Folder" ) {
+        string $folder = relativeWorkspace("");
+        string $buffer[];
+        int $numTokens = `tokenize ($folder) "/" $buffer`;
+        string $folderPath = "";
+        for($i=0;$i<$numTokens;$i++)
+        {
+            $folderPath += ($buffer[$i]+"\\");
+        }
+        string $syscmd = "start explorer /n,/e, " + $folderPath; 
+        system( $syscmd );
+    } else if( $response == "Okay" ) {
+    }
+}
+
+//Create UI
+global proc exportForTexturing()
+{
+    if (`window -exists texturingExportWindow`) deleteUI texturingExportWindow;
+    window -w 300 -h 300 -title "Texturing Export Window" texturingExportWindow;
+        
+        formLayout exportForm;
+          frameLayout -label "File Type" fileTypeFrame;
+            formLayout fileTypeForm;
+             text -label "Filename" textLabel;
+             textField -w 250 nameText;
+             iconTextButton -style "iconOnly" -image1 "refresh.png" -c "setText()" reloadButton;
+             checkBox -label "Texture" -v 1 -onc ( "frameLayout -e -collapse 0 textureOptionsFrame") -ofc ( "frameLayout -e -collapse 1 textureOptionsFrame") textureOn;
+             checkBox -label "FBX" -onc ( "frameLayout -e -collapse 0 fbxOptionsFrame") -ofc ( "frameLayout -e -collapse 1 fbxOptionsFrame") fbxOn;
+             
+            formLayout -edit
+             -af textLabel top 15
+             -af textLabel left 10 
+             -af nameText top 10
+             -ac nameText left 10 textLabel
+             -ac nameText right 10 reloadButton
+             -ac textureOn top 10 textLabel
+             -ac textureOn left 10 textLabel
+             -af reloadButton top 9 
+             -af reloadButton right 10
+             -ac fbxOn top 10 textLabel
+             -ac fbxOn left 10 textureOn
+            fileTypeForm;
+          setParent..;
+          frameLayout -label "Texture Options" -collapsable 1 -collapse 0 textureOptionsFrame;
+            formLayout -h 90 textureForm;
+              text -label "Resolution" resolutionLabel;
+              optionMenu -w 126 resolution;
+                menuItem -label "256"; 
+                menuItem -label "512";
+                menuItem -label "1024";
+                menuItem -label "2048";
+                menuItem -label "4096";
+              optionMenu -e -sl 4 resolution;
+              checkBox -label "Single File" -v 1 singleTextureBox;
+            formLayout -edit
+             -af resolutionLabel top 15
+             -af resolutionLabel left 10  
+             -af resolution top 12
+             -ac resolution left 5 resolutionLabel
+             -ac singleTextureBox top 12 resolutionLabel
+             -af singleTextureBox left 66
+            textureForm;
+            setParent..;
+          setParent..;
+          frameLayout -label "FBX Options" -collapsable 1 -collapse 1 fbxOptionsFrame;
+            formLayout -h 90 fbxForm;
+              text -label "Smooths" smoothLabel;
+              intSliderGrp -field true -min 0 -max 2 -fieldMinValue 0 -fieldMaxValue 4 -value 2 -step 1 -cw2 40 100 -w 140 smoothSlider;
+              checkBox -label "Single File" -v 1 singleFbxBox;
+            formLayout -edit
+             -af smoothLabel top 15
+             -af smoothLabel left 10  
+             -af smoothSlider top 10
+             -ac smoothSlider left 5 smoothLabel
+             -ac singleFbxBox top 12 smoothSlider
+             -af singleFbxBox left 66
+            fbxForm;
+            setParent..;
+          setParent..;
+        setParent..;
+             button -l "Export" -h 50 -c ("CheckText()") btn1;
+             button -l "Close" -h 50 -c ("deleteUI texturingExportWindow") btn2 ;
+        formLayout -edit
+             -af btn1 bottom 0
+             -af btn1 left 0
+             -ap btn1 right 0 50
+             -af btn2 bottom 0
+             -ac btn2 left 0 btn1
+             -af btn2 right 0 
+             -af fileTypeFrame left 0
+             -af fileTypeFrame right 0
+            exportForm;
+    setText();
+}
+//exportForTexturing();  
