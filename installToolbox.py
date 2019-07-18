@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 import sys
-from pymel.all import *
+#from pymel.all import *
+import maya.mel as mel
 import json
 import os
 import urllib2
@@ -215,7 +216,7 @@ def installToolboxWindow():
     nameText = cmds.textField('nameText',width=250,tx='Custom')
     scriptsMenu = cmds.optionMenu('scriptsMenu')
     separator = ';' if cmds.about(nt=True) else ':'
-    scriptsPaths = mel.getenv('MAYA_SCRIPT_PATH')
+    scriptsPaths = os.getenv('MAYA_SCRIPT_PATH')
     allparts = scriptsPaths.split(separator)
     for i, part in enumerate(allparts):
         if (i==0):
@@ -226,7 +227,7 @@ def installToolboxWindow():
                 cmds.menuItem( label=part )
             
     iconsMenu = cmds.optionMenu('iconsMenu')  
-    iconsPaths = mel.getenv('XBMLANGPATH')
+    iconsPaths = os.getenv('XBMLANGPATH')
     iconsParts = iconsPaths.split(separator)
     
     for i, part in enumerate(iconsParts):
