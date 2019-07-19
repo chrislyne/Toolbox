@@ -12,8 +12,10 @@ class MakeCtrlCurve:
     ctrlName = 'newCtrl'
     pos = [0,0,0]
     rot = [0,0,0]
+    scl = [1,1,1]
     ctrlColour = []
     thickness = 2
+    attr = {}
     
     #set colour
     def setColour(self,ctrl):
@@ -89,10 +91,23 @@ class MakeCtrlCurve:
 
     
     def makeCtrl(self,ctrl):
-        #freeze transformations
+        #set transformations
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
-        cmds.xform(ctrl,ro=self.rot)
+        cmds.xform(ctrl,ro=self.rot,s=self.scl)
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+        #set attributes
+        for attrName in self.attr:
+            cmds.addAttr(ctrl,ln=attrName,at='double',dv=0)
+            try:
+                cmds.addAttr('%s.%s'%(ctrl[0],attrName),e=True,min=self.attr[attrName]['min'])
+            except:
+                pass
+            try:
+                cmds.addAttr('%s.%s'%(ctrl[0],attrName),e=True,max=self.attr[attrName]['max'])
+            except:
+                pass
+            
+            cmds.setAttr('%s.%s'%(ctrl[0],attrName),e=True,keyable=True)
         
         self.setColour(ctrl)
         self.setThickness(ctrl)
@@ -161,8 +176,6 @@ def locatorChild(obj,hierarchy):
         cmds.parent(newLocator[0],obj)
     return newLocator[0]
     
-
-
 #list joints
 guideJoints = cmds.ls(sl=True)
 
@@ -187,39 +200,29 @@ mainCtrl = MakeCtrlCurve()
 mainCtrl.ctrlName = '%s_CTRL_%s'%(type,side)
 mainCtrl.pos = startPos
 mainCtrl.rot = [0,90,0]
+mainCtrl.scl = [restDistance/2,restDistance/2,restDistance/2]
 mainCtrl.ctrlColour = [0,1,0]
 mainCtrl = mainCtrl.makeCtrl(mainCtrl.makeDiamond())
 
-cmds.parentConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
-
-
-cmds.xform(mainCtrl,s=[restDistance/2,restDistance/2,restDistance/2])
-cmds.makeIdentity(mainCtrl,apply=True,r=True,s=True)
 mainCtrlGrp = cmds.group(mainCtrl,name='%s_CTRL_GRP_%s'%(type,side))
 guideJRot = cmds.xform(guideJoints[0],q=True,ro=True,ws=True)
 cmds.xform(mainCtrlGrp,ro=guideJRot)
 mainCtrl = '%s|%s'%(mainCtrlGrp,mainCtrl[0])
+#parent ik joints to main ctrl
+cmds.parentConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
 
 #create fkIk switch control
 middleIndex = (len(guideJoints) - 1)/2
 mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
-
-    
 
 #fkIk control
 fkIkCtrl0 = MakeCtrlCurve()
 fkIkCtrl0.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
 fkIkCtrl0.pos = mPos
 fkIkCtrl0.ctrlColour = [0,1,0]
+fkIkCtrl0.attr = {'IKFK':{'min':0,'max':10}}
 fkIkCtrl = fkIkCtrl0.makeCtrl(fkIkCtrl0.makePlus())
-print mainCtrl
-print fkIkCtrl[0]
-#cmds.parent(fkIkCtrl[0],mainCtrl)
-#fkIkCtrl = ['%s|%s'%(mainCtrl,fkIkCtrl[0])]
 
-#fkIkCtrl = createPlusCtrl(mPos,'IKFK_%s_switch_CTRL_%s'%(type,side))
-cmds.addAttr(fkIkCtrl,ln='IKFK',at='double',min=0,max=10,dv=0)
-cmds.setAttr('%s.IKFK'%fkIkCtrl[0],e=True,keyable=True)
 #connect fkIk switch control
 multNode = cmds.shadingNode('multiplyDivide',asUtility=True)
 cmds.connectAttr('%s.IKFK'%fkIkCtrl[0],'%s.input1X'%multNode)
@@ -242,9 +245,6 @@ cmds.setAttr('%s.colorIfTrueR'%ikVisCondition,1)
 cmds.setAttr('%s.colorIfFalseR'%ikVisCondition,0) 
 cmds.connectAttr('%s.IKFK'%fkIkCtrl[0],'%s.firstTerm'%ikVisCondition)
 
-
-
-
 curvePoints = []
 for i,j in enumerate(blendJoints):
     pconst = cmds.parentConstraint(fkJoints[i],ikJoints[i],j)
@@ -263,10 +263,10 @@ for i,j in enumerate(fkJoints):
         fkCtrl.ctrlName = 'FK_%s_CTRL_%s'%(j.split('_')[0],side)
         fkCtrl.pos = fkJpos
         fkCtrl.rot = [0,90,0]
+        fkCtrl.scl = [restDistance/4,restDistance/4,restDistance/4]
         fkCtrl.ctrlColour = [0,0,1]
         fkCtrl = fkCtrl.makeCtrl(fkCtrl.makeSquare())
-        cmds.xform(fkCtrl,s=[restDistance/4,restDistance/4,restDistance/4])
-        cmds.makeIdentity(apply=True,r=True,s=True)
+
         fkCtrlGrp = cmds.group(fkCtrl,name='%s_GRP'%fkCtrl[0])
         fkjRot = cmds.xform(j,q=True,ro=True,ws=True)
         cmds.xform(fkCtrlGrp,ro=fkjRot)
@@ -282,7 +282,6 @@ for i,j in enumerate(fkJoints):
 
             cmds.parent(fkCtrlGrp,mainCtrl)
          
-
 #ik control
 #create controller
 ikjPos = cmds.xform(ikJoints[-1],q=True,t=True,ws=True)
@@ -290,31 +289,20 @@ ikjRot = cmds.xform(ikJoints[-1],q=True,ro=True,ws=True)
 newIKControl = MakeCtrlCurve()
 newIKControl.ctrlName = 'IK_%s_CTRL_%s'%(type,side)
 newIKControl.ctrlColour = [1,0,0]
+newIKControl.pos = ikjPos
+newIKControl.rot = [ikjRot[0],ikjRot[1]-90,ikjRot[2]]
+newIKControl.attr = {'bendy':{'min':0,'max':10},'stretchy':{'min':0,'max':10},'preserveVol':{}}
 newIKControl = newIKControl.makeCtrl(newIKControl.makeCircle())
-#newIKControl = cmds.circle(n='IK_%s_CTRL_%s'%(type,side),ch=0,r=0.3)
-cmds.xform(newIKControl,ro=[0,-90,0])
-cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
-cmds.xform(newIKControl,t=ikjPos,ro=ikjRot,ws=True)
-cmds.makeIdentity(newIKControl,apply=True,t=1,r=1)
 #orient constrain end ikJoint to ik CTRL
 cmds.orientConstraint(newIKControl[0],ikJoints[-1],mo=True)
-#add attributes
-cmds.addAttr(newIKControl,ln='bendy',at='double',min=0,max=10,dv=0)
-cmds.setAttr('%s.bendy'%newIKControl[0],e=True,keyable=True)
-cmds.addAttr(newIKControl,ln='stretchy',at='double',min=0,max=10,dv=0)
-cmds.setAttr('%s.stretchy'%newIKControl[0],e=True,keyable=True)
-cmds.addAttr(newIKControl,ln='preserveVol',at='double')
-cmds.setAttr('%s.preserveVol'%newIKControl[0],e=True,keyable=True)
+#add additional attributes
 for i,j in enumerate(guideJoints[:-1]):
     i = i+1
     cmds.addAttr(newIKControl,ln='length%s'%i,at='double')
     cmds.setAttr('%s.length%s'%(newIKControl[0],i),e=True,keyable=True)
-    
 #create IK handle 
 newIkHandle = cmds.ikHandle(sj=ikJoints[0],ee=ikJoints[-1])
 cmds.parent(newIkHandle[0],newIKControl)
-
-
 #create distance
 startLoc = locatorChild(ikJoints[0],0)
 cmds.parent(startLoc,mainCtrl)
