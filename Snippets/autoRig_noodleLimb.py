@@ -310,6 +310,10 @@ endLoc = locatorChild(newIKControl[0],1)
 distanceNode = cmds.shadingNode('distanceBetween',asUtility=True)
 cmds.connectAttr('%s.worldPosition[0]'%startLoc,'%s.point1'%distanceNode)
 cmds.connectAttr('%s.worldPosition[0]'%endLoc,'%s.point2'%distanceNode)
+distanceMult = cmds.shadingNode('multiplyDivide',asUtility=True)
+cmds.connectAttr('%s.distance'%distanceNode,'%s.input1X'%distanceMult)
+cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%distanceMult)
+cmds.setAttr('%s.operation'%distanceMult,2)
 #math nodes
 floatComp = cmds.shadingNode('floatComposite',asUtility=True)
 stretchMultiply = cmds.shadingNode('floatComposite',asUtility=True)
@@ -320,9 +324,9 @@ cmds.connectAttr('%s.outFloat'%stretchMultiply,'%s.factor'%floatComp)
 cmds.setAttr('%s.operation'%floatComp,2)
 
 cmds.setAttr('%s.floatB'%floatComp,restDistance)
-cmds.connectAttr('%s.distance'%distanceNode,'%s.floatA'%floatComp)
+cmds.connectAttr('%s.outputX'%distanceMult,'%s.floatA'%floatComp)
 multNode = cmds.shadingNode('multiplyDivide',asUtility=True)
-cmds.connectAttr('%s.distance'%distanceNode,'%s.input1X'%multNode)
+cmds.connectAttr('%s.outputX'%distanceMult,'%s.input1X'%multNode)
 cmds.connectAttr('%s.outFloat'%floatComp,'%s.input2X'%multNode)
 cmds.setAttr('%s.operation'%multNode,2)
 
@@ -332,7 +336,7 @@ cmds.xform(newIKControl,s=[restDistance/4,restDistance/4,restDistance/4])
 cmds.makeIdentity(newIKControl,apply=True,s=1)
 
 condishNode = cmds.shadingNode('condition',asUtility=True)
-cmds.connectAttr('%s.distance'%distanceNode,'%s.firstTerm'%condishNode)
+cmds.connectAttr('%s.outputX'%distanceMult,'%s.firstTerm'%condishNode)
 cmds.connectAttr('%s.input2X'%multNode,'%s.secondTerm'%condishNode)
 cmds.setAttr('%s.operation'%condishNode,2)
 cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
@@ -409,9 +413,16 @@ for i,j in enumerate(bendJoints[1:-1]):
 #connect end last bendJoint orientation to last bendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
+#scale ik joints
 for i,j in enumerate(ikJoints):
     if i < len(ikJoints)-1:
         cmds.connectAttr('%s.outColorR'%condishNode,'%s.scaleX'%j)
+
+
+cmds.scaleConstraint(mainCtrl,ikCtrlGrp,mo=True)
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(fkJoints[0],p=True),mo=True)
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(blendJoints[0],p=True),mo=True)
 
 #final grouping
 CTRL_constraint_GRP = cmds.group(mainCtrlGrp,ikCtrlGrp,n='%s_CTRL_constraint_GRP_%s'%(type,side))
