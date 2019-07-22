@@ -289,11 +289,7 @@ newIKControl.attr = {'bendy':{'min':0,'max':10},'stretchy':{'min':0,'max':10},'p
 newIKControl = newIKControl.makeCtrl(newIKControl.makeCircle())
 #orient constrain end ikJoint to ik CTRL
 cmds.orientConstraint(newIKControl[0],ikJoints[-1],mo=True)
-#add additional attributes
-for i,j in enumerate(guideJoints[:-1]):
-    i = i+1
-    cmds.addAttr(newIKControl,ln='length%s'%i,at='double')
-    cmds.setAttr('%s.length%s'%(newIKControl[0],i),e=True,keyable=True)
+
 #create IK handle 
 newIkHandle = cmds.ikHandle(sj=ikJoints[0],ee=ikJoints[-1])
 cmds.parent(newIkHandle[0],newIKControl)
@@ -330,6 +326,20 @@ cmds.connectAttr('%s.outputX'%distanceMult,'%s.firstTerm'%condishNode)
 cmds.connectAttr('%s.input2X'%multNode,'%s.secondTerm'%condishNode)
 cmds.setAttr('%s.operation'%condishNode,2)
 cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
+#add additional attributes for length extend
+n=0
+for i,j in enumerate(guideJoints[:-1]):
+    i = i+1
+    cmds.addAttr(newIKControl,ln='length%s'%i,at='double')
+    cmds.setAttr('%s.length%s'%(newIKControl[0],i),e=True,keyable=True)
+    lenFloatComp = cmds.shadingNode('floatComposite',asUtility=True)
+    cmds.connectAttr('%s.outColorR'%(condishNode),'%s.floatA'%lenFloatComp)
+    cmds.connectAttr('%s.length%s'%(newIKControl[0],i),'%s.floatB'%lenFloatComp)
+    #scale ik joints
+    cmds.connectAttr('%s.outFloat'%lenFloatComp,'%s.scaleX'%ikJoints[n])
+    cmds.connectAttr('%s.outFloat'%lenFloatComp,'%s.scaleX'%ikJoints[n+1])
+    n = n+2
+
 #group IK parts
 ikCtrlGrp = cmds.group(newIKControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
 cmds.xform(ikCtrlGrp,piv=startPos,ws=True)
@@ -404,9 +414,6 @@ for i,j in enumerate(bendJoints[1:-1]):
 #connect end last bendJoint orientation to last blendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
-#scale ik joints
-for j in ikJoints[:-1]:
-    cmds.connectAttr('%s.outColorR'%condishNode,'%s.scaleX'%j)
 
 #final grouping
 CTRL_constraint_GRP = cmds.group(mainCtrlGrp,ikCtrlGrp,n='%s_CTRL_constraint_GRP_%s'%(type,side))
