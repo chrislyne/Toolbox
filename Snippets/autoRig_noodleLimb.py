@@ -197,6 +197,12 @@ mainCtrl = '%s|%s'%(mainCtrlGrp,mainCtrl[0])
 #parent ik joints to main ctrl
 cmds.parentConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
 
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(fkJoints[0],p=True),mo=True)
+ikScaleConstraint = cmds.scaleConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
+ikScaleConstraint = ikScaleConstraint[0]
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(blendJoints[0],p=True),mo=True)
+cmds.scaleConstraint(mainCtrl,cmds.listRelatives(bendJoints[0],p=True),mo=True)
+
 #create fkIk switch control
 middleIndex = (len(guideJoints) - 1)/2
 mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
@@ -300,7 +306,8 @@ cmds.connectAttr('%s.worldPosition[0]'%startLoc,'%s.point1'%distanceNode)
 cmds.connectAttr('%s.worldPosition[0]'%endLoc,'%s.point2'%distanceNode)
 distanceMult = cmds.shadingNode('multiplyDivide',asUtility=True)
 cmds.connectAttr('%s.distance'%distanceNode,'%s.input1X'%distanceMult)
-cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%distanceMult)
+cmds.connectAttr('%s.constraintScaleX'%ikScaleConstraint,'%s.input2X'%distanceMult)
+#cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%distanceMult)
 cmds.setAttr('%s.operation'%distanceMult,2)
 #math nodes
 floatComp = cmds.shadingNode('floatComposite',asUtility=True)
@@ -327,6 +334,7 @@ cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
 ikCtrlGrp = cmds.group(newIKControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
 cmds.xform(ikCtrlGrp,piv=startPos,ws=True)
 cmds.connectAttr('%s.outColorR'%ikVisCondition,'%s.visibility'%ikCtrlGrp)
+cmds.scaleConstraint(mainCtrl,ikCtrlGrp,mo=True)
 
 #create curve
 ikCurve = cmds.curve(d=3,p=curvePoints,n='%s_ikSpline_curve_%s'%(type,side))
@@ -338,7 +346,8 @@ cmds.setAttr('%s.input2X'%splineMultNode,cmds.arclen(ikCurve))
 curveInfoNode = cmds.arclen(ikCurve, ch=True)
 curveMult = cmds.shadingNode('multiplyDivide',asUtility=True)
 cmds.connectAttr('%s.arcLength'%curveInfoNode,'%s.input1X'%curveMult)
-cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%curveMult)
+cmds.connectAttr('%s.constraintScaleX'%ikScaleConstraint,'%s.input2X'%curveMult)
+#cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%curveMult)
 cmds.setAttr('%s.operation'%curveMult,2)
 cmds.connectAttr('%s.outputX'%curveMult,'%s.input1X'%splineMultNode)
 #group ikSpline parts
@@ -398,14 +407,6 @@ cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 #scale ik joints
 for j in ikJoints[:-1]:
     cmds.connectAttr('%s.outColorR'%condishNode,'%s.scaleX'%j)
-
-
-cmds.scaleConstraint(mainCtrl,ikCtrlGrp,mo=True)
-cmds.scaleConstraint(mainCtrl,cmds.listRelatives(fkJoints[0],p=True),mo=True)
-cmds.scaleConstraint(mainCtrl,cmds.listRelatives(ikJoints[0],p=True),mo=True)
-cmds.scaleConstraint(mainCtrl,cmds.listRelatives(blendJoints[0],p=True),mo=True)
-cmds.scaleConstraint(mainCtrl,cmds.listRelatives(bendJoints[0],p=True),mo=True)
-
 
 #final grouping
 CTRL_constraint_GRP = cmds.group(mainCtrlGrp,ikCtrlGrp,n='%s_CTRL_constraint_GRP_%s'%(type,side))
