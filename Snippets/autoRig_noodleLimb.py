@@ -1,3 +1,10 @@
+#TODO
+#Cleaner joint naming
+#Better elbow
+#IK snap softener
+#smoother volume preservation
+
+
 #cmds.select('shoulder_guideJoint_L',r=True)
 #cmds.select('elbow_guideJoint_L',add=True)
 #cmds.select('wrist_guideJoint_L',add=True)
