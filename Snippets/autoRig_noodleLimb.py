@@ -118,7 +118,7 @@ def midpoint(p1,p2):
     m1.append((p1[2] + p2[2])/2)
     return m1
     
-def createJoints(type,jointType,lockMidJoints):
+def createJoints(guideJoints,type,jointType,lockMidJoints):
     cmds.select(cl=True)
     newJoints = []
     parentJRot = [0,0,0]
@@ -134,7 +134,8 @@ def createJoints(type,jointType,lockMidJoints):
         if guideJoints[i-1] and i > 0:
             #create midpoint joint
             mjPos = midpoint(jPos,cmds.xform(guideJoints[i-1],q=True,t=True,ws=True))
-            newJointName = guideJoints[i-1].replace('_guide','Mid_%s'%jointType)
+            newJointName = guideJoints[i-1].replace('_blend','Mid_%s'%jointType)
+            newJointName = newJointName.replace('_guide','Mid_%s'%jointType)
             newJoint = cmds.joint(n=newJointName,p=[mjPos[0],mjPos[1],mjPos[2]])
             newJoints.append(newJoint)
             #lock mid joints
@@ -143,8 +144,13 @@ def createJoints(type,jointType,lockMidJoints):
                  cmds.setAttr('%s.ry'%newJoint,lock=True)
                  cmds.setAttr('%s.rz'%newJoint,lock=True)
         #create new joint
-        newJointName = j.replace('guide',jointType)
+
+        #newJointName = j.replace('guide',jointType)
+        newJointName = '%s_%s'%(j,jointType)
+        if cmds.objExists(newJointName):
+            newJointName = '%s%s'%(newJointName,i)
         newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]],o=[jRot[0],jRot[1],jRot[2]])
+
         newJoints.append(newJoint)
     #group joints
     groupPiv = cmds.xform(newJoints[0],q=True,t=True,ws=True)
@@ -175,10 +181,10 @@ type = 'arm'
 hideRig = True;
 
 #create joints
-blendJoints = createJoints(type,'blend',0)
-fkJoints = createJoints(type,'FK',1)
-ikJoints = createJoints(type,'IK',1)
-bendJoints = createJoints(type,'bend',0)
+blendJoints = createJoints(guideJoints,type,'blend',0)
+fkJoints = createJoints(guideJoints,type,'FK',1)
+ikJoints = createJoints(guideJoints,type,'IK',1)
+bendJoints = createJoints(blendJoints,type,'bend',0)
 
 #create main CTRL
 #get position
@@ -315,7 +321,7 @@ cmds.connectAttr('%s.stretchy'%newIKControl[0],'%s.floatA'%stretchMultiply)
 cmds.connectAttr('%s.outFloat'%stretchMultiply,'%s.factor'%floatComp)
 cmds.setAttr('%s.operation'%floatComp,2)
 
-cmds.setAttr('%s.floatB'%floatComp,restDistance)
+#cmds.setAttr('%s.floatB'%floatComp,restDistance)
 cmds.connectAttr('%s.outputX'%distanceMult,'%s.floatA'%floatComp)
 multNode = cmds.shadingNode('multiplyDivide',asUtility=True)
 cmds.connectAttr('%s.outputX'%distanceMult,'%s.input1X'%multNode)
@@ -329,6 +335,11 @@ cmds.setAttr('%s.operation'%condishNode,2)
 cmds.connectAttr('%s.outputX'%multNode,'%s.colorIfTrueR'%condishNode)
 #add additional attributes for length extend
 n=0
+lenSum = cmds.shadingNode('plusMinusAverage',asUtility=True)
+restDistanceConstant = cmds.shadingNode('floatConstant',asUtility=True)
+cmds.setAttr('%s.inFloat'%restDistanceConstant,restDistance)
+cmds.connectAttr('%s.outFloat'%(restDistanceConstant),'%s.input1D[0]'%lenSum)
+cmds.connectAttr('%s.output1D'%lenSum,'%s.floatB'%floatComp)
 for i,j in enumerate(guideJoints[:-1]):
     i = i+1
     cmds.addAttr(newIKControl,ln='length%s'%i,at='double')
@@ -340,6 +351,11 @@ for i,j in enumerate(guideJoints[:-1]):
     cmds.connectAttr('%s.outFloat'%lenFloatComp,'%s.scaleX'%ikJoints[n])
     cmds.connectAttr('%s.outFloat'%lenFloatComp,'%s.scaleX'%ikJoints[n+1])
     n = n+2
+    lenFloatMath = cmds.shadingNode('floatMath',asUtility=True)
+    cmds.connectAttr('%s.length%s'%(newIKControl[0],i),'%s.floatB'%lenFloatMath)
+    cmds.setAttr('%s.operation'%lenFloatMath,2)
+    cmds.setAttr('%s.floatA'%lenFloatMath,restDistance*0.5)
+    cmds.connectAttr('%s.outFloat'%lenFloatMath,'%s.input1D[%i]'%(lenSum,i))
 
 #group IK parts
 ikCtrlGrp = cmds.group(newIKControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
@@ -370,8 +386,9 @@ for j in bendJoints[:-1]:
 #get curve cvs
 curveCVs = cmds.ls('{0}.cv[:]'.format(ikCurve), fl=True)
 #create clusters
-bendGrp = cmds.group(em=True,n='bend_%s_GRP_%s'%(type,side))
+bendGrp = cmds.group(em=True,n='%s_bend_GRP_%s'%(type,side))
 cmds.xform(bendGrp,piv=startPos,ws=True)
+cmds.scaleConstraint(mainCtrl,bendGrp,mo=True)
 for i,cv in enumerate(curveCVs):
     newCluster = cmds.cluster(cv)
     #make control
@@ -383,7 +400,7 @@ for i,cv in enumerate(curveCVs):
     newStarCtrl.scl = [restDistance/4,restDistance/4,restDistance/4]
     bendCtrl = newStarCtrl.makeCtrl(newStarCtrl.makeStar())
     #group ctrl
-    bendCtrlGrp = cmds.group(bendCtrl,n='bend_%s_CTRL_GRP_%s'%(type,side))
+    bendCtrlGrp = cmds.group(bendCtrl,n='%s_bend_CTRL_GRP_%s'%(type,side))
     jRot = cmds.xform(blendJoints[i],q=True,ro=True,ws=True)
     cmds.xform(bendCtrlGrp,t=[cPos[0],cPos[1],cPos[2]],ro=jRot,ws=True)
     cmds.makeIdentity(bendCtrlGrp,apply=True,t=1)
