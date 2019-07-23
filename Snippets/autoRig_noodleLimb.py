@@ -172,6 +172,7 @@ for j in guideJoints[1:]:
 
 side = guideJoints[0][-1]
 type = 'arm'
+hideRig = True;
 
 #create joints
 blendJoints = createJoints(type,'blend',0)
@@ -414,6 +415,10 @@ for i,j in enumerate(bendJoints[1:-1]):
 #connect end last bendJoint orientation to last blendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
+hideObjects = [cmds.listRelatives(ikJoints[0],p=True)[0],cmds.listRelatives(fkJoints[0],p=True)[0],cmds.listRelatives(blendJoints[0],p=True)[0],ikSpline_GRP]
+if hideRig:
+    for o in hideObjects:
+        cmds.setAttr('%s.visibility'%o,0)
 
 #final grouping
 CTRL_constraint_GRP = cmds.group(mainCtrlGrp,ikCtrlGrp,n='%s_CTRL_constraint_GRP_%s'%(type,side))
