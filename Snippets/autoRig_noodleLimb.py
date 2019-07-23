@@ -354,7 +354,7 @@ for i,j in enumerate(guideJoints[:-1]):
     lenFloatMath = cmds.shadingNode('floatMath',asUtility=True)
     cmds.connectAttr('%s.length%s'%(newIKControl[0],i),'%s.floatB'%lenFloatMath)
     cmds.setAttr('%s.operation'%lenFloatMath,2)
-    cmds.setAttr('%s.floatA'%lenFloatMath,restDistance*0.5)
+    cmds.setAttr('%s.floatA'%lenFloatMath,restDistance/(len(guideJoints)-1))
     cmds.connectAttr('%s.outFloat'%lenFloatMath,'%s.input1D[%i]'%(lenSum,i))
 
 #group IK parts
