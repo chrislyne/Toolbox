@@ -1,8 +1,8 @@
 #TODO
-#Cleaner joint naming
 #Better elbow
 #IK snap softener
-#smoother volume preservation
+#ik pole vector control
+#position fk controls on ik and vice versa
 
 
 #cmds.select('shoulder_guideJoint_L',r=True)
@@ -125,11 +125,13 @@ def midpoint(p1,p2):
     m1.append((p1[2] + p2[2])/2)
     return m1
     
-def createJoints(guideJoints,type,jointType,lockMidJoints):
+def createJoints(guideJoints,type,rigSystem,lockMidJoints):
     cmds.select(cl=True)
     newJoints = []
+    side = guideJoints[0].split('_')[-1]
     parentJRot = [0,0,0]
     for i,j in enumerate(guideJoints):
+        jointTypeName = j.split('_')[0]
         #get joint position
         jPos = cmds.xform(j,q=True,t=True,ws=True)
         jRotWs = cmds.xform(j,q=True,ro=True,os=False,ws=True)
@@ -141,8 +143,7 @@ def createJoints(guideJoints,type,jointType,lockMidJoints):
         if guideJoints[i-1] and i > 0:
             #create midpoint joint
             mjPos = midpoint(jPos,cmds.xform(guideJoints[i-1],q=True,t=True,ws=True))
-            newJointName = guideJoints[i-1].replace('_blend','Mid_%s'%jointType)
-            newJointName = newJointName.replace('_guide','Mid_%s'%jointType)
+            newJointName = '%s_%sMidJoint_%s'%(jointTypeName,rigSystem,side)
             newJoint = cmds.joint(n=newJointName,p=[mjPos[0],mjPos[1],mjPos[2]])
             newJoints.append(newJoint)
             #lock mid joints
@@ -151,17 +152,13 @@ def createJoints(guideJoints,type,jointType,lockMidJoints):
                  cmds.setAttr('%s.ry'%newJoint,lock=True)
                  cmds.setAttr('%s.rz'%newJoint,lock=True)
         #create new joint
-
-        #newJointName = j.replace('guide',jointType)
-        newJointName = '%s_%s'%(j,jointType)
-        if cmds.objExists(newJointName):
-            newJointName = '%s%s'%(newJointName,i)
+        newJointName = '%s_%sJoint_%s'%(jointTypeName,rigSystem,side)
         newJoint = cmds.joint(n=newJointName,p=[jPos[0],jPos[1],jPos[2]],o=[jRot[0],jRot[1],jRot[2]])
 
         newJoints.append(newJoint)
     #group joints
     groupPiv = cmds.xform(newJoints[0],q=True,t=True,ws=True)
-    jointGrp = cmds.group(newJoints[0],n='%s_%sJoint_GRP_%s'%(type,jointType,guideJoints[0][-1]))
+    jointGrp = cmds.group(newJoints[0],n='%s_%sJoint_GRP_%s'%(type,rigSystem,side))
     cmds.xform(jointGrp,piv=groupPiv)
     
     return newJoints
@@ -181,7 +178,7 @@ guideJoints = cmds.ls(sl=True)
 
 restDistance = 0
 for j in guideJoints[1:]:
-    restDistance += cmds.getAttr('%s.translateX'%j)
+    restDistance += abs(cmds.getAttr('%s.translateX'%j))
 
 side = guideJoints[0][-1]
 type = 'arm'
@@ -425,14 +422,22 @@ cmds.connectAttr('%s.preserveVol'%newIKControl[0],'%s.floatA'%preserveVolFloatMa
 preserveVolCompNode = cmds.shadingNode('floatComposite',asUtility=True)
 cmds.setAttr('%s.operation'%preserveVolCompNode,6)
 cmds.connectAttr('%s.outFloat'%preserveVolFloatMath,'%s.floatA'%preserveVolCompNode)
+bendJointsLen = len(bendJoints)-2
 for i,j in enumerate(bendJoints[1:-1]):
+    squashAmount = abs(i - float(bendJointsLen)/2)
+    squashAmount = (squashAmount/(bendJointsLen))+1
+    print squashAmount
     floatMathNode = cmds.shadingNode('floatMath',asUtility=True)
     cmds.setAttr('%s.operation'%floatMathNode,3)
     cmds.connectAttr('%s.scaleX'%j,'%s.floatB'%floatMathNode)
     clampNode = cmds.shadingNode('clamp',asUtility=True)
     cmds.setAttr('%s.maxR'%clampNode,1)
+    squashMultNode = cmds.shadingNode('floatMath',asUtility=True)
+    cmds.setAttr('%s.operation'%squashMultNode,2)
+    cmds.setAttr('%s.floatA'%squashMultNode,squashAmount)
+    cmds.connectAttr('%s.outFloat'%floatMathNode,'%s.floatB'%squashMultNode)
     cmds.connectAttr('%s.outFloat'%preserveVolCompNode,'%s.minR'%clampNode)
-    cmds.connectAttr('%s.outFloat'%floatMathNode,'%s.inputR'%clampNode)
+    cmds.connectAttr('%s.outFloat'%squashMultNode,'%s.inputR'%clampNode)
     cmds.connectAttr('%s.outputR'%clampNode,'%s.scaleY'%j)
     cmds.connectAttr('%s.outputR'%clampNode,'%s.scaleZ'%j)
 
