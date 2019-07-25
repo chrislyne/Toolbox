@@ -1,7 +1,6 @@
 #TODO
 #Better elbow
 #IK snap softener
-#ik pole vector control
 #position fk controls on ik and vice versa
 
 
@@ -13,6 +12,7 @@
 #
 #
 import maya.cmds as cmds
+import maya.OpenMaya as om
 
 class MakeCtrlCurve:
     
@@ -116,6 +116,25 @@ class MakeCtrlCurve:
 #newCtrl.ctrlColour = [1,0,1]
 #newCtrl.makeCtrl(newCtrl.makeCross())
 
+def getPoleVecPos(rootPos,midPos,endPos):
+
+    rootJointVec = om.MVector(rootPos[0],rootPos[1],rootPos[2])
+    midJointVec = om.MVector(midPos[0],midPos[1],midPos[2])
+    endJointVec = om.MVector(endPos[0],endPos[1],endPos[2])
+
+    line = (endJointVec - rootJointVec)
+    point = (midJointVec - rootJointVec)
+
+    scaleValue = (line * point) / (line * line)
+    projVec = line * scaleValue + rootJointVec
+
+    rootToMidLen = (midJointVec - rootJointVec).length()
+    midToEndLen = (endJointVec - midJointVec).length()
+    totalLength = rootToMidLen + midToEndLen
+
+    poleVecPos = (midJointVec - projVec).normal() * totalLength/2 + midJointVec
+
+    return poleVecPos
 
 def midpoint(p1,p2):
     #return midpoint 
@@ -183,6 +202,7 @@ for j in guideJoints[1:]:
 side = guideJoints[0][-1]
 type = 'arm'
 hideRig = True;
+ctrlScaleMult = 1
 
 #create joints
 blendJoints = createJoints(guideJoints,type,'blend',0)
@@ -197,7 +217,7 @@ mainCtrl = MakeCtrlCurve()
 mainCtrl.ctrlName = '%s_CTRL_%s'%(type,side)
 mainCtrl.pos = startPos
 mainCtrl.rot = [0,90,0]
-mainCtrl.scl = [restDistance/2,restDistance/2,restDistance/2]
+mainCtrl.scl = [restDistance/2*ctrlScaleMult,restDistance/2*ctrlScaleMult,restDistance/2*ctrlScaleMult]
 mainCtrl.ctrlColour = [0,1,0]
 mainCtrl = mainCtrl.makeCtrl(mainCtrl.makeDiamond())
 
@@ -222,6 +242,7 @@ mPos = cmds.xform(guideJoints[middleIndex],q=True,t=True,ws=True)
 fkIkCtrl0 = MakeCtrlCurve()
 fkIkCtrl0.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
 fkIkCtrl0.pos = mPos
+fkIkCtrl0.scl = [restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult]
 fkIkCtrl0.ctrlColour = [0,1,0]
 fkIkCtrl0.attr = {'IKFK':{'min':0,'max':10}}
 fkIkCtrl = fkIkCtrl0.makeCtrl(fkIkCtrl0.makePlus())
@@ -267,7 +288,7 @@ for i,j in enumerate(fkJoints):
         squareCtrl.ctrlName = 'FK_%s_CTRL_%s'%(j.split('_')[0],side)
         squareCtrl.pos = fkJpos
         squareCtrl.rot = [0,90,0]
-        squareCtrl.scl = [restDistance/4,restDistance/4,restDistance/4]
+        squareCtrl.scl = [restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult]
         squareCtrl.ctrlColour = [0,0,1]
         fkCtrl = squareCtrl.makeCtrl(squareCtrl.makeSquare())
         #group CTRL
@@ -295,7 +316,7 @@ newIKControl.ctrlName = 'IK_%s_CTRL_%s'%(type,side)
 newIKControl.ctrlColour = [1,0,0]
 newIKControl.pos = ikjPos
 newIKControl.rot = [ikjRot[0],ikjRot[1]-90,ikjRot[2]]
-newIKControl.scl = [restDistance/4,restDistance/4,restDistance/4]
+newIKControl.scl = [restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult]
 newIKControl.attr = {'bendy':{'min':0,'max':10},'stretchy':{'min':0,'max':10},'preserveVol':{}}
 newIKControl = newIKControl.makeCtrl(newIKControl.makeCircle())
 #orient constrain end ikJoint to ik CTRL
@@ -361,8 +382,29 @@ for i,j in enumerate(guideJoints[:-1]):
     cmds.setAttr('%s.floatA'%lenFloatMath,restDistance/(len(guideJoints)-1))
     cmds.connectAttr('%s.outFloat'%lenFloatMath,'%s.input1D[%i]'%(lenSum,i))
 
+#create ik pole vec control
+rootJointPos = cmds.xform(guideJoints[0],q=True,ws=True,t=True)
+midJointPos = cmds.xform(guideJoints[1],q=True,ws=True,t=True)
+endJointPos = cmds.xform(guideJoints[-1],q=True,ws=True,t=True)
+
+poleVecPos = getPoleVecPos(rootJointPos,midJointPos,endJointPos)
+poleVecLoc = cmds.spaceLocator()
+cmds.move(poleVecPos[0],poleVecPos[1],poleVecPos[2],poleVecLoc,ws=True)
+#make pole constraint
+cmds.poleVectorConstraint(poleVecLoc[0],newIkHandle[0])
+poleVecControl = MakeCtrlCurve()
+poleVecControl.ctrlName = '%s_IKPoleVec_CTRL_%s'%(type,side)
+poleVecControl.ctrlColour = [1,0,0]
+poleVecControl.pos = poleVecPos
+poleVecControl.scl = [restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult]
+poleVecControl = poleVecControl.makeCtrl(poleVecControl.makeCross())
+#hide locator
+cmds.setAttr('%s.visibility'%poleVecLoc[0],0)
+#parent locator to CTRL
+cmds.parent(poleVecLoc[0],poleVecControl)
+
 #group IK parts
-ikCtrlGrp = cmds.group(newIKControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
+ikCtrlGrp = cmds.group(newIKControl,poleVecControl,n='%s_IK_CTRL_GRP_%s'%(type,side))
 cmds.xform(ikCtrlGrp,piv=startPos,ws=True)
 cmds.connectAttr('%s.outColorR'%ikVisCondition,'%s.visibility'%ikCtrlGrp)
 cmds.scaleConstraint(mainCtrl,ikCtrlGrp,mo=True)
@@ -395,13 +437,15 @@ cmds.xform(bendGrp,piv=startPos,ws=True)
 cmds.scaleConstraint(mainCtrl,bendGrp,mo=True)
 for i,cv in enumerate(curveCVs):
     newCluster = cmds.cluster(cv)
+    if hideRig:
+        cmds.setAttr('%s.visibility'%newCluster[1],0) 
     #make control
     cPos = cmds.xform(newCluster[1],q=True,piv=True,ws=True)
     newStarCtrl = MakeCtrlCurve()
     newStarCtrl.ctrlName = 'IKFK_%s_switch_CTRL_%s'%(type,side)
     newStarCtrl.ctrlColour = [1,0.7,0]
     newStarCtrl.rot = [0,-90,0]
-    newStarCtrl.scl = [restDistance/4,restDistance/4,restDistance/4]
+    newStarCtrl.scl = [restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult,restDistance/4*ctrlScaleMult]
     bendCtrl = newStarCtrl.makeCtrl(newStarCtrl.makeStar())
     #group ctrl
     bendCtrlGrp = cmds.group(bendCtrl,n='%s_bend_CTRL_GRP_%s'%(type,side))
@@ -426,7 +470,6 @@ bendJointsLen = len(bendJoints)-2
 for i,j in enumerate(bendJoints[1:-1]):
     squashAmount = abs(i - float(bendJointsLen)/2)
     squashAmount = (squashAmount/(bendJointsLen))+1
-    print squashAmount
     floatMathNode = cmds.shadingNode('floatMath',asUtility=True)
     cmds.setAttr('%s.operation'%floatMathNode,3)
     cmds.connectAttr('%s.scaleX'%j,'%s.floatB'%floatMathNode)
@@ -444,7 +487,7 @@ for i,j in enumerate(bendJoints[1:-1]):
 #connect end last bendJoint orientation to last blendJoint
 cmds.orientConstraint(blendJoints[-1],bendJoints[-1])
 
-hideObjects = [cmds.listRelatives(ikJoints[0],p=True)[0],cmds.listRelatives(fkJoints[0],p=True)[0],cmds.listRelatives(blendJoints[0],p=True)[0],ikSpline_GRP]
+hideObjects = [cmds.listRelatives(ikJoints[0],p=True)[0],cmds.listRelatives(fkJoints[0],p=True)[0],cmds.listRelatives(blendJoints[0],p=True)[0],ikSpline_GRP,newIkHandle[0],guideJoints[0],startLoc,endLoc]
 if hideRig:
     for o in hideObjects:
         cmds.setAttr('%s.visibility'%o,0)
