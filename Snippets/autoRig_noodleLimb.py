@@ -2,6 +2,7 @@
 #Better elbow
 #IK snap softener
 #position fk controls on ik and vice versa
+#connect spline twist to rig
 
 
 #cmds.select('shoulder_guideJoint_L',r=True)
@@ -395,7 +396,7 @@ cmds.poleVectorConstraint(poleVecLoc[0],newIkHandle[0])
 poleVecControl = MakeCtrlCurve()
 poleVecControl.ctrlName = '%s_IKPoleVec_CTRL_%s'%(type,side)
 poleVecControl.ctrlColour = [1,0,0]
-poleVecControl.pos = poleVecPos
+poleVecControl.pos = [poleVecPos[0],poleVecPos[1],poleVecPos[2]]
 poleVecControl.scl = [restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult,restDistance/8*ctrlScaleMult]
 poleVecControl = poleVecControl.makeCtrl(poleVecControl.makeCross())
 #hide locator
