@@ -2,7 +2,7 @@
 #Better elbow
 #IK snap softener
 #position fk controls on ik and vice versa
-#connect spline twist to rig
+
 
 
 #cmds.select('shoulder_guideJoint_L',r=True)
@@ -136,6 +136,15 @@ def getPoleVecPos(rootPos,midPos,endPos):
     poleVecPos = (midJointVec - projVec).normal() * totalLength/2 + midJointVec
 
     return poleVecPos
+
+#def findMiddle(input_list):
+#    middle = float(len(input_list))/2
+#    if middle % 2 != 0:
+#        return (input_list[int(middle-1.5)],input_list[int(middle-0.5)], input_list[int(middle+0.5)])
+
+#    else:
+#        return (input_list[int(middle-1)],input_list[int(middle)], input_list[int(middle+1)])
+
 
 def midpoint(p1,p2):
     #return midpoint 
@@ -424,6 +433,9 @@ cmds.connectAttr('%s.constraintScaleX'%ikScaleConstraint,'%s.input2X'%curveMult)
 #cmds.connectAttr('%s.scaleX'%mainCtrlGrp,'%s.input2X'%curveMult)
 cmds.setAttr('%s.operation'%curveMult,2)
 cmds.connectAttr('%s.outputX'%curveMult,'%s.input1X'%splineMultNode)
+#connect roll and twist
+cmds.connectAttr('%s.rotateX'%blendJoints[0],'%s.roll'%ikSplineHandle[0])
+cmds.connectAttr('%s.rotateX'%blendJoints[-1],'%s.twist'%ikSplineHandle[0])
 #group ikSpline parts
 ikSpline_GRP = cmds.group(ikCurve,ikSplineHandle[0],n='%s_ikSpline_GRP_%s'%(type,side))
 
@@ -436,7 +448,9 @@ curveCVs = cmds.ls('{0}.cv[:]'.format(ikCurve), fl=True)
 bendGrp = cmds.group(em=True,n='%s_bend_GRP_%s'%(type,side))
 cmds.xform(bendGrp,piv=startPos,ws=True)
 cmds.scaleConstraint(mainCtrl,bendGrp,mo=True)
+
 for i,cv in enumerate(curveCVs):
+
     newCluster = cmds.cluster(cv)
     if hideRig:
         cmds.setAttr('%s.visibility'%newCluster[1],0) 
