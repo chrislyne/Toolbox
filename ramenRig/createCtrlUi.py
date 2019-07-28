@@ -1,23 +1,35 @@
+from PySide2 import QtWidgets
+import maya.cmds as cmds
+import maya.OpenMayaUI as mui
+import shiboken2
 import baseIO.qtBase as qtBase
-from PySide2.QtWidgets import QColorDialog
-from PySide2.QtGui import QColor
 from random import randint
+from random import uniform
+
+def randomColor():
+	#randomise colours
+    hue = randint(0,359)
+    sat = uniform(0.5,1)
+    val = 1 - sat + 0.5
+    return[hue,sat,val]
 
 def createCTRL_ui():
-    window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'createCTRL.ui')
+    window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'createCtrl.ui')
     window._windowTitle = 'Create CTRL Window'
-    window._windowName = 'crateCtrlWindow'
+    window._windowName = 'createCtrlWindow'
     window.pathModify = 'ramenRig/'
     window.BuildUI()
+    #layout for color slider
+    qtLayout = window.mainWidget.ctrlColorLayout
+    paneLayoutName = cmds.paneLayout()
+    # Create slider widget
+    csg = cmds.colorSliderGrp(hsvValue=randomColor())
+    # Find a pointer to the paneLayout that we just created using Maya API
+    ptr = mui.MQtUtil.findControl(paneLayoutName)
+    # Wrap the pointer into a python QObject. Note that with PyQt QObject is needed. In Shiboken we use QWidget.
+    paneLayoutQt = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
+    # Now that we have a QtWidget, we add it to our Qt layout
+    qtLayout.addWidget(paneLayoutQt)
     window.show(dockable=False)
-
-def colourDialog():
-    #randomise colours
-    hue = randint(0,359)
-    sat = randint(128,255)
-    val = 255 - sat + 128
-    #open dialog
-    newColor = QColorDialog.getColor(title='Colour Foo',initial=QColor.fromHsv(hue,sat,val))
-    return newColor.getRgb()
 
 createCTRL_ui()
