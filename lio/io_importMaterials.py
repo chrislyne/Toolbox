@@ -51,6 +51,7 @@ def assignMaterials():
         allConnections = []
         project = cmds.workspace( q=True, directory=True, rd=True)
         JSONPath = project +'renderData/alembicShaders/%s/%s.json'%(ref,ref)
+        print JSONPath
         with open(JSONPath) as data_file:    
                 data = json.load(data_file)
                 for obj in (data["shapes"]):
