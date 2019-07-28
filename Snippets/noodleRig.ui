@@ -59,6 +59,9 @@
      </layout>
     </item>
     <item>
+     <layout class="QVBoxLayout" name="VariantsLayout"/>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="topMargin">
        <number>0</number>
