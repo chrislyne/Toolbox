@@ -5,6 +5,7 @@ import shiboken2
 import baseIO.qtBase as qtBase
 from random import randint
 from random import uniform
+import ramenRig.createCtrl as createCtrl
 
 def randomColor():
 	#randomise colours
@@ -12,6 +13,33 @@ def randomColor():
     sat = uniform(0.5,1)
     val = 1 - sat + 0.5
     return[hue,sat,val]
+
+def createBtn():
+    win = ctrlWindow.mainWidget
+    shapeType = win.comboBox.currentText()
+
+
+    newCtrl = createCtrl.MakeCtrlCurve()
+    newCtrl.ctrlColour = [1,0,1]
+    newCtrl.thickness = win.spinBox_lineThickness.value()
+    newCtrl.scl = [win.doubleSpinBox.value(),win.doubleSpinBox.value(),win.doubleSpinBox.value()]
+    if win.radioButton_x.isChecked():
+        newCtrl.rot = [0,90,0]
+    if win.radioButton_y.isChecked():
+        newCtrl.rot = [90,0,0]
+    if shapeType == 'Square':
+        newCtrl.makeCtrl(newCtrl.makeSquare())
+    if shapeType == 'Diamond':
+        newCtrl.makeCtrl(newCtrl.makeDiamond())
+    if shapeType == 'Plus':
+        newCtrl.makeCtrl(newCtrl.makePlus())
+    if shapeType == 'Star':
+        newCtrl.makeCtrl(newCtrl.makeStar())
+    if shapeType == 'Cross':
+        newCtrl.makeCtrl(newCtrl.makeCross())
+    if shapeType == 'Circle':
+        newCtrl.makeCtrl(newCtrl.makeCircle())
+    
 
 def createCTRL_ui():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'createCtrl.ui')
@@ -32,4 +60,9 @@ def createCTRL_ui():
     qtLayout.addWidget(paneLayoutQt)
     window.show(dockable=False)
 
-createCTRL_ui()
+    #connect buttons
+    window.mainWidget.pushButton_newCtrl.clicked.connect(createBtn)
+
+    return window
+
+ctrlWindow = createCTRL_ui()
