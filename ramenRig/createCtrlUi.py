@@ -29,7 +29,18 @@ def createBtn():
         newCtrl.rot = [90,0,0]
 
     newCtrl.makeCtrl(newCtrl.makeShape())
-    
+
+def sizeSlider(val):
+    win = ctrlWindow.mainWidget
+    win.doubleSpinBox.setValue(float(val)*0.1)
+
+def sizeSpinbox(val):
+    win = ctrlWindow.mainWidget
+    #increase range of slider if needed
+    sliderMax = win.horizontalSlider_2.maximum()
+    if int(val*10) > sliderMax:
+        win.horizontalSlider_2.setMaximum(int(val*20))
+    win.horizontalSlider_2.setValue(int(val*10))
 
 def createCTRL_ui():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'createCtrl.ui')
@@ -52,6 +63,8 @@ def createCTRL_ui():
 
     #connect buttons
     window.mainWidget.pushButton_newCtrl.clicked.connect(createBtn)
+    window.mainWidget.horizontalSlider_2.sliderMoved.connect(sizeSlider)
+    window.mainWidget.doubleSpinBox.valueChanged.connect(sizeSpinbox)
 
     return window
 
