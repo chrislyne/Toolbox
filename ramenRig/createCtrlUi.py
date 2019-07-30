@@ -8,7 +8,7 @@ from random import uniform
 import ramenRig.createCtrl as createCtrl
 
 def randomColor():
-	#randomise colours
+    #randomise colours
     hue = randint(0,359)
     sat = uniform(0.5,1)
     val = 1 - sat + 0.5
@@ -16,10 +16,10 @@ def randomColor():
 
 def createBtn():
     win = ctrlWindow.mainWidget
-    shapeType = win.comboBox.currentText()
 
-
+    
     newCtrl = createCtrl.MakeCtrlCurve()
+    newCtrl.shape = win.comboBox.currentText()
     newCtrl.ctrlColour = [1,0,1]
     newCtrl.thickness = win.spinBox_lineThickness.value()
     newCtrl.scl = [win.doubleSpinBox.value(),win.doubleSpinBox.value(),win.doubleSpinBox.value()]
@@ -27,18 +27,8 @@ def createBtn():
         newCtrl.rot = [0,90,0]
     if win.radioButton_y.isChecked():
         newCtrl.rot = [90,0,0]
-    if shapeType == 'Square':
-        newCtrl.makeCtrl(newCtrl.makeSquare())
-    if shapeType == 'Diamond':
-        newCtrl.makeCtrl(newCtrl.makeDiamond())
-    if shapeType == 'Plus':
-        newCtrl.makeCtrl(newCtrl.makePlus())
-    if shapeType == 'Star':
-        newCtrl.makeCtrl(newCtrl.makeStar())
-    if shapeType == 'Cross':
-        newCtrl.makeCtrl(newCtrl.makeCross())
-    if shapeType == 'Circle':
-        newCtrl.makeCtrl(newCtrl.makeCircle())
+
+    newCtrl.makeCtrl(newCtrl.makeShape())
     
 
 def createCTRL_ui():
