@@ -58,12 +58,13 @@ def createBtn(shape):
                 side = nameComboBox
 
             ctrlName = o.split('_')[0]
-            if ctrlNames:
+            if len(ctrlNames[0])>0:
                 ctrlName = ctrlNames[i % len(ctrlNames)]
-                print ctrlName
-            ctrlName = '%s_CTRL%s#'%(ctrlName,side)
+            ctrlFullName = '%s_CTRL%s'%(ctrlName,side)
+            if cmds.objExists(ctrlFullName):
+                ctrlFullName = '%s_CTRL%s#'%(ctrlName,side)
 
-            ctrl = createNewCtrl(shape,ctrlName,[objPos2[0],objPos2[1],objPos2[2]])
+            ctrl = createNewCtrl(shape,ctrlFullName,[objPos2[0],objPos2[1],objPos2[2]])
             if win.checkBox_group.isChecked():
                 ctrlGrp = cmds.group(ctrl,n='%s_GRP'%(ctrl[0]))
                 cmds.xform(ctrlGrp,piv=[objPos2[0],objPos2[1],objPos2[2]],ws=True)
@@ -76,10 +77,12 @@ def createBtn(shape):
         if nameComboBox != 'Auto' and nameComboBox != 'None':
             side = nameComboBox
 
-        if len(ctrlNames) == 0:
+        if len(ctrlNames[0]) == 0:
             ctrlNames = [shape]
         for n in ctrlNames:
             ctrlName = '%s_CTRL%s'%(n,side)
+            if cmds.objExists(ctrlName):
+                ctrlName = '%s_CTRL#%s'%(n,side)
             ctrl = createNewCtrl(shape,ctrlName,[0,0,0])
             if win.checkBox_group.isChecked():
                 ctrlGrp = cmds.group(ctrl,n='%s_GRP'%(ctrl[0]))
