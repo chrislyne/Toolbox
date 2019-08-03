@@ -15,21 +15,13 @@ def randomColor():
     val = 1 - sat + 0.5
     return[hue,sat,val]
 
-def createNewCtrl(shape,pos):
+def createNewCtrl(shape,shapeName,pos):
     #widget locations
     win = ctrlWindow.mainWidget
 
-    side = ''
-    nameComboBox = win.comboBox_name.currentText()  
-    if nameComboBox != 'Auto' and nameComboBox != 'None':
-        side = nameComboBox
-    
     newCtrl = createCtrl.MakeCtrlCurve()
     newCtrl.shape = shape
-    ctrlName = shape
-    if win.lineEdit_name.text():
-        ctrlName = win.lineEdit_name.text()
-    newCtrl.ctrlName = '%s_CTRL%s'%(ctrlName,side)
+    newCtrl.ctrlName = shapeName
     newCtrl.ctrlColour = cmds.colorSliderGrp('ctrlColour',q=True,rgb=True)
     newCtrl.thickness = win.spinBox_lineThickness.value()
     newCtrl.scl = [win.doubleSpinBox.value(),win.doubleSpinBox.value(),win.doubleSpinBox.value()]
@@ -42,14 +34,39 @@ def createNewCtrl(shape,pos):
     newCtrl.makeCtrl(newCtrl.makeShape())
 
 def createBtn(shape):
-
+    win = ctrlWindow.mainWidget
     sel = cmds.ls(sl=True)
+
     if sel:
         for o in sel:
             objPos2 = cmds.xform(o,q=True,t=True,ws=True)
-            createNewCtrl(shape,[objPos2[0],objPos2[1],objPos2[2]])
+
+            side = ''
+            nameComboBox = win.comboBox_name.currentText()  
+            if nameComboBox == 'Auto':
+                if objPos2[0] > 0:
+                    side = '_L'
+                if objPos2[0] < 0:
+                    side = '_R'
+            elif nameComboBox != 'None':
+                side = nameComboBox
+
+            ctrlName = o
+            if win.lineEdit_name.text():
+                ctrlName = win.lineEdit_name.text()
+            ctrlName = '%s_CTRL%s'%(ctrlName,side)
+
+            createNewCtrl(shape,ctrlName,[objPos2[0],objPos2[1],objPos2[2]])
     else:
-        createNewCtrl(shape,[0,0,0])
+        side = ''
+        nameComboBox = win.comboBox_name.currentText()  
+        if nameComboBox != 'Auto' and nameComboBox != 'None':
+            side = nameComboBox
+        ctrlName = shape
+        if win.lineEdit_name.text():
+            ctrlName = win.lineEdit_name.text()
+        ctrlName = '%s_CTRL%s'%(ctrlName,side)
+        createNewCtrl(shape,ctrlName,[0,0,0])
         
 
 def sizeSlider(val):
