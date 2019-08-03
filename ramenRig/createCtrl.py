@@ -77,7 +77,7 @@ class MakeCtrlCurve:
             cmds.insertKnotCurve('%s.u[7.9]'%ctrl[0],ch=0,cos=True,nk=1,add=1,ib=0,rpo=1)
             cmds.xform('%s.cv[0:10]'%ctrl[0],t=[0,-2,0],r=True) 
             cmds.xform('%s.cv[11]'%ctrl[0],t=[0,-0.3,0],r=True) 
-            cmds.xform(ctrl,ro=[0,0,180],s=[0.5,0.5,0.5])
+            cmds.xform(ctrl,ro=[0,0,180],s=[0.5,0.5,0.5],t=self.pos)
 
 
         else:

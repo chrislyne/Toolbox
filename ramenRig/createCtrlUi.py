@@ -6,6 +6,7 @@ import baseIO.qtBase as qtBase
 from random import randint
 from random import uniform
 import ramenRig.createCtrl as createCtrl
+import ramenRig.createCtrl_resources
 
 def randomColor():
     #randomise colours
@@ -14,21 +15,42 @@ def randomColor():
     val = 1 - sat + 0.5
     return[hue,sat,val]
 
-def createBtn():
+def createNewCtrl(shape,pos):
+    #widget locations
     win = ctrlWindow.mainWidget
 
+    side = ''
+    nameComboBox = win.comboBox_name.currentText()  
+    if nameComboBox != 'Auto' and nameComboBox != 'None':
+        side = nameComboBox
     
     newCtrl = createCtrl.MakeCtrlCurve()
-    newCtrl.shape = win.comboBox.currentText()
-    newCtrl.ctrlColour = [1,0,1]
+    newCtrl.shape = shape
+    ctrlName = shape
+    if win.lineEdit_name.text():
+        ctrlName = win.lineEdit_name.text()
+    newCtrl.ctrlName = '%s_CTRL%s'%(ctrlName,side)
+    newCtrl.ctrlColour = cmds.colorSliderGrp('ctrlColour',q=True,rgb=True)
     newCtrl.thickness = win.spinBox_lineThickness.value()
     newCtrl.scl = [win.doubleSpinBox.value(),win.doubleSpinBox.value(),win.doubleSpinBox.value()]
+    newCtrl.pos = pos
     if win.radioButton_x.isChecked():
         newCtrl.rot = [0,90,0]
     if win.radioButton_y.isChecked():
         newCtrl.rot = [90,0,0]
 
     newCtrl.makeCtrl(newCtrl.makeShape())
+
+def createBtn(shape):
+
+    sel = cmds.ls(sl=True)
+    if sel:
+        for o in sel:
+            objPos2 = cmds.xform(o,q=True,t=True,ws=True)
+            createNewCtrl(shape,[objPos2[0],objPos2[1],objPos2[2]])
+    else:
+        createNewCtrl(shape,[0,0,0])
+        
 
 def sizeSlider(val):
     win = ctrlWindow.mainWidget
@@ -52,7 +74,7 @@ def createCTRL_ui():
     qtLayout = window.mainWidget.ctrlColorLayout
     paneLayoutName = cmds.paneLayout()
     # Create slider widget
-    csg = cmds.colorSliderGrp(hsvValue=randomColor())
+    csg = cmds.colorSliderGrp('ctrlColour',hsvValue=randomColor())
     # Find a pointer to the paneLayout that we just created using Maya API
     ptr = mui.MQtUtil.findControl(paneLayoutName)
     # Wrap the pointer into a python QObject. Note that with PyQt QObject is needed. In Shiboken we use QWidget.
@@ -62,7 +84,16 @@ def createCTRL_ui():
     window.show(dockable=False)
 
     #connect buttons
-    window.mainWidget.pushButton_newCtrl.clicked.connect(createBtn)
+    window.mainWidget.btn_circle.clicked.connect(lambda: createBtn('circle'))
+    window.mainWidget.btn_square.clicked.connect(lambda: createBtn('square'))
+    window.mainWidget.btn_star.clicked.connect(lambda: createBtn('star'))
+    window.mainWidget.btn_diamond.clicked.connect(lambda: createBtn('diamond'))
+    window.mainWidget.btn_plus.clicked.connect(lambda: createBtn('plus'))
+    window.mainWidget.btn_cross.clicked.connect(lambda: createBtn('cross'))
+    window.mainWidget.btn_arch.clicked.connect(lambda: createBtn('arch'))
+    window.mainWidget.btn_pin.clicked.connect(lambda: createBtn('pin'))
+    window.mainWidget.btn_arrow.clicked.connect(lambda: createBtn('arrow'))
+    window.mainWidget.btn_doubleArrow.clicked.connect(lambda: createBtn('doubleArrow'))
     window.mainWidget.horizontalSlider_2.sliderMoved.connect(sizeSlider)
     window.mainWidget.doubleSpinBox.valueChanged.connect(sizeSpinbox)
 
