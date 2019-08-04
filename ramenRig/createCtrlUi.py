@@ -8,6 +8,35 @@ from random import uniform
 import ramenRig.createCtrl as createCtrl
 import ramenRig.createCtrl_resources
 
+def colourAtPoint(rampName,point):
+
+    rampData = cmds.gradientControlNoAttr(rampName,q=True,asString=True)
+    rampList = rampData.split(',')
+
+    def channelGrad(channel,point):
+        
+        channelDict = {'R':0,'G':1,'B':2}
+        channelInt = channelDict[channel]
+        
+        cmds.optionVar(stringValue=['tempRChannelOptVar', '%s,%s,1'%(rampList[channelInt],rampList[3])])
+    
+        positions = rampList[3::5]
+        for i,c in enumerate(positions[1:]):
+            cmds.optionVar(stringValueAppend=['tempRChannelOptVar', '%s,%s,1'%(rampList[channelInt::5][i+1],c)])
+        
+        tempGrad = cmds.gradientControlNoAttr(h=90,m=False)
+        cmds.gradientControlNoAttr(tempGrad, e=True, optionVar='tempRChannelOptVar' )
+        
+        channelValue = cmds.gradientControlNoAttr(tempGrad, q=True, valueAtPoint=point )
+        cmds.deleteUI(tempGrad, control=True )
+        return channelValue
+    
+    R = channelGrad('R',point)
+    G = channelGrad('G',point)
+    B = channelGrad('B',point)
+    
+    return([R,G,B])
+
 def randomColor():
     #randomise colours
     hue = randint(0,359)
@@ -15,14 +44,15 @@ def randomColor():
     val = 1 - sat + 0.5
     return[hue,sat,val]
 
-def createNewCtrl(shape,shapeName,pos):
+def createNewCtrl(shape,shapeName,pos,pointOnRamp):
     #widget locations
     win = ctrlWindow.mainWidget
 
     newCtrl = createCtrl.MakeCtrlCurve()
     newCtrl.shape = shape
     newCtrl.ctrlName = shapeName
-    newCtrl.ctrlColour = cmds.colorSliderGrp('ctrlColour',q=True,rgb=True)
+    newCtrl.ctrlColour = colourAtPoint('falloffCurve',pointOnRamp)
+    #newCtrl.ctrlColour = cmds.colorSliderGrp('ctrlColour',q=True,rgb=True)
     newCtrl.thickness = win.spinBox_lineThickness.value()
     newCtrl.scl = [win.doubleSpinBox.value(),win.doubleSpinBox.value(),win.doubleSpinBox.value()]
     newCtrl.pos = pos
@@ -43,6 +73,11 @@ def createBtn(shape):
 
 
     if sel and win.checkBox_selection.isChecked() == True:
+
+        if len(sel) > 1:
+            gradSplit = 1.0/float(len(sel)-1)
+        else:
+            gradSplit = 1
         for i,o in enumerate(sel):
             objPos2 = cmds.xform(o,q=True,t=True,ws=True)
             objRo = cmds.xform(o,q=True,ro=True,ws=True)
@@ -64,7 +99,7 @@ def createBtn(shape):
             if cmds.objExists(ctrlFullName):
                 ctrlFullName = '%s_CTRL%s#'%(ctrlName,side)
 
-            ctrl = createNewCtrl(shape,ctrlFullName,[objPos2[0],objPos2[1],objPos2[2]])
+            ctrl = createNewCtrl(shape,ctrlFullName,[objPos2[0],objPos2[1],objPos2[2]],gradSplit*i)
             if win.checkBox_group.isChecked():
                 ctrlGrp = cmds.group(ctrl,n='%s_GRP'%(ctrl[0]))
                 cmds.xform(ctrlGrp,piv=[objPos2[0],objPos2[1],objPos2[2]],ws=True)
@@ -79,11 +114,15 @@ def createBtn(shape):
 
         if len(ctrlNames[0]) == 0:
             ctrlNames = [shape]
-        for n in ctrlNames:
+        if len(ctrlNames) > 1:
+            gradSplit = 1.0/float(len(ctrlNames)-1)
+        else:
+            gradSplit = 1
+        for i,n in enumerate(ctrlNames):
             ctrlName = '%s_CTRL%s'%(n,side)
             if cmds.objExists(ctrlName):
                 ctrlName = '%s_CTRL#%s'%(n,side)
-            ctrl = createNewCtrl(shape,ctrlName,[0,0,0])
+            ctrl = createNewCtrl(shape,ctrlName,[0,0,0],gradSplit*i)
             if win.checkBox_group.isChecked():
                 ctrlGrp = cmds.group(ctrl,n='%s_GRP'%(ctrl[0]))
                 cmds.xform(ctrlGrp,piv=[0,0,0],ws=True)
@@ -102,6 +141,14 @@ def sizeSpinbox(val):
         win.horizontalSlider_2.setMaximum(int(val*20))
     win.horizontalSlider_2.setValue(int(val*10))
 
+def setRampCol():
+    col = cmds.colorSliderGrp('ctrlColour',q=True,rgbValue=True)
+    col00 = cmds.gradientControlNoAttr( 'falloffCurve',e=True,currentKeyColorValue=col)
+
+def setColour():
+    col00 = cmds.gradientControlNoAttr( 'falloffCurve',q=True,currentKeyColorValue=True)
+    cmds.colorSliderGrp('ctrlColour',e=True,rgbValue=col00)
+
 def createCTRL_ui():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'createCtrl.ui')
     window._windowTitle = 'Create CTRL Window'
@@ -110,15 +157,23 @@ def createCTRL_ui():
     window.BuildUI()
     #layout for color slider
     qtLayout = window.mainWidget.ctrlColorLayout
-    paneLayoutName = cmds.paneLayout()
+    paneLayoutName = cmds.columnLayout()
     # Create slider widget
-    csg = cmds.colorSliderGrp('ctrlColour',hsvValue=randomColor())
+    csg = cmds.colorSliderGrp('ctrlColour',hsvValue=randomColor(),cc='setRampCol()')
+    rgbColour = cmds.colorSliderGrp('ctrlColour',q=True,rgbValue=True)
+    cmds.optionVar(stringValue=['falloffCurveOptionVar', '1,1,1'])
+    cmds.optionVar(stringValueAppend=['falloffCurveOptionVar', '1,0,1'])
+    cmds.gradientControlNoAttr( 'falloffCurve', h=70,w=250,rac=True)
+    cmds.gradientControlNoAttr( 'falloffCurve', e=True, optionVar='falloffCurveOptionVar',clv=rgbColour )
+    cmds.gradientControlNoAttr( 'falloffCurve', e=True,currentKey=1,clv=rgbColour,cc='setColour()' )
+
     # Find a pointer to the paneLayout that we just created using Maya API
     ptr = mui.MQtUtil.findControl(paneLayoutName)
     # Wrap the pointer into a python QObject. Note that with PyQt QObject is needed. In Shiboken we use QWidget.
     paneLayoutQt = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
     # Now that we have a QtWidget, we add it to our Qt layout
     qtLayout.addWidget(paneLayoutQt)
+
     window.show(dockable=False)
 
     #connect buttons
