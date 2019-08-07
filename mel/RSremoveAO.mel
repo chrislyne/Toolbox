@@ -1,0 +1,11 @@
+global proc RSremoveAO()
+{
+	string $sel[] = `ls -sl`;
+	for( $item in $sel)
+	{
+	    if(`attributeExists "ao_on" $item `)
+	    {
+	        setAttr ($item+".ao_on") 0;
+	      }
+	}
+}

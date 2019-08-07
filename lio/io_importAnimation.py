@@ -1,41 +1,54 @@
-def io_importAnimation():
+import maya.cmds as cmds
+import maya.mel as mel
+import lio
 
-    #import dialog
-    proc string SelectedABC()
-    {
-        string $basicFilter = "*.abc";
-        string $result[] = `fileDialog2 -fm 1 -fileFilter $basicFilter -dialogStyle 2`;
-        return $result[0];
-    }
+def importAnimation(silent,selectedABC):
+
+    #check if plug is already loaded
+    if not cmds.pluginInfo('AbcExport',query=True,loaded=True):
+        try:
+            #load abcExport plugin
+            cmds.loadPlugin( 'AbcExport' )
+        except: cmds.error('Could not load AbcExport plugin')
+
+    myWorkspace = cmds.workspace( q=True, fullName=True )
+    myAlembics = myWorkspace+'/cache/alembic'
+
+    basicFilter = "*.abc"
+    selectedABC += cmds.fileDialog2(fm=4,fileFilter=basicFilter, dir=myAlembics)
+
+    #create top level group
+    if cmds.objExists('|ANIM') == 0:
+        newRootGroup = cmds.group(em=True,n='ANIM')
+
+    existingObjs = cmds.ls(transforms=True)
+
+    for abc in selectedABC:
+        grpName = '%s_GRP'%abc.split('/')[-1].split('.')[0]
+        print grpName
     
-    #split path
-    string $abcPath = SelectedABC();
-    string $parts[];
-    $numTokens = `tokenize $abcPath "/" $parts`;
-    string $filename = $parts[(`size $parts`-1)];
-    string $fileParts[];
-    $numTokens2 = `tokenize $filename "." $fileParts`;
-    string $filename2 = $fileParts[0];
-    //create top level group
-    select -cl;
-    if (`objExists |GEO` == 0)
-    {
-        string $newRootGroup = `group -em -n "GEO"`;
-    }
-    //create file group
-    string $newGroup = `group -em -n $filename2`;
-    parent $newGroup |GEO;
-    string $importFiles = `AbcImport -mode import -reparent $newGroup $abcPath`;
-    
+        newGroup = cmds.group(em=True,n=grpName)
+        cmds.parent(newGroup,'|ANIM')
+        command = "AbcImport -reparent \"|ANIM|"+newGroup+"\" -mode import \""+abc+"\""
+        mel.eval(command)
+
+    updatedObjs = cmds.ls(transforms=True)
+
+    newObjs = [x for x in updatedObjs if x not in existingObjs]
+    cmds.select(newObjs,r=True)
+
+    #import materials
+    lio.io_importMaterials.assignMaterials()
+
     #remove curves
     
     #remove empty groups
-}
-
+    
+'''
 def importAnim(filename):
-        command = "AbcImport -mode import \""+filename+"\""; 
-        mel.eval(command)
-        setupSceneFromCam()
+    command = "AbcImport -mode import \""+filename+"\""; 
+    mel.eval(command)
+    setupSceneFromCam()
 
 def importAnimDialog():
     myWorkspace = cmds.workspace( q=True, fullName=True )
@@ -44,5 +57,6 @@ def importAnimDialog():
     #import camera
     if (filename):
         importAnim(filename[0])
-
-abc_importAnimation();
+'''
+#empty = []
+#importAnimation(0,empty);

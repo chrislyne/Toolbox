@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="buttons">
+    <file>icons/ctrl_pin.svg</file>
+    <file>icons/ctrl_plus.svg</file>
+    <file>icons/ctrl_square.svg</file>
+    <file>icons/ctrl_star.svg</file>
+    <file>icons/ctrl_circle.svg</file>
+    <file>icons/ctrl_arch.svg</file>
+    <file>icons/ctrl_arrow.svg</file>
+    <file>icons/ctrl_cross.svg</file>
+    <file>icons/ctrl_diamond.svg</file>
+    <file>icons/ctrl_doubleArrow.svg</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,4 @@
+global proc smedgeRender()
+{
+	python ("import pipelime.submitToFarm as submitToFarm;reload(submitToFarm);submitToFarm.openSubmitWindow()");
+}

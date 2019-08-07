@@ -1,0 +1,4 @@
+string $cmd = "\"C:/Program\ Files/Smedge/PoolManager\" List Name";
+string $result = `system $cmd`;
+string $lines[] = stringToStringArray( $result, "\n" );
+print $lines;

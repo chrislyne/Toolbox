@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 import sys
-from pymel.all import *
+#from pymel.all import *
+import maya.mel as mel
 import json
 import os
 import urllib2
@@ -41,19 +42,26 @@ def RemoveButton(shelfName,iconName):
             #Assert that this is a shelfButton
             if cmds.objectTypeUI(btn,isType='shelfButton'):
 
-                label = cmds.shelfButton(btn,q=True,image=True)
+                label = cmds.shelfButton(btn,q=True,label=True)
 
                 #If this button has the label we're looking for,
                 #delete the button.
                 if iconName == label:
                     cmds.deleteUI(btn)
 
-def DownloadFile(remote, local):
+def downloadFile(remote, local):
 
     
     u = urllib2.urlopen(remote)
     h = u.info()
     totalSize = int(h["Content-Length"])
+
+    filePath = local.rsplit('/',1)
+
+    #make folder
+    if len(filePath) > 1:
+        if not os.path.exists('%s'%(filePath[0])):
+            os.makedirs('%s'%(filePath[0]))
     
     print "Downloading %s bytes..." % totalSize,
     fp = open(local, 'wb')
@@ -103,6 +111,7 @@ def AddIcons(shelfName):
     #resize progress bar
     cmds.progressBar('progressControl', edit=True,vis=True, maxValue=len(buttons)-1)
 
+    #loop through dictionary
     for i, btn in enumerate(buttons):
         shelfElements = buttons[i]
         shelfString = 'cmds.shelfButton(rpt=True'
@@ -116,20 +125,23 @@ def AddIcons(shelfName):
                     print 'seperator'
                     shelfString = 'cmds.separator(style=\'shelf\',horizontal=0'
                 else:
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
+                    #try to download file
+                    downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/icons/'+ico), (localIconsPath+'/'+ico))
                     if ii == 0:
-                        shelfString += ',i1=\''+ico+'\''
-            
+                        shelfString += ',i1=\''+ico+'\''  
         except:
             print ('file not available')
+            #set icon to default button because image can not be downloaded
+            shelfString += ',i1=\'commandButton.png\''
         #update progress
         cmds.progressBar('progressControl', edit=True, step=1)
         #download script from github
         if scriptsMenuI > 1:
             try:
                 script = buttons[i]['script']
-                fileName = script.split('/')
-                DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
+
+                downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+script))
+                #DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+script),(localScriptsPath+'/'+fileName[-1]))
             except:
                 print ('file not available')
         #download modules from github
@@ -137,11 +149,8 @@ def AddIcons(shelfName):
             try:
                 modules = buttons[i]['modules']
                 for mod in modules:
-                    fileName = mod.split('/')
-                    #make folder
-                    if not os.path.exists('%s/%s'%(localScriptsPath,fileName[0])):
-                        os.makedirs('%s/%s'%(localScriptsPath,fileName[0]))
-                    DownloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
+
+                    downloadFile(('https://raw.githubusercontent.com/chrislyne/Toolbox/master/'+mod),'%s/%s'%(localScriptsPath,mod))
             except:
                 print ('file not available')
         try:
@@ -164,8 +173,8 @@ def AddIcons(shelfName):
         shelfString += ',w=32,h=32,p=\''+shelfName+'\')'
         
         #remove old button
-        for ico in icon:
-            RemoveButton(shelfName,ico)
+        if label:
+            RemoveButton(shelfName,label)
 
         #add icons to shelf
         currentButton = eval (shelfString)
@@ -207,7 +216,7 @@ def installToolboxWindow():
     nameText = cmds.textField('nameText',width=250,tx='Custom')
     scriptsMenu = cmds.optionMenu('scriptsMenu')
     separator = ';' if cmds.about(nt=True) else ':'
-    scriptsPaths = mel.getenv('MAYA_SCRIPT_PATH')
+    scriptsPaths = os.getenv('MAYA_SCRIPT_PATH')
     allparts = scriptsPaths.split(separator)
     for i, part in enumerate(allparts):
         if (i==0):
@@ -218,7 +227,7 @@ def installToolboxWindow():
                 cmds.menuItem( label=part )
             
     iconsMenu = cmds.optionMenu('iconsMenu')  
-    iconsPaths = mel.getenv('XBMLANGPATH')
+    iconsPaths = os.getenv('XBMLANGPATH')
     iconsParts = iconsPaths.split(separator)
     
     for i, part in enumerate(iconsParts):

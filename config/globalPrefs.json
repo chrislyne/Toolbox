@@ -1,0 +1,23 @@
+{
+    "pathToRenderExe": {
+        "value": "'C:/Program Files/Autodesk/Maya2019/bin/Render.exe'"
+    }, 
+    "pathToSubmitExe": {
+        "value": "'C:/Program Files/Smedge/submit.exe'"
+    }, 
+    "window.mainWidget.lineEdit_render": [
+        {
+            "setText": "'C:/Program Files/Autodesk/Maya2019/bin/Render.exe'"
+        }
+    ], 
+    "window.mainWidget.lineEdit_submitExe": [
+        {
+            "setText": "'C:/Program Files/Smedge/submit.exe'"
+        }
+    ], 
+    "window.mainWidget.lineEdit_trelloBoard": [
+        {
+            "setText": "''"
+        }
+    ]
+}

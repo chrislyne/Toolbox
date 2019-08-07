@@ -1,0 +1,52 @@
+global proc RSObjectId(){
+
+	if (`window -ex RSIDWindow` == 1){
+		deleteUI RSIDWindow;
+	} 
+	window -rtf true -title "Redshift ID" RSIDWindow;
+
+	columnLayout;
+
+	intSliderGrp -label "ID" -field true -min 0 -max 9 -fieldMaxValue 1000 -value 1 IDSlider;
+
+	button -c assignID -label "Apply";
+	button -c selectID -label "Select";
+
+	showWindow RSIDWindow;
+}
+
+global proc assignID (){
+	    
+	    int $intID = `intSliderGrp -q -value "IDSlider"`;
+	    
+	    string $sel[] = `ls -sl`;
+
+		for( $item in $sel)
+		{
+			string $shapes[] = `listRelatives -s -path $item`;
+			for( $shape in $shapes)
+			{
+				setAttr ($shape + ".rsObjectId") $intID;
+			}
+		}
+
+}
+
+global proc selectID (){
+    
+    int $intID = `intSliderGrp -q -value "IDSlider"`;
+    
+	select -cl;
+	string $allgeo[] = `ls -g`;
+	for( $item in $allgeo)
+	{
+    	if(`attributeExists "rsObjectId" $item`)
+    	{
+        	if(`getAttr ($item + ".rsObjectId")` == $intID)
+        	{
+            	select -tgl $item;
+        	}
+    	}
+	}
+}
+

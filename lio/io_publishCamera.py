@@ -13,7 +13,7 @@ def publishCamera(abcFilename,cameraName):
     filename = cmds.file(q=True,sn=True)
     #get relative path (from scenes)
     relativePath = ''
-    for dir in filename.split('/')[8:-1]:
+    for dir in filename.split('/')[workspaceLen:-1]:
         relativePath += '%s/'%(dir)
     
     #get scene settings
@@ -51,7 +51,7 @@ def publishCamera(abcFilename,cameraName):
     additionalAttributes = ['width','height','startFrame','endFrame','frameRate']
     for attr in additionalAttributes:
         additionalAttr += ' -attr %s'%(attr)
-    command = '-frameRange %d %d%s -ro -stripNamespaces -worldSpace -dataFormat ogawa%s -file %scache/alembic/%s%s.abc'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
+    command = '-frameRange %d %d%s -ro -stripNamespaces -worldSpace -dataFormat ogawa%s -file \"%scache/alembic/%s%s.abc\"'%(startFrame,endFrame,additionalAttr,exportString,workspace,relativePath,abcFilename)
     #write to disk
     cmds.AbcExport ( j=command )
     return '%scache/alembic/%s%s.abc'%(workspace,relativePath,abcFilename)
