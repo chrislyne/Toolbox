@@ -12,8 +12,10 @@ def local_path():
     return userDocs
 
 def self_path():
-    path = os.path.dirname(__file__)
-    path = path.rsplit('\\',1)[0]
+    #path = os.path.dirname(__file__)
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.dirname(path)
+    #path = path.rsplit('\\',1)[0]
     #path = 'C:/Users/Chris/Dropbox/Projects/Qt'
     print path
     if not path:
@@ -29,6 +31,8 @@ def qtWindow(uiFilePath):
         #load .ui file
         loader = QtUiTools.QUiLoader() 
         uifile = QtCore.QFile(uiFilePath) 
+        print uifile
+        print uiFilePath
         uifile.open(QtCore.QFile.ReadOnly) 
         qt_widget = loader.load(uifile,None)
         #close .ui file
