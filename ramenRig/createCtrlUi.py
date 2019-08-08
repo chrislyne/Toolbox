@@ -192,4 +192,9 @@ def createCTRL_ui():
 
     return window
 
-ctrlWindow = createCTRL_ui()
+def openCtrlWindow():
+    global ctrlWindow
+    ctrlWindow = createCTRL_ui()
+
+
+#import ramenRig;ramenRig.createCtrlUi.openCtrlWindow()
