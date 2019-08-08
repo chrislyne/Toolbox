@@ -41,10 +41,12 @@ global proc preFlightChecks(){
   //set common options
   setAttr -type "string" "defaultRenderGlobals.imageFilePrefix" ($holdingPath + "<RenderLayer>/<Scene>/"+$buffer[0] + "_<RenderLayer>"); 
   setAttr "redshiftOptions.imageFormat" 1;
+  setAttr "redshiftOptions.exrForceMultilayer" 1;
   //setAttr "redshiftOptions.pngBits" 16;
   setAttr "defaultRenderGlobals.animation" 1;
   setAttr "defaultRenderGlobals.extensionPadding" 4;
   setAttr "defaultRenderGlobals.animation" 0;
+   setAttr "defaultRenderGlobals.animation" 0;
 
 
   //aov options
