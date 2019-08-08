@@ -217,10 +217,11 @@ def exportShaders(publishName,scenePath):
                     controlData += ']'
                 faces = ''
                 allFaces = sortFaceShadingGroups(shape,shadingGrp)
-                for c,f in enumerate(allFaces):
-                    if c > 0:
-                        faces += '","'
-                    faces += '.%s'%(f)
+                if allFaces:
+                    for c,f in enumerate(allFaces):
+                        if c > 0:
+                            faces += '","'
+                        faces += '.%s'%(f)
                 if n > 0:
                     shadingGrpsString += ',\n               '
                 shadingGrpsString +=  '{"%s":["%s"]}'%(shadingGrp,faces)
