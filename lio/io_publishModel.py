@@ -112,13 +112,14 @@ def sortFaceShadingGroups(shape,shadingGrp):
     
     faces = []
     #search set for matching shapes 
-    for obj in allObjects:
-        splitObj = obj.split('.')
-        if len(splitObj) > 1:
-            if splitObj[0] == transform[0]:
-                faces.append(splitObj[1])
-    #return faces assign to material
-    return faces
+    if allObjects:
+        for obj in allObjects:
+            splitObj = obj.split('.')
+            if len(splitObj) > 1:
+                if splitObj[0] == transform[0]:
+                    faces.append(splitObj[1])
+        #return faces assign to material
+        return faces
 
 
 #publish shaders
@@ -216,10 +217,11 @@ def exportShaders(publishName,scenePath):
                     controlData += ']'
                 faces = ''
                 allFaces = sortFaceShadingGroups(shape,shadingGrp)
-                for c,f in enumerate(allFaces):
-                    if c > 0:
-                        faces += '","'
-                    faces += '.%s'%(f)
+                if allFaces:
+                    for c,f in enumerate(allFaces):
+                        if c > 0:
+                            faces += '","'
+                        faces += '.%s'%(f)
                 if n > 0:
                     shadingGrpsString += ',\n               '
                 shadingGrpsString +=  '{"%s":["%s"]}'%(shadingGrp,faces)

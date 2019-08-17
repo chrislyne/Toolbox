@@ -7,7 +7,7 @@
 			"label":"Incremental Save",
 			"script":"Tools/incrementalSaveUI.py",
 			"modules": ["baseIO/incrementalSave.py","baseIO/IOuserPref.py"],
-			"command":"import incrementalSaveUI;from incrementalSaveUI import *;incrementalSaveUI()",
+			"command":"import Tools.incrementalSaveUI;from Tools.incrementalSaveUI import *;incrementalSaveUI()",
 			"stp":"python"
 		},
 		{
@@ -166,13 +166,30 @@
 			"icon":"separator"
 		},
 		{
+			"icon":"createCtrl.svg",
+			"label":"Create Ctrl",
+			"script":"ramenRig/createCtrlUi.py",
+			"command":"import ramenRig;ramenRig.createCtrlUi.openCtrlWindow()",
+			"stp":"python",
+			"modules": [
+			"ramenRig/createCtrl_resources.py",
+			"ramenRig/createCtrl.py",
+			"ramenRig/__init__.py",
+			"ramenRig/createCtrl.ui"
+			]
+		},
+		{
+			"icon":"separator"
+		},
+		{
 			"icon":"cacheYetiFur.svg",
 			"label":"Cache yeti fur",
 			"script":"mel/cacheYetiFur.mel",
 			"command":"source cacheYetiFur;cacheYetiFur;",
 			"stp":"mel"
 		},
-		{
+		{	
+			"icon":"checkOutYeti.svg",
 			"label":"Check Out Yeti Licence",
 			"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";",
 			"stp":"mel",

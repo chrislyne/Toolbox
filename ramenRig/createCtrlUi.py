@@ -159,13 +159,13 @@ def createCTRL_ui():
     qtLayout = window.mainWidget.ctrlColorLayout
     paneLayoutName = cmds.columnLayout()
     # Create slider widget
-    csg = cmds.colorSliderGrp('ctrlColour',hsvValue=randomColor(),cc='setRampCol()')
+    csg = cmds.colorSliderGrp('ctrlColour',hsvValue=randomColor(),cc='ramenRig.createCtrlUi.setRampCol()')
     rgbColour = cmds.colorSliderGrp('ctrlColour',q=True,rgbValue=True)
     cmds.optionVar(stringValue=['falloffCurveOptionVar', '1,1,1'])
     cmds.optionVar(stringValueAppend=['falloffCurveOptionVar', '1,0,1'])
     cmds.gradientControlNoAttr( 'falloffCurve', h=70,w=250,rac=True)
     cmds.gradientControlNoAttr( 'falloffCurve', e=True, optionVar='falloffCurveOptionVar',clv=rgbColour )
-    cmds.gradientControlNoAttr( 'falloffCurve', e=True,currentKey=1,clv=rgbColour,cc='setColour()' )
+    cmds.gradientControlNoAttr( 'falloffCurve', e=True,currentKey=1,clv=rgbColour,cc='ramenRig.createCtrlUi.setColour()' )
 
     # Find a pointer to the paneLayout that we just created using Maya API
     ptr = mui.MQtUtil.findControl(paneLayoutName)
@@ -192,4 +192,9 @@ def createCTRL_ui():
 
     return window
 
-ctrlWindow = createCTRL_ui()
+def openCtrlWindow():
+    global ctrlWindow
+    ctrlWindow = createCTRL_ui()
+
+
+#import ramenRig;ramenRig.createCtrlUi.openCtrlWindow()
