@@ -1,0 +1,1 @@
+system("start C:/Program Files/Allegorithmic/Substance Painter/substance painter.exe --mesh d:/temp/exported.fbx");
