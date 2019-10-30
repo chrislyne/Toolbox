@@ -142,9 +142,9 @@ def selectRenderExe():
 
 def submitButton():
 
-	#save file
-	cmds.file(save=True)
-	
+    #save file
+    cmds.file(save=True)
+
     print 'submit'
 
     #loop through layers in layerWidget
