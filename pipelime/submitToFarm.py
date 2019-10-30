@@ -141,6 +141,10 @@ def selectRenderExe():
     stf_window.mainWidget.lineEdit_render.setText(filename[0])
 
 def submitButton():
+
+	#save file
+	cmds.file(save=True)
+	
     print 'submit'
 
     #loop through layers in layerWidget
