@@ -3,12 +3,12 @@
         "Z:/Job_2","Z:/Job_1","Z:/Job_3/pitch"
     ],
     "general":
-        {"folders":[".projectData","Production/schedule","Production/cost report","Production/quote","To_From/To Agency","To_From/From Agency","OUTPUT","Elements/Reference","Elements/Concept Art","Elements/Artwork","WIP"]
+        {"folders":[".projectData","Production/schedule","Production/cost report","Production/quote","Brief","To_From/To Agency","To_From/From Agency","OUTPUT","Elements/Reference","Elements/Concept Art","Elements/Artwork","WIP"]
     },
     "options":
         {
         "3D":{
-            "folders":["3D/Elements","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/sourceimages/<var>","3D/images","3D/scripts","Elements/Playblasts"],
+            "folders":["3D/assets","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/sourceimages/<var>","3D/images","3D/scripts","Elements/Playblasts"],
             "files":[{"source":"workspace.mel","dest":"3D"}]
             },
         "anim":
