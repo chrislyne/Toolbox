@@ -907,7 +907,7 @@ background-image: url(/icon/io_ANIMOUT.png);
         <item>
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
-           <string>Half Res</string>
+           <string>Draft</string>
           </property>
          </widget>
         </item>

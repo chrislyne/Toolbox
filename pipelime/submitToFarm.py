@@ -147,6 +147,8 @@ def submitButton():
 
     print 'submit'
 
+    updateStrings = []
+
     #loop through layers in layerWidget
     for l in layerWidget.layerWidgets:
 
@@ -171,7 +173,7 @@ def submitButton():
 
             #create string
             submitString = ''
-            submitString += '%s '%stf_window.mainWidget.lineEdit_submitExe.text()
+            submitString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
             submitString += ' -Type Redshift for Maya'
             submitString += ' -Scene %s'%getProj.filepath()
             submitString += ' -Project %s'%getProj.getProject()
@@ -182,23 +184,35 @@ def submitButton():
             submitString += ' -Pool %s'%l.comboBox_layerPool.currentText()
             submitString += ' -Range %s'%l.lineEdit_layerRange.text()
             submitString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
-            if stf_window.mainWidget.checkBox_paused.isChecked() == 1:
-                submitString += ' -Paused'
+            submitString += ' -Paused'
             submitString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
             submitString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
             submitString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+            if stf_window.mainWidget.checkBox.isChecked() == 1:
+            	width = maya.cmds.getAttr("defaultResolution.width")/2
+            	height = maya.cmds.getAttr("defaultResolution.height")/2
+                submitString += ' -Extra \"-x %s -y %s -preRender \"setAttr \\\"redshiftOptions.unifiedMaxSamples\\\" 16; setAttr \\\"redshiftOptions.unifiedMinSamples\\\" 4;\"\"'%(width,height)
             if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
             submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
             try:
-                #send = subprocess.call(submitString,stdout=open(os.devnull, 'wb'))
+            	#que the files paused
                 send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
-                print 'send = %s'%send
+                jobID = send.rsplit(' ',1)[-1]
+                jobID = jobID.replace('\n', '').replace('\r', '')
+                updateString = submitString.replace("-Paused","-ID %s"%jobID)
+                updateStrings.append(updateString) 
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
             layerDict(l.checkBox_layerEnable.text())
-            #Submit.exe Script -Type Redshift for Maya -Scene Z:/Job_2/Amstel/maya/scenes/RENDER/SH0040/SH0040_RENDER_v018_cl.mb -Project Z:/Job_2/Amstel/maya -im fooBar -Name maya: SH0040_RENDER_v018_cl "(rs_snow)" -Range 0-230 -PacketSize 8 -Priority 50 -Paused -Pool Redshift -Creator Chris -CPUs 1 -GPUs 1 -RAM 0 -Note  -Extra "-rl rs_snow" -DistributeMode 0
+    
+    #save file with added metadata
+    cmds.file(save=True)
+    if stf_window.mainWidget.checkBox_paused.isChecked() == 0:
+	    for updateLayer in updateStrings:
+	        subprocess.check_output(updateLayer, stdin=None, stderr=None, shell=False)
+
     #projectDict()
     localDict()
     fileDict()
