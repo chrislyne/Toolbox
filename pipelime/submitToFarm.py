@@ -27,6 +27,10 @@ class LayerWidget(qtBase.BaseWidget):
             self.layerWidgets.append(self.aWidget)
             #set attributes from global controls
             self.aWidget.spinBox_layerPacketSize.setValue(parentWindow.mainWidget.spinBox_packetSize.value())
+            #set pools from global pools
+            allPools = [parentWindow.mainWidget.comboBox_pool.itemText(i) for i in range(parentWindow.mainWidget.comboBox_pool.count())]
+            self.aWidget.comboBox_layerPool.clear()
+            self.aWidget.comboBox_layerPool.addItems(allPools)
             self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
             self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
             self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
@@ -92,14 +96,14 @@ def fetchPools():
     pools = filter(None, pools)
     prefData = []
     prefData.append(['pools','value','\'%s\''%pools])
-    IO.writePrefsToFile(prefData,'%s/globalPrefs.json'%qtBase.self_path())
+    IO.writePrefsToFile(prefData,'%s/config/globalPrefs.json'%qtBase.self_path())
     #return pools
 
 def globalDict():
     prefData = []
     prefData.append(['pathToRenderExe','value','\'%s\''%stf_window.mainWidget.lineEdit_render.text()])
     prefData.append(['pathToSubmitExe','value','\'%s\''%stf_window.mainWidget.lineEdit_submitExe.text()])
-    IO.writePrefsToFile(prefData,'%s/globalPrefs.json'%qtBase.self_path())
+    IO.writePrefsToFile(prefData,'%s/config/globalPrefs.json'%qtBase.self_path())
 
 def projectDict():
     prefData = []
@@ -332,6 +336,9 @@ def submitRenderUI():
     comboDict = mergeDictionaries(comboDict,{"lineEdit_range": {"value":rangeFromTimeline}})
     versionlessSceneName = ''.join([c for c in getProj.sceneName() if c not in "1234567890"])
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/.data/%s.json'%(getProj.sceneFolder(),versionlessSceneName)))
+    #populate pool comboBox from /config/globalPrefs.json
+    poolsList = ((comboDict["pools"]["value"])[2:-2]).replace('\'','').split(',')
+    stf_window.mainWidget.comboBox_pool.addItems(poolsList)
 
     setOptions(comboDict,stf_window)
     return stf_window

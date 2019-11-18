@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>779</width>
-    <height>771</height>
+    <height>758</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -723,26 +723,6 @@ background-image: url(/icon/io_ANIMOUT.png);
           <item>
            <property name="text">
             <string>Whole System</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Yeti</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1080TI</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Redshift</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>This Machine</string>
            </property>
           </item>
          </widget>
