@@ -906,6 +906,9 @@ background-image: url(/icon/io_ANIMOUT.png);
         </item>
         <item>
          <widget class="QCheckBox" name="checkBox">
+          <property name="toolTip">
+           <string>Render at half resolution and low sample rate</string>
+          </property>
           <property name="text">
            <string>Draft</string>
           </property>

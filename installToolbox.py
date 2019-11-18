@@ -18,7 +18,7 @@ def createShelf(shelfName):
         print 'Shelf {} Exists'.format(shelfName)
     else:
         print 'Shelf {} does not exist'.format(shelfName)
-        mel.addNewShelfTab(shelfName)
+        mel.eval("addNewShelfTab(\"%s\");"%shelfName)
 
 def RemoveSeparator(shelfName,iconName):
     createShelf(shelfName)
