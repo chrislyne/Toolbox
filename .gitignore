@@ -1,3 +1,4 @@
 Core/toSlack
 *.pyc
 mel/rivet.mel
+pipelime/files/files/workspace.mel
