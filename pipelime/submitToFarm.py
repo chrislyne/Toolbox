@@ -203,8 +203,8 @@ def submitButton():
             submitString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
             submitString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
             if stf_window.mainWidget.checkBox.isChecked() == 1:
-            	width = cmds.getAttr("defaultResolution.width")/2
-            	height = cmds.getAttr("defaultResolution.height")/2
+                width = cmds.getAttr("defaultResolution.width")/2
+                height = cmds.getAttr("defaultResolution.height")/2
                 submitString += ' -Extra \"-x %s -y %s -preRender \"setAttr \\\"redshiftOptions.unifiedMaxSamples\\\" 16; setAttr \\\"redshiftOptions.unifiedMinSamples\\\" 4;\"\"'%(width,height)
             if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
                 submitString += ' -DetectErrors 0'
