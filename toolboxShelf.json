@@ -275,6 +275,15 @@
 			"icon":"separator"
 		},
 		{
+			"label":"Creates a new project",
+			"script":"pipelime/lm_projectWindow.py",
+			"command":"import pipelime.lm_projectWindow as lm_projectWindow;lm_projectWindow.openProjectWindow()",
+			"stp":"python"
+		},
+		{
+			"icon":"separator"
+		},
+		{
 			"icon":"playblastTemp.svg",
 			"label":"playblast with presets",
 			"script":"mel/playblastTemp.mel",

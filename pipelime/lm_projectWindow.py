@@ -77,6 +77,10 @@ def createButton():
     #set prefs for project
     projectDict('%s/.projectData'%projectRoot)
 
+    #open window
+    path=os.path.realpath(projectRoot)
+    os.startfile(path)
+
 def deleteWidget(self):
         self.aWidget.hide()
 
