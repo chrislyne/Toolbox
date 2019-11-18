@@ -9,7 +9,7 @@
         {
         "3D":{
             "folders":["3D/assets","3D/autosave","3D/cache","3D/clips","3D/data","3D/sceneAssembly","3D/Time Editor","3D/scenes/REF","3D/sourceimages/<var>","3D/images","3D/scripts","Elements/Playblasts"],
-            "files":[{"source":"files/workspace.mel","dest":"3D"}]
+            "files":[{"source":"workspace.mel","dest":"3D"}]
             },
         "anim":
             {"folders":["3D/scenes/REF","3D/scenes/ANIM/<var>/SH0010","3D/sourceimages","3D/images","3D/scripts","Elements/Playblasts/ANIM/<var>"]

@@ -67,9 +67,11 @@ def createButton():
             #copy files
             try:
                 for i in folderStructureDict["options"][c[1]]["files"]:
-                    sourcePath = '%s/files'%qtBase.self_path()
+                    sourcePath = '%s/pipelime/files'%qtBase.self_path()
                     sourceFile = '%s/%s'%(sourcePath,i["source"])
                     destFile = '%s/%s/%s'%(projectRoot,i["dest"],i["source"])
+                    sourceFile = os.path.realpath(sourceFile)
+                    destFile = os.path.realpath(destFile)
                     shutil.copyfile(sourceFile, destFile)
             except:
                 pass
