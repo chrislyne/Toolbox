@@ -83,6 +83,18 @@ class LayerWidget(qtBase.BaseWidget):
             layer.checkBox_layerEnable.setChecked(value)
 
 
+def fetchPools():
+    updatePools = "C:/Program Files/Smedge/PoolManager list NAME"
+    si = subprocess.STARTUPINFO()
+    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    upd = subprocess.check_output(updatePools, startupinfo=si)
+    pools = (upd.replace('\r','')).split('\n')
+    pools = filter(None, pools)
+    prefData = []
+    prefData.append(['pools','value','\'%s\''%pools])
+    IO.writePrefsToFile(prefData,'%s/globalPrefs.json'%qtBase.self_path())
+    #return pools
+
 def globalDict():
     prefData = []
     prefData.append(['pathToRenderExe','value','\'%s\''%stf_window.mainWidget.lineEdit_render.text()])
@@ -300,6 +312,7 @@ def submitRenderUI():
     #connect buttons
     stf_window.mainWidget.submitButton.clicked.connect(submitButton)
     stf_window.mainWidget.pushButton_globals.clicked.connect(globalDict)
+    stf_window.mainWidget.pushButton_pools.clicked.connect(fetchPools)
     stf_window.mainWidget.pushButton_project.clicked.connect(projectDict)
     stf_window.mainWidget.pushButton_user.clicked.connect(localDict)
     stf_window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
