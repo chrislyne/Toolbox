@@ -1,7 +1,7 @@
 //Maya 2018 Project Definition
 
 workspace -fr "fluidCache" "cache/nCache/fluid";
-workspace -fr "images" "images";
+workspace -fr "images" "../images/Elements/3D_RENDERS";
 workspace -fr "offlineEdit" "scenes/edits";
 workspace -fr "furShadowMap" "renderData/fur/furShadowMap";
 workspace -fr "iprImages" "renderData/iprImages";
