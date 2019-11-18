@@ -275,6 +275,7 @@
 			"icon":"separator"
 		},
 		{
+			"icon":"lm_projectWindow.svg",
 			"label":"Creates a new project",
 			"script":"pipelime/lm_projectWindow.py",
 			"command":"import pipelime.lm_projectWindow as lm_projectWindow;lm_projectWindow.openProjectWindow()",
