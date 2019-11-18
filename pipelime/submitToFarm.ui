@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>779</width>
-    <height>797</height>
+    <height>771</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -365,7 +365,7 @@ background-image: url(/icon/io_ANIMOUT.png);
               </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="pushButton_pools">
                <property name="text">
                 <string>Get Pools</string>
                </property>
