@@ -142,10 +142,24 @@ def selectRenderExe():
 
 def submitButton():
 
-    #save file
-    cmds.file(save=True)
+    #progress bar
+    countActiveLayers = 0
+    for l in layerWidget.layerWidgets:
+        if l.checkBox_layerEnable.isChecked() == 1:
+            countActiveLayers +=1
+    if stf_window.mainWidget.checkBox_paused.isChecked() == 0:
+        countActiveLayers *=2
+    countActiveLayers +=2
+    progressWindow = cmds.window(title='Submit Progress')
+    cmds.columnLayout(adjustableColumn=True)
+    progressControl = cmds.progressBar(maxValue=countActiveLayers, width=500,height=40)
+    progressLabel = cmds.text( label='',width=100,height=40,align='center')
+    cmds.showWindow( progressWindow )
 
-    print 'submit'
+    #save file
+    cmds.text(progressLabel, edit=True, label='Saving File')
+    cmds.file(save=True)
+    cmds.progressBar(progressControl, edit=True, step=1)
 
     updateStrings = []
 
@@ -197,22 +211,35 @@ def submitButton():
             submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
             try:
             	#que the files paused
-                send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
+                #send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
+                cmds.text(progressLabel, edit=True, label='Submitting Layer - %s'%l.checkBox_layerEnable.text())
+                si = subprocess.STARTUPINFO()
+                si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                send = subprocess.check_output(submitString, startupinfo=si)
                 jobID = send.rsplit(' ',1)[-1]
                 jobID = jobID.replace('\n', '').replace('\r', '')
                 updateString = submitString.replace("-Paused","-ID %s"%jobID)
                 updateStrings.append(updateString) 
+                cmds.progressBar(progressControl, edit=True, step=1)
+                
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
             layerDict(l.checkBox_layerEnable.text())
     
     #save file with added metadata
+    cmds.text(progressLabel, edit=True, label='Writing Metadata')
     cmds.file(save=True)
-    if stf_window.mainWidget.checkBox_paused.isChecked() == 0:
-	    for updateLayer in updateStrings:
-	        subprocess.check_output(updateLayer, stdin=None, stderr=None, shell=False)
+    cmds.progressBar(progressControl, edit=True, step=1)
 
+    if stf_window.mainWidget.checkBox_paused.isChecked() == 0:
+        for updateLayer in updateStrings:
+            cmds.text(progressLabel, edit=True, label='Updating Layer Status')
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            subprocess.check_output(updateLayer, startupinfo=si)
+            cmds.progressBar(progressControl, edit=True, step=1)
+    cmds.text(progressLabel, edit=True, label='DONE!')
     #projectDict()
     localDict()
     fileDict()
