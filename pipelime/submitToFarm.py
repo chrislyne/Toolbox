@@ -337,8 +337,11 @@ def submitRenderUI():
     versionlessSceneName = ''.join([c for c in getProj.sceneName() if c not in "1234567890"])
     comboDict = mergeDictionaries(comboDict,IO.loadDictionary('%s/.data/%s.json'%(getProj.sceneFolder(),versionlessSceneName)))
     #populate pool comboBox from /config/globalPrefs.json
-    poolsList = ((comboDict["pools"]["value"])[2:-2]).replace('\'','').split(',')
-    stf_window.mainWidget.comboBox_pool.addItems(poolsList)
+    try:
+        poolsList = ((comboDict["pools"]["value"])[2:-2]).replace('\'','').split(',')
+        stf_window.mainWidget.comboBox_pool.addItems(poolsList)
+    except:
+        pass
 
     setOptions(comboDict,stf_window)
     return stf_window
