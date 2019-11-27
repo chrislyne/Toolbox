@@ -88,7 +88,8 @@ class LayerWidget(qtBase.BaseWidget):
 
 
 def fetchPools():
-    updatePools = "C:/Program Files/Smedge/PoolManager list NAME"
+    submitPath = stf_window.mainWidget.lineEdit_submitExe.text()
+    updatePools = submitPath.replace('submit.exe','PoolManager list NAME')
     si = subprocess.STARTUPINFO()
     si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     upd = subprocess.check_output(updatePools, startupinfo=si)
