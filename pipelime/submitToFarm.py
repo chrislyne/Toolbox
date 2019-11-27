@@ -86,8 +86,17 @@ class LayerWidget(qtBase.BaseWidget):
         for layer in self.layerWidgets:
             layer.checkBox_layerEnable.setChecked(value)
 
+def listCameras():
+    #list renderable cameras
+    cameraSel = cmds.ls(type=('camera'), l=True)
+    renderableCameras = []
+    for cam in cameraSel:
+        if cmds.getAttr("%s.renderable"%cam) == 1:
+            renderableCameras.append(cam)
+    return renderableCameras
 
 def fetchPools():
+    #use submit path to get poolManager 
     submitPath = stf_window.mainWidget.lineEdit_submitExe.text()
     updatePools = submitPath.replace('submit.exe','PoolManager list NAME')
     si = subprocess.STARTUPINFO()
@@ -98,6 +107,9 @@ def fetchPools():
     prefData = []
     prefData.append(['pools','value','\'%s\''%pools])
     IO.writePrefsToFile(prefData,'%s/config/globalPrefs.json'%qtBase.self_path())
+    stf_window.mainWidget.comboBox_pool.addItems(pools)
+    for l in layerWidget.layerWidgets:
+        l.comboBox_layerPool.addItems(pools)
     #return pools
 
 def globalDict():
