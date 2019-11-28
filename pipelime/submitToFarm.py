@@ -15,41 +15,47 @@ class LayerWidget(qtBase.BaseWidget):
     layerWidgets = []
     previousValue = ''
 
-    def __init__(self,layers,parentWindow):
+    def __init__(self,layers,cameras,parentWindow):
         self.uiFile = 'submitToFarmWidget.ui'
         self.pathModify = 'pipelime/'
         self.parent = parentWindow.mainWidget.verticalLayout_3
         self.previousValue = parentWindow.mainWidget.prioritySlider.value()
         for l in layers:
-            self.BuildUI()
-            self.aWidget.checkBox_layerEnable.setText(l[0]) 
-            self.aWidget.checkBox_layerEnable.setChecked(l[1]) 
-            self.layerWidgets.append(self.aWidget)
-            #set attributes from global controls
-            self.aWidget.spinBox_layerPacketSize.setValue(parentWindow.mainWidget.spinBox_packetSize.value())
-            #set pools from global pools
-            allPools = [parentWindow.mainWidget.comboBox_pool.itemText(i) for i in range(parentWindow.mainWidget.comboBox_pool.count())]
-            self.aWidget.comboBox_layerPool.clear()
-            self.aWidget.comboBox_layerPool.addItems(allPools)
-            self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
-            self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
-            self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
-            
-            #read attributes from layer
-            widgets = self.aWidget.findChildren(QtWidgets.QWidget)
-            for w in widgets:
-                try:
-                    if w.parent() == self.aWidget:
-                        value = cmds.getAttr('%s.%s'%(l[0],w.objectName()))
-                        type = w.metaObject().className()
-                        if type == 'QLineEdit':
-                            w.setText(value)
-                        if type == 'QComboBox':
-                            w.setCurrentText(value)
-                        if type == 'QSpinBox':
-                            w.setValue(int(value))
-                except:
-                    pass
+            for c in cameras:
+                self.BuildUI()
+                layerName = l[0]
+                if len(cameras) > 1:
+                    layerName = '%s - %s'%(l[0],c.split('|')[-2])
+                self.aWidget.renderLayerName = l[0]
+                self.aWidget.camName = c
+                self.aWidget.checkBox_layerEnable.setText(layerName) 
+                self.aWidget.checkBox_layerEnable.setChecked(l[1])
+                self.layerWidgets.append(self.aWidget)
+                #set attributes from global controls
+                self.aWidget.spinBox_layerPacketSize.setValue(parentWindow.mainWidget.spinBox_packetSize.value())
+                #set pools from global pools
+                allPools = [parentWindow.mainWidget.comboBox_pool.itemText(i) for i in range(parentWindow.mainWidget.comboBox_pool.count())]
+                self.aWidget.comboBox_layerPool.clear()
+                self.aWidget.comboBox_layerPool.addItems(allPools)
+                self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
+                self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
+                self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
+                
+                #read attributes from layer
+                widgets = self.aWidget.findChildren(QtWidgets.QWidget)
+                for w in widgets:
+                    try:
+                        if w.parent() == self.aWidget:
+                            value = cmds.getAttr('%s.%s'%(l[0],w.objectName()))
+                            type = w.metaObject().className()
+                            if type == 'QLineEdit':
+                                w.setText(value)
+                            if type == 'QComboBox':
+                                w.setCurrentText(value)
+                            if type == 'QSpinBox':
+                                w.setValue(int(value))
+                    except:
+                        pass
             
         #connect main controls to layer controls
         parentWindow.mainWidget.prioritySlider.valueChanged.connect(self.slide01)
@@ -57,7 +63,7 @@ class LayerWidget(qtBase.BaseWidget):
         parentWindow.mainWidget.comboBox_pool.currentTextChanged.connect(self.pool)
         parentWindow.mainWidget.lineEdit_range.textChanged.connect(self.range)
         parentWindow.mainWidget.checkBox_enable.stateChanged.connect(self.enabled)
-        height = 50*len(layers)
+        height = 50*(len(layers)*len(cameras))
         parentWindow.mainWidget.scrollAreaWidgetContents.setMaximumHeight(height)
         parentWindow.mainWidget.scrollAreaWidgetContents.setMinimumHeight(height)
         
@@ -221,7 +227,8 @@ def submitButton():
             submitString += ' -Scene %s'%getProj.filepath()
             submitString += ' -Project %s'%getProj.getProject()
             submitString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
-            submitString += ' -Extra \"-rl %s\"'%l.checkBox_layerEnable.text()
+            submitString += ' -Extra \"-rl %s\"'%l.renderLayerName
+            submitString += ' -Extra \"-cam %s\"'%l.camName
             submitString += ' -Priority %s'%l.layerPrioritySlider.value()
             submitString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
             submitString += ' -Pool %s'%l.comboBox_layerPool.currentText()
@@ -376,7 +383,8 @@ def openSubmitWindow():
     stf_window = submitRenderUI()
     #get render layers from scene
     layers = sceneVar.getRenderLayers()
-    layerWidget = LayerWidget(layers,stf_window)
+    cameras = listCameras()
+    layerWidget = LayerWidget(layers,cameras,stf_window)
 
 
 #import pipelime.submitToFarm as submitToFarm
