@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>779</width>
-    <height>758</height>
+    <width>786</width>
+    <height>771</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -798,7 +798,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>757</width>
+           <width>764</width>
            <height>240</height>
           </rect>
          </property>
@@ -1130,7 +1130,7 @@ background-image: url(/icon/io_ANIMOUT.png);
 </string>
           </property>
           <property name="text">
-           <string>SUBMIT</string>
+           <string>RENDER</string>
           </property>
           <property name="autoDefault">
            <bool>false</bool>
@@ -1140,6 +1140,31 @@ background-image: url(/icon/io_ANIMOUT.png);
           </property>
           <property name="flat">
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="playblastButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>120</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>PLAYBLAST</string>
           </property>
          </widget>
         </item>
@@ -1154,7 +1179,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>779</width>
+     <width>786</width>
      <height>21</height>
     </rect>
    </property>
