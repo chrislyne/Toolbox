@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>771</height>
+    <width>747</width>
+    <height>787</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -425,7 +425,7 @@ background-image: url(/icon/io_ANIMOUT.png);
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0,0">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -467,6 +467,25 @@ background-image: url(/icon/io_ANIMOUT.png);
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Job Type</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_3">
@@ -591,6 +610,39 @@ background-image: url(/icon/io_ANIMOUT.png);
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="Line" name="line_10">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_jobType">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <item>
+           <property name="text">
+            <string>Redshift</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Playblast</string>
+           </property>
+          </item>
+         </widget>
         </item>
         <item>
          <widget class="Line" name="line_3">
@@ -798,7 +850,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>764</width>
+           <width>725</width>
            <height>240</height>
           </rect>
          </property>
@@ -1179,7 +1231,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>786</width>
+     <width>747</width>
      <height>21</height>
     </rect>
    </property>
