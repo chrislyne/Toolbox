@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>866</width>
+    <width>883</width>
     <height>787</height>
    </rect>
   </property>
@@ -425,7 +425,7 @@ background-image: url(/icon/io_ANIMOUT.png);
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0,0,0">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -486,6 +486,22 @@ background-image: url(/icon/io_ANIMOUT.png);
            <string>Job Type</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QLabel" name="label_3">
@@ -648,6 +664,9 @@ background-image: url(/icon/io_ANIMOUT.png);
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Maximum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -863,7 +882,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>844</width>
+           <width>861</width>
            <height>240</height>
           </rect>
          </property>
@@ -1219,7 +1238,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>866</width>
+     <width>883</width>
      <height>21</height>
     </rect>
    </property>

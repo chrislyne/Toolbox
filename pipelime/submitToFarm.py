@@ -58,6 +58,7 @@ class LayerWidget(qtBase.BaseWidget):
                         pass
             
         #connect main controls to layer controls
+        parentWindow.mainWidget.comboBox_jobType.currentTextChanged.connect(self.jobType)
         parentWindow.mainWidget.prioritySlider.valueChanged.connect(self.slide01)
         parentWindow.mainWidget.spinBox_packetSize.valueChanged.connect(self.packetSize)
         parentWindow.mainWidget.comboBox_pool.currentTextChanged.connect(self.pool)
@@ -70,6 +71,10 @@ class LayerWidget(qtBase.BaseWidget):
         
     #widget functions
     
+    def jobType(self,value):
+        for layer in self.layerWidgets:
+            layer.comboBox_jobType.setCurrentText(value)
+
     def slide01(self,value):
         difference = self.previousValue - value
         for layer in self.layerWidgets:
@@ -137,6 +142,7 @@ def localDict():
     prefData.append(['checkBox_Paused','value',stf_window.mainWidget.checkBox_paused.isChecked()])
     prefData.append(['prioritySlider','value',stf_window.mainWidget.prioritySlider.value()])
     prefData.append(['comboBox_pool','value','\'%s\''%stf_window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['comboBox_jobType','value','\'%s\''%stf_window.mainWidget.comboBox_jobType.currentText()])
     prefData.append(['spinBox_packetSize','value',stf_window.mainWidget.spinBox_packetSize.value()])
     IO.writePrefsToFile(prefData,'%s/localPrefs.json'%qtBase.local_path())
 
@@ -144,6 +150,7 @@ def fileDict():
     prefData = []
     prefData.append(['prioritySlider','value',stf_window.mainWidget.prioritySlider.value()])
     prefData.append(['comboBox_pool','value','\'%s\''%stf_window.mainWidget.comboBox_pool.currentText()])
+    prefData.append(['comboBox_jobType','value','\'%s\''%stf_window.mainWidget.comboBox_jobType.currentText()])
     prefData.append(['spinBox_packetSize','value',stf_window.mainWidget.spinBox_packetSize.value()])
     prefData.append(['staggerStart','value',stf_window.mainWidget.lineEdit_stagger.text()])
 
@@ -175,8 +182,59 @@ def selectRenderExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
     stf_window.mainWidget.lineEdit_render.setText(filename[0])
 
-def submitButton():
+def playblastString(l):
+    #playblast string
+    filename = '%s_%s_%s'%(getProj.sceneName(),l.renderLayerName,l.camName.split('|')[-2])
 
+    pbString = ''
+    pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
+    pbString += ' -Type Generic Script'
+    pbString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
+    pbString += ' -Priority %s'%l.layerPrioritySlider.value()
+    pbString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
+    pbString += ' -Pool %s'%l.comboBox_layerPool.currentText()
+    pbString += ' -Range %s'%l.lineEdit_layerRange.text()
+    pbString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
+    pbString += ' -Paused'
+    pbString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
+    pbString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
+    pbString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+    mayaBatchPath = stf_window.mainWidget.lineEdit_render.text().replace('Render','mayaBatch')
+    pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"playblasts/%s\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath(),filename)
+
+    return pbString
+
+def renderString(l):
+    #render string
+    submitString = ''
+    submitString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
+    submitString += ' -Type Redshift for Maya'
+    submitString += ' -Scene %s'%getProj.filepath()
+    submitString += ' -Project %s'%getProj.getProject()
+    submitString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
+    submitString += ' -Extra \"-rl %s\"'%l.renderLayerName
+    submitString += ' -Extra \"-cam %s\"'%l.camName
+    submitString += ' -Priority %s'%l.layerPrioritySlider.value()
+    submitString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
+    submitString += ' -Pool %s'%l.comboBox_layerPool.currentText()
+    submitString += ' -Range %s'%l.lineEdit_layerRange.text()
+    submitString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
+    submitString += ' -Paused'
+    submitString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
+    submitString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
+    submitString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+    if stf_window.mainWidget.checkBox.isChecked() == 1:
+        width = cmds.getAttr("defaultResolution.width")/2
+        height = cmds.getAttr("defaultResolution.height")/2
+        submitString += ' -Extra \"-x %s -y %s -preRender \"setAttr \\\"redshiftOptions.unifiedMaxSamples\\\" 16; setAttr \\\"redshiftOptions.unifiedMinSamples\\\" 4;\"\"'%(width,height)
+    if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
+        submitString += ' -DetectErrors 0'
+    submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
+
+    return submitString
+
+
+def submitButton():
     #progress bar
     countActiveLayers = 0
     for l in layerWidget.layerWidgets:
@@ -214,57 +272,20 @@ def submitButton():
                     if type == 'QSpinBox':
                         value = w.value()
                     if value and w.parent() == l:
-                        if cmds.attributeQuery(w.objectName(),node=l.checkBox_layerEnable.text(),ex=True) == False:
-                            cmds.addAttr(l.checkBox_layerEnable.text(),ln=w.objectName(),dt='string')
-                        cmds.setAttr('%s.%s'%(l.checkBox_layerEnable.text(),w.objectName()),value,type="string")       
+
+                        if cmds.attributeQuery(w.objectName(),node=l.renderLayerName,ex=True) == False:
+                            cmds.addAttr(l.renderLayerName,ln=w.objectName(),dt='string')
+                        cmds.setAttr('%s.%s'%(l.renderLayerName,w.objectName()),value,type="string")       
                 except:
                     pass
 
+            submitString = renderString(l)
+            if l.comboBox_jobType.currentText() == 'Playblast':
+                submitString = playblastString(l)
 
-            #playblast string
-            pbString = ''
-            pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
-            pbString += ' -Type Generic Script'
-            pbString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
-            pbString += ' -Priority %s'%l.layerPrioritySlider.value()
-            pbString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
-            pbString += ' -Pool %s'%l.comboBox_layerPool.currentText()
-            pbString += ' -Range %s'%l.lineEdit_layerRange.text()
-            pbString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
-            pbString += ' -Paused'
-            pbString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
-            pbString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
-            pbString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
-            mayaBatchPath = stf_window.mainWidget.lineEdit_render.text().replace('Render','mayaBatch')
-            pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"playblasts/test01\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath())
 
-            #render string
-            submitString = ''
-            submitString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
-            submitString += ' -Type Redshift for Maya'
-            submitString += ' -Scene %s'%getProj.filepath()
-            submitString += ' -Project %s'%getProj.getProject()
-            submitString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
-            submitString += ' -Extra \"-rl %s\"'%l.renderLayerName
-            submitString += ' -Extra \"-cam %s\"'%l.camName
-            submitString += ' -Priority %s'%l.layerPrioritySlider.value()
-            submitString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
-            submitString += ' -Pool %s'%l.comboBox_layerPool.currentText()
-            submitString += ' -Range %s'%l.lineEdit_layerRange.text()
-            submitString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
-            submitString += ' -Paused'
-            submitString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
-            submitString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
-            submitString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
-            if stf_window.mainWidget.checkBox.isChecked() == 1:
-                width = cmds.getAttr("defaultResolution.width")/2
-                height = cmds.getAttr("defaultResolution.height")/2
-                submitString += ' -Extra \"-x %s -y %s -preRender \"setAttr \\\"redshiftOptions.unifiedMaxSamples\\\" 16; setAttr \\\"redshiftOptions.unifiedMinSamples\\\" 4;\"\"'%(width,height)
-            if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
-                submitString += ' -DetectErrors 0'
-            submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
             try:
-            	#que the files paused
+                #que the files paused
                 #send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
                 cmds.text(progressLabel, edit=True, label='Submitting Layer - %s'%l.checkBox_layerEnable.text())
                 si = subprocess.STARTUPINFO()
@@ -280,7 +301,7 @@ def submitButton():
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
             layerDict(l.checkBox_layerEnable.text())
-    
+
     #save file with added metadata
     cmds.text(progressLabel, edit=True, label='Writing Metadata')
     cmds.file(save=True)
@@ -297,6 +318,7 @@ def submitButton():
     #projectDict()
     localDict()
     fileDict()
+
 
 def setUiValue(uiObject,value,window):
 
@@ -325,6 +347,7 @@ def setOptions(data,window):
                     [window.mainWidget.checkBox_paused,"checkBox_Paused"],
                     [window.mainWidget.prioritySlider,"prioritySlider"],
                     [window.mainWidget.comboBox_pool,"comboBox_pool"],
+                    [window.mainWidget.comboBox_jobType,"comboBox_jobType"],
                     [window.mainWidget.spinBox_packetSize,"spinBox_packetSize"],
                     [window.mainWidget.lineEdit_range,"lineEdit_range"],
                     [window.mainWidget.lineEdit_stagger,"staggerStart"]
