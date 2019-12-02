@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
+    <width>947</width>
     <height>60</height>
    </rect>
   </property>
@@ -75,6 +75,19 @@
       </widget>
      </item>
      <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
       <widget class="Line" name="line_6">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -106,6 +119,19 @@
         </property>
        </item>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <widget class="Line" name="line_4">
@@ -284,12 +310,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>539</x>
+     <x>751</x>
      <y>35</y>
     </hint>
     <hint type="destinationlabel">
-     <x>583</x>
-     <y>33</y>
+     <x>857</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
@@ -300,11 +326,11 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>583</x>
-     <y>31</y>
+     <x>857</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel">
-     <x>539</x>
+     <x>751</x>
      <y>35</y>
     </hint>
    </hints>
@@ -320,8 +346,8 @@
      <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>424</x>
-     <y>32</y>
+     <x>636</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
@@ -336,8 +362,8 @@
      <y>22</y>
     </hint>
     <hint type="destinationlabel">
-     <x>340</x>
-     <y>17</y>
+     <x>625</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>
@@ -348,12 +374,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>238</x>
-     <y>18</y>
+     <x>105</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
-     <x>455</x>
-     <y>18</y>
+     <x>740</x>
+     <y>28</y>
     </hint>
    </hints>
   </connection>
@@ -368,8 +394,8 @@
      <y>27</y>
     </hint>
     <hint type="destinationlabel">
-     <x>539</x>
-     <y>29</y>
+     <x>751</x>
+     <y>35</y>
     </hint>
    </hints>
   </connection>
@@ -380,12 +406,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>238</x>
-     <y>28</y>
+     <x>105</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
-     <x>583</x>
-     <y>28</y>
+     <x>857</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
@@ -400,8 +426,8 @@
      <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>721</x>
-     <y>17</y>
+     <x>1006</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>
@@ -416,8 +442,8 @@
      <y>27</y>
     </hint>
     <hint type="destinationlabel">
-     <x>753</x>
-     <y>27</y>
+     <x>1017</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
@@ -432,8 +458,8 @@
      <y>26</y>
     </hint>
     <hint type="destinationlabel">
-     <x>690</x>
-     <y>26</y>
+     <x>902</x>
+     <y>34</y>
     </hint>
    </hints>
   </connection>
@@ -448,8 +474,8 @@
      <y>22</y>
     </hint>
     <hint type="destinationlabel">
-     <x>721</x>
-     <y>35</y>
+     <x>1006</x>
+     <y>40</y>
     </hint>
    </hints>
   </connection>
@@ -460,12 +486,12 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>131</x>
-     <y>22</y>
+     <x>105</x>
+     <y>33</y>
     </hint>
     <hint type="destinationlabel">
-     <x>342</x>
-     <y>22</y>
+     <x>625</x>
+     <y>32</y>
     </hint>
    </hints>
   </connection>
@@ -480,8 +506,40 @@
      <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>607</x>
-     <y>13</y>
+     <x>891</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_layerEnable</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>comboBox_jobType</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>22</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>562</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_layerEnable</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>line_6</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>19</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>511</x>
+     <y>20</y>
     </hint>
    </hints>
   </connection>

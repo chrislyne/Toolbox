@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>747</width>
+    <width>866</width>
     <height>787</height>
    </rect>
   </property>
@@ -645,6 +645,19 @@ background-image: url(/icon/io_ANIMOUT.png);
          </widget>
         </item>
         <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="Line" name="line_3">
           <property name="cursor">
            <cursorShape>SizeHorCursor</cursorShape>
@@ -850,7 +863,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>725</width>
+           <width>844</width>
            <height>240</height>
           </rect>
          </property>
@@ -1195,31 +1208,6 @@ background-image: url(/icon/io_ANIMOUT.png);
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="playblastButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>120</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>120</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>PLAYBLAST</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -1231,7 +1219,7 @@ background-image: url(/icon/io_ANIMOUT.png);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>747</width>
+     <width>866</width>
      <height>21</height>
     </rect>
    </property>
@@ -1254,12 +1242,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>562</x>
-     <y>443</y>
+     <x>509</x>
+     <y>417</y>
     </hint>
     <hint type="destinationlabel">
-     <x>605</x>
-     <y>443</y>
+     <x>545</x>
+     <y>416</y>
     </hint>
    </hints>
   </connection>
@@ -1270,12 +1258,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>605</x>
-     <y>443</y>
+     <x>545</x>
+     <y>416</y>
     </hint>
     <hint type="destinationlabel">
-     <x>562</x>
-     <y>443</y>
+     <x>509</x>
+     <y>417</y>
     </hint>
    </hints>
   </connection>
@@ -1286,7 +1274,7 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>796</x>
+     <x>736</x>
      <y>60</y>
     </hint>
     <hint type="destinationlabel">
@@ -1302,12 +1290,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>780</x>
-     <y>338</y>
+     <x>727</x>
+     <y>312</y>
     </hint>
     <hint type="destinationlabel">
-     <x>780</x>
-     <y>367</y>
+     <x>727</x>
+     <y>341</y>
     </hint>
    </hints>
   </connection>
