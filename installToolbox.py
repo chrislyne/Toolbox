@@ -257,9 +257,9 @@ def updateGrpCheckboxes():
 def installToolboxWindow():
 	installForm = cmds.formLayout()
 	textLabel = cmds.text(label='Shelf')
-	nameText = cmds.textField('nameText',width=250,tx='Custom')
+	nameText = cmds.textField('nameText',width=200,tx='Custom')
 	scriptsMenu = cmds.optionMenu('scriptsMenu')
-	jsonPathText = cmds.textField('jsonPathText',width=250,ed=False,pht='path to json')
+	jsonPathText = cmds.textField('jsonPathText',ed=False,pht='path to json')
 	jsonPathBtn = cmds.button('jsonPathBtn',width=50,label='...',c='browseForFile()')
 	separator = ';' if cmds.about(nt=True) else ':'
 	scriptsPaths = os.getenv('MAYA_SCRIPT_PATH')
@@ -364,7 +364,7 @@ def toolbox_install():
 	workspaceName = 'Install Toolbox'
 	if(cmds.workspaceControl('Install Toolbox', exists=True)):
 		cmds.deleteUI('Install Toolbox')
-	cmds.workspaceControl(workspaceName,initialHeight=250,initialWidth=300,uiScript = 'installToolboxWindow()')
+	cmds.workspaceControl(workspaceName,initialHeight=250,initialWidth=200,uiScript = 'installToolboxWindow()')
 
 
 #toolbox_install()
