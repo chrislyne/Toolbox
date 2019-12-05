@@ -92,15 +92,12 @@ def takeScreenshot(assetName):
 
     lch = screenshot.ScreenShot()
     imageFileName = '%s/.data/%s_thumb.jpg'%(assetPath,assetName)
-    print imageFileName
     lch.launch(imageFileName)
 
-    try:
-        buttonIcon = QtGui.QIcon("%s/icons/%s.jpg"%(qtBase.self_path(), "tap"))
-        window.mainWidget.pushButton_thumb.setIcon(buttonIcon)
-        window.mainWidget.pushButton_thumb.setText("")
-    except:
-        pass
+    buttonIcon = QtGui.QIcon(assetPath)
+    assetManagerUIWindow.mainWidget.pushButton_thumb.setIcon(buttonIcon)
+    assetManagerUIWindow.mainWidget.pushButton_thumb.setText("")
+
 
 def orderByModified(dirpath):
 
@@ -146,6 +143,7 @@ def newAsset():
             items.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index))
             itemsText.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index).text())
 
+
         if newAssetType not in itemsText:
             #add item to type list
             itm = QtWidgets.QListWidgetItem(newAssetType)
@@ -158,12 +156,19 @@ def newAsset():
             for i in items:
                 if newAssetType == i.text():
                     itm = i
-            setType(newAssetType)
+            #setType()
         itm.setSelected(True)
         
         #add item to asset list
-        itm = QtWidgets.QListWidgetItem(QtGui.QIcon('C:/Users/Admin/Documents/Toolbox/icons/lightRed.png'),newAssetName);
+        try:
+            dirname = os.path.dirname(__file__)
+        except:
+            print 'running in test environment'
+            dirname = 'C:/Users/Admin/Documents/Toolbox'
+        itm = QtWidgets.QListWidgetItem(QtGui.QIcon('%s/icons/lightRed.png'%(dirname)),newAssetName);
         assetManagerUIWindow.mainWidget.listWidget_assets.addItem(itm);
+        for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assets.count()):
+            (assetManagerUIWindow.mainWidget.listWidget_assets.item(index)).setSelected(False)
         itm.setSelected(True)
         #create folder and file
         if not os.path.exists(assetPath):
@@ -247,12 +252,19 @@ def setVersion(assetName):
         
 
 def setAsset():
-
-    assetName = assetManagerUIWindow.mainWidget.listWidget_assets.currentItem().text()
-
-    assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
+    try:
+        assetName = assetManagerUIWindow.mainWidget.listWidget_assets.currentItem().text()
+    except:
+        pass
+    try:
+        assetType = assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text()
+    except:
+        pass
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
-    thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDictGlobal[project]["projectPath"],assetType,assetName,assetName)
+    try:
+        thumbPath = '%s/scenes/REF/%s/%s/.data/%s_thumb.jpg'%(projectsDictGlobal[project]["projectPath"],assetType,assetName,assetName)
+    except:
+        pass
     #find and display date
     try:
         refPath = '%s/scenes/REF/%s/%s_REF.mb'%(projectsDictGlobal[project]["projectPath"],assetType,assetName)
@@ -286,7 +298,10 @@ def setAsset():
     except:
         pass
     assetManagerUIWindow.mainWidget.tableWidget_assetVersions.setVisible(0)
-    setVersion(assetName)
+    try:
+        setVersion(assetName)
+    except:
+        pass
 
 def setType():
     project = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
@@ -304,11 +319,16 @@ def setType():
 
     assetManagerUIWindow.mainWidget.listWidget_assets.clear()
     #assetManagerUIWindow.mainWidget.listWidget_assets.addItems(assetFolders)
+    try:
+        dirname = os.path.dirname(__file__)
+    except:
+        print 'running in test environment'
+        dirname = 'C:/Users/Admin/Documents/Toolbox'
 
     for assets in assetFolders:
-        itm = QtWidgets.QListWidgetItem(QtGui.QIcon('C:/Users/Admin/Documents/Toolbox/icons/lightRed.png'),assets);
+        itm = QtWidgets.QListWidgetItem(QtGui.QIcon('%s/icons/lightRed.png'%dirname),assets);
         if os.path.isfile('%s/%s_REF.mb'%(typePath,assets)):
-            itm = QtWidgets.QListWidgetItem(QtGui.QIcon('C:/Users/Admin/Documents/Toolbox/icons/lightGreen.png'),assets);
+            itm = QtWidgets.QListWidgetItem(QtGui.QIcon('%s/icons/lightGreen.png'%dirname),assets);
 
         assetManagerUIWindow.mainWidget.listWidget_assets.addItem(itm);
 
@@ -328,6 +348,7 @@ def setType():
 def setProject():
     projectsDict = IO.loadDictionary('%s/projects.json'%qtBase.local_path())
     print projectsDict
+    print 'foobar'
     key = assetManagerUIWindow.mainWidget.project_comboBox.currentText()
     projectPath = projectsDict[key]["projectPath"]
 
@@ -349,15 +370,14 @@ def setProject():
         for index in xrange(assetManagerUIWindow.mainWidget.listWidget_assetType.count()):
             items.append(assetManagerUIWindow.mainWidget.listWidget_assetType.item(index))
 
-        #items[0].setSelected(True)
-        #assetManagerUIWindow.mainWidget.listWidget_assetType.setCurrentItem(items[0])
-        #setType()
+        items[0].setSelected(True)
+        assetManagerUIWindow.mainWidget.listWidget_assetType.setCurrentItem(items[0])
+        setType()
     except:
         pass
 
 
     #assetManagerUIWindow.mainWidget.listWidget_assetType.currentTextChanged.connect(lambda: setType(assetManagerUIWindow.mainWidget.listWidget_assetType.currentItem().text(),path))
-
 
 def assetManagerUI():
     window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'lm_assetManager.ui')
@@ -380,6 +400,7 @@ def assetManagerUI():
     window.mainWidget.project_comboBox.currentTextChanged.connect(setProject)
 
     window.mainWidget.listWidget_assetType.currentTextChanged.connect(setType)
+    
 
     #add project button
     window.mainWidget.pushButton_addProject.clicked.connect(selectFolder)
@@ -388,6 +409,7 @@ def assetManagerUI():
     #change asset selection
     window.mainWidget.listWidget_assets.currentTextChanged.connect(setAsset)
     window.mainWidget.listWidget_assets.doubleClicked.connect(doubleClicked)
+    #window.mainWidget.listWidget_assets.itemSelectionChanged.connect(listChanged)
     #reference button
     window.mainWidget.pushButton_reference.clicked.connect(lambda: referenceAsset(window.mainWidget.listWidget_assets.selectedItems(),0))
     #import button
