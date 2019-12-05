@@ -1,360 +1,410 @@
 {
-	"dependencies":[
-	],
-	"buttons": [
-		{
-			"icon":"incrementalSave.svg",
-			"label":"Incremental Save",
-			"script":"Tools/incrementalSaveUI.py",
-			"modules": ["baseIO/incrementalSave.py","baseIO/IOuserPref.py"],
-			"command":"import Tools.incrementalSaveUI;from Tools.incrementalSaveUI import *;incrementalSaveUI()",
-			"stp":"python"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"selectClear.svg",
-			"label":"Clear selection",
-			"command":"select -cl;",
-			"stp":"mel"
-		},
-		{
-			"icon":"selectList.svg",
-			"label":"List current selection",
-			"command":"string $quickSel[] = `ls -sl`;;",
-			"stp":"mel"
-		},
-		{
-			"icon":"selectReplace.svg",
-			"label":"Replace selection with list",
-			"command":"select -r $quickSel;",
-			"stp":"mel"
-		},
-		{
-			"icon":"selectSmooths.svg",
-			"label":"Select all smooths in the scene",
-			"command":"select \"*polySmoothFace*\";",
-			"stp":"mel"
-		},
-		{
-			"icon":"clearPlugins.svg",
-			"label":"clears plugins from scene",
-			"script":"mel/clearPlugins.mel",
-			"command":"source clearPlugins;clearPlugins(0);",
-			"menuItem":[
-				{
-					"label":"Remove turtles",
-					"command":"source clearPlugins;clearPlugins(1);"
-				},
-				{
-					"label":"Remove pre/post scripts",
-					"command":"source clearPlugins;clearPlugins(2);"
-				},
-				{
-					"label":"Remove Vray",
-					"command":"source clearPlugins;clearPlugins(3);"
-				},
-				{
-					"label":"Remove MRay",
-					"command":"source clearPlugins;clearPlugins(4);"
-				}
-				
-			],
-			"stp":"mel"
-		},
-		{
-			"icon":"loopBox.svg",
-			"label":"loops through attributes",
-			"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};",
-			"script":"mel/loopBox.mel",
-			"command":"source loopBox;loopBox;",
-			"stp":"mel"
-		},
-		{
-			"icon":"mapFaces.svg",
-			"label":"Maps shader on selected faces",
-			"command":"string $selList[] = `ls -sl`;hyperShade -smn;hyperShadePanelGraphCommand(\"hyperShadePanel1\", \"showUpAndDownstream\");select -r $selList;",
-			"stp":"mel"
-		},
-		{
-			"icon":"assignNewShader.svg",
-			"label":"assign new shader to selected object",
-			"script":"mel/assignNewShader.mel",
-			"command":"source assignNewShader;assignNewShader(\"lambert\");",
-			"stp":"mel",
-			"menuItem":[
-				{
-					"label":"lambert",
-					"command":"source assignNewShader;assignNewShader(\"lambert\");"
-				},
-				{
-					"label":"RedshiftMaterial",
-					"command":"source assignNewShader;assignNewShader(\"RedshiftMaterial\");"
-				}
-				
-			]
-		},
-		{
-			"icon":"rivet.svg",
-			"label":"Makes rivet between two edges",
-			"command":"source rivet;rivet;",
-			"stp":"mel"
-		},
-		{
-			"icon":"edgeToCurve.svg",
-			"label":"select edges on object to make curve",
-			"script":"mel/edgeToCurve.mel",
-			"command":"source edgeToCurve;edgeToCurve(0);",
-			"menuItem":[
-				{
-					"label":"Extrude GEO",
-					"command":"source edgeToCurve;edgeToCurve(1);"
-				}
-			],
-			"stp":"mel"
-		},
-		{
-			"icon":"parentShape.svg",
-			"label":"Parent shape node to a new transform",
-			"command":"parent -add -s;",
-			"stp":"mel"
-		},
-		{
-			"icon":"removeNamespaces.svg",
-			"label":"Remove namespaces from selected objects or from whole scene",
-			"script":"mel/removeNamespaces.mel",
-			"command":"source removeNamespaces;removeNamespaces;",
-			"stp":"mel"
-		},
-		{
-			"icon":"OpenRenderFolder.svg",
-			"label":"Open project folders",
-			"script":"Tools/OpenRenderFolder.py",
-			"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(0)",
-			"stp":"python",
-			"menuItem":[
-				{
-					"label":"images temp",
-					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(1)",
-					"stp":"python"
-				},
-				{
-					"label":"sourceimages",
-					"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(2)",
-					"stp":"python"
-				}
-				
-			],
-			"stp":"python"
-		},
-		{
-			"icon":"multiRef.svg",
-			"label":"reference or import multiple files at once",
-			"script":"mel/multiRef.mel",
-			"command":"source multiRef;multiRef;",
-			"stp":"mel"
-		},
-		{
-			"icon":"exportForTexturing.svg",
-			"label":"Export geo and UV maps for texturing",
-			"script":"mel/exportForTexturing.mel",
-			"command":"source exportForTexturing;exportForTexturing;",
-			"stp":"mel"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"createCtrl.svg",
-			"label":"Create Ctrl",
-			"script":"ramenRig/createCtrlUi.py",
-			"command":"import ramenRig;ramenRig.createCtrlUi.openCtrlWindow()",
-			"stp":"python",
-			"modules": [
-			"ramenRig/createCtrl_resources.py",
-			"ramenRig/createCtrl.py",
-			"ramenRig/__init__.py",
-			"ramenRig/createCtrl.ui"
-			]
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"cacheYetiFur.svg",
-			"label":"Cache yeti fur",
-			"script":"mel/cacheYetiFur.mel",
-			"command":"source cacheYetiFur;cacheYetiFur;",
-			"stp":"mel"
-		},
-		{	
-			"icon":"checkOutYeti.svg",
-			"label":"Check Out Yeti Licence",
-			"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";",
-			"stp":"mel",
-			"menuItem":[
-				{
-					"label":"Check Out Licence",
-					"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";"
-				},
-				{
-					"label":"Release Licence",
-					"command":"pgYetiCommand -returnLicense;putenv \"YETI_INTERACTIVE_LICENSE\" \"0\";"
-				}
-			]
-		},
-		{
-			"icon":"cacheBifrost.svg",
-			"label":"Cache Bifrost on Smedge",
-			"script":"mel/SmedgeBifrostCache.mel",
-			"command":"source SmedgeBifrostCache;SmedgeBifrostCache;",
-			"stp":"mel"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":["io_Llama.svg","io_importAnim.svg","io_importCam.svg","io_publishAnim.svg","io_publishCam.svg","io_publishModel.svg"],
-			"label":"LlamaIO pipeline control",
-			"script":"lio/llamaIO.py",
-			"modules": [
-			"lio/io_importAnimation.py",
-			"lio/io_importCamera.py",
-			"lio/io_importMaterials.py",
-			"lio/io_publishAnimation.py",
-			"lio/io_publishCamera.py",
-			"lio/io_publishModel.py",
-			"lio/io_publishToNewScene.py",
-			"lio/__init__.py",
-			"lio/LlamaIO/LlamaUtil.py",
-			"lio/LlamaIO/UserPrefs.py",
-			"lio/LlamaIO/__init__.py"
-			],
-			"command":"import lio;from lio.llamaIO import LlamaIOWindow;lio.llamaIO.LlamaIO()",
-			"stp":"python"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"RSTessellate.svg",
-			"label":"Adds tesselsation to redshift objects",
-			"script":"mel/RSTessellate.mel",
-			"command":"source RSTessellate;RSTessellate;",
-			"stp":"mel"
-		},
-		{
-			"icon":"RSObjectId.svg",
-			"label":"Adds object ID to redshift objects",
-			"script":"mel/RSObjectId.mel",
-			"command":"source RSObjectId;RSObjectId;",
-			"stp":"mel"
-		},
-		{
-			"icon":"RSAOV.svg",
-			"label":"Adds redshift AOV deffinitions",
-			"command":"source RSAOV;RSAOV;",
-			"stp":"mel"
-		},
-		{
-			"icon":"RSFresnel.svg",
-			"label":"Create redshift fresnel / occlusion material",
-			"script":"mel/RSFresnel.mel",
-			"command":"source RSFresnel;RSFresnel;",
-			"stp":"mel"
-		},
-		{
-			"icon":"RSCameraBokeh.svg",
-			"label":"Adds redshift bokeh to camera",
-			"script":"mel/RSCameraBokeh.mel",
-			"command":"source RSCameraBokeh;RSCameraBokeh;",
-			"stp":"mel"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"lm_projectWindow.svg",
-			"label":"Creates a new project",
-			"script":"pipelime/lm_projectWindow.py",
-			"command":"import pipelime.lm_projectWindow as lm_projectWindow;lm_projectWindow.openProjectWindow()",
-			"stp":"python"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"playblastTemp.svg",
-			"label":"playblast with presets",
-			"script":"mel/playblastTemp.mel",
-			"command":"source playblastTemp;playblastTemp(0);",
-			"menuItem":[
-				{
-					"label":".mov",
-					"command":"source playblastTemp;playblastTemp(1);"
-				},
-				{
-					"label":".mov on green",
-					"command":"source playblastTemp;playblastTemp(2);"
-				},
-				{
-					"label":".png",
-					"command":"source playblastTemp;playblastTemp(3);"
-				},
-				{
-					"label":"green",
-					"command":"source playblastTemp;playblastTemp(4);"
-				}
-				
-			],
-			"stp":"mel"
-		},
-		{
-			"icon":"preFlightChecks.svg",
-			"label":"Pre render checks",
-			"script":"mel/preFlightChecks.mel",
-			"command":"source preFlightChecks;preFlightChecks;",
-			"stp":"mel"
-		},
-		{
-			"icon":"smedgeRender.svg",
-			"label":"Submit render to smedge",
-			"script":"mel/smedgeRender.mel",
-			"command":"source smedgeRender;smedgeRender;",
-			"modules":[
-				"pipelime/__init__.py",
-				"pipelime/submitToFarm.py",
-				"pipelime/submitToFarm.ui",
-				"pipelime/submitToFarmWidget.ui",
-				"baseIO/loadSave.py",
-				"baseIO/sceneVar.py",
-				"baseIO/qtBase.py",
-				"baseIO/getProj.py",
-				"icons/gear.png"
-			],
-			"stp":"mel"
-		},
-		{
-			"icon":"separator"
-		},
-		{
-			"icon":"icecream.svg",
-			"label":"icecream?",
-			"script":"Tools/toSlack.py",
-			"command":"import toSlack;toSlack.icecreamBot()",
-			"modules": ["Tools/__init__.py"],
-			"stp":"python"
-		},
-		{
-			"icon":"installToolbox.svg",
-			"label":"install or update toolbox",
-			"script":"installToolbox.mel",
-			"command":"source installToolbox;installToolbox;",
-			"stp":"mel"
-		}
+	"Quick Save":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"incrementalSave.svg",
+				"label":"Incremental Save",
+				"script":"Tools/incrementalSaveUI.py",
+				"modules": ["baseIO/incrementalSave.py","baseIO/IOuserPref.py"],
+				"command":"import Tools.incrementalSaveUI;from Tools.incrementalSaveUI import *;incrementalSaveUI()",
+				"stp":"python"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Efficiency Tools":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"selectClear.svg",
+				"label":"Clear selection",
+				"command":"select -cl;",
+				"stp":"mel"
+			},
+			{
+				"icon":"selectList.svg",
+				"label":"List current selection",
+				"command":"string $quickSel[] = `ls -sl`;;",
+				"stp":"mel"
+			},
+			{
+				"icon":"selectReplace.svg",
+				"label":"Replace selection with list",
+				"command":"select -r $quickSel;",
+				"stp":"mel"
+			},
+			{
+				"icon":"selectSmooths.svg",
+				"label":"Select all smooths in the scene",
+				"command":"select \"*polySmoothFace*\";",
+				"stp":"mel"
+			},
+			{
+				"icon":"clearPlugins.svg",
+				"label":"clears plugins from scene",
+				"script":"mel/clearPlugins.mel",
+				"command":"source clearPlugins;clearPlugins(0);",
+				"menuItem":[
+					{
+						"label":"Remove turtles",
+						"command":"source clearPlugins;clearPlugins(1);"
+					},
+					{
+						"label":"Remove pre/post scripts",
+						"command":"source clearPlugins;clearPlugins(2);"
+					},
+					{
+						"label":"Remove Vray",
+						"command":"source clearPlugins;clearPlugins(3);"
+					},
+					{
+						"label":"Remove MRay",
+						"command":"source clearPlugins;clearPlugins(4);"
+					}
+					
+				],
+				"stp":"mel"
+			},
+			{
+				"icon":"loopBox.svg",
+				"label":"loops through attributes",
+				"command":"source loopBox;loopBox;\\n\/*\\nstring $sel[] = `ls -sl`;\\nfor( $item in $sel)\\n{\\n\\n};",
+				"script":"mel/loopBox.mel",
+				"command":"source loopBox;loopBox;",
+				"stp":"mel"
+			},
+			{
+				"icon":"mapFaces.svg",
+				"label":"Maps shader on selected faces",
+				"command":"string $selList[] = `ls -sl`;hyperShade -smn;hyperShadePanelGraphCommand(\"hyperShadePanel1\", \"showUpAndDownstream\");select -r $selList;",
+				"stp":"mel"
+			},
+			{
+				"icon":"assignNewShader.svg",
+				"label":"assign new shader to selected object",
+				"script":"mel/assignNewShader.mel",
+				"command":"source assignNewShader;assignNewShader(\"lambert\");",
+				"stp":"mel",
+				"menuItem":[
+					{
+						"label":"lambert",
+						"command":"source assignNewShader;assignNewShader(\"lambert\");"
+					},
+					{
+						"label":"RedshiftMaterial",
+						"command":"source assignNewShader;assignNewShader(\"RedshiftMaterial\");"
+					}
+					
+				]
+			},
+			{
+				"icon":"rivet.svg",
+				"label":"Makes rivet between two edges",
+				"command":"source rivet;rivet;",
+				"stp":"mel"
+			},
+			{
+				"icon":"edgeToCurve.svg",
+				"label":"select edges on object to make curve",
+				"script":"mel/edgeToCurve.mel",
+				"command":"source edgeToCurve;edgeToCurve(0);",
+				"menuItem":[
+					{
+						"label":"Extrude GEO",
+						"command":"source edgeToCurve;edgeToCurve(1);"
+					}
+				],
+				"stp":"mel"
+			},
+			{
+				"icon":"parentShape.svg",
+				"label":"Parent shape node to a new transform",
+				"command":"parent -add -s;",
+				"stp":"mel"
+			},
+			{
+				"icon":"removeNamespaces.svg",
+				"label":"Remove namespaces from selected objects or from whole scene",
+				"script":"mel/removeNamespaces.mel",
+				"command":"source removeNamespaces;removeNamespaces;",
+				"stp":"mel"
+			},
+			{
+				"icon":"OpenRenderFolder.svg",
+				"label":"Open project folders",
+				"script":"Tools/OpenRenderFolder.py",
+				"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(0)",
+				"stp":"python",
+				"menuItem":[
+					{
+						"label":"images temp",
+						"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(1)",
+						"stp":"python"
+					},
+					{
+						"label":"sourceimages",
+						"command":"import OpenRenderFolder;OpenRenderFolder.OpenRenderFolder(2)",
+						"stp":"python"
+					}
+					
+				],
+				"stp":"python"
+			},
+			{
+				"icon":"multiRef.svg",
+				"label":"reference or import multiple files at once",
+				"script":"mel/multiRef.mel",
+				"command":"source multiRef;multiRef;",
+				"stp":"mel"
+			},
+			{
+				"icon":"exportForTexturing.svg",
+				"label":"Export geo and UV maps for texturing",
+				"script":"mel/exportForTexturing.mel",
+				"command":"source exportForTexturing;exportForTexturing;",
+				"stp":"mel"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Rigging":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"createCtrl.svg",
+				"label":"Create Ctrl",
+				"script":"ramenRig/createCtrlUi.py",
+				"command":"import ramenRig;ramenRig.createCtrlUi.openCtrlWindow()",
+				"stp":"python",
+				"modules": [
+				"ramenRig/createCtrl_resources.py",
+				"ramenRig/createCtrl.py",
+				"ramenRig/__init__.py",
+				"ramenRig/createCtrl.ui"
+				]
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Yeti":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"cacheYetiFur.svg",
+				"label":"Cache yeti fur",
+				"script":"mel/cacheYetiFur.mel",
+				"command":"source cacheYetiFur;cacheYetiFur;",
+				"stp":"mel"
+			},
+			{	
+				"icon":"checkOutYeti.svg",
+				"label":"Check Out Yeti Licence",
+				"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";",
+				"stp":"mel",
+				"menuItem":[
+					{
+						"label":"Check Out Licence",
+						"command":"putenv \"YETI_INTERACTIVE_LICENSE\" \"1\";"
+					},
+					{
+						"label":"Release Licence",
+						"command":"pgYetiCommand -returnLicense;putenv \"YETI_INTERACTIVE_LICENSE\" \"0\";"
+					}
+				]
+			},
+			{
+				"icon":"cacheBifrost.svg",
+				"label":"Cache Bifrost on Smedge",
+				"script":"mel/SmedgeBifrostCache.mel",
+				"command":"source SmedgeBifrostCache;SmedgeBifrostCache;",
+				"stp":"mel"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Pipelime":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":["io_Llama.svg","io_importAnim.svg","io_importCam.svg","io_publishAnim.svg","io_publishCam.svg","io_publishModel.svg"],
+				"label":"LlamaIO pipeline control",
+				"script":"lio/llamaIO.py",
+				"modules": [
+				"lio/io_importAnimation.py",
+				"lio/io_importCamera.py",
+				"lio/io_importMaterials.py",
+				"lio/io_publishAnimation.py",
+				"lio/io_publishCamera.py",
+				"lio/io_publishModel.py",
+				"lio/io_publishToNewScene.py",
+				"lio/__init__.py",
+				"lio/LlamaIO/LlamaUtil.py",
+				"lio/LlamaIO/UserPrefs.py",
+				"lio/LlamaIO/__init__.py"
+				],
+				"command":"import lio;from lio.llamaIO import LlamaIOWindow;lio.llamaIO.LlamaIO()",
+				"stp":"python"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Redshift":{
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"RSTessellate.svg",
+				"label":"Adds tesselsation to redshift objects",
+				"script":"mel/RSTessellate.mel",
+				"command":"source RSTessellate;RSTessellate;",
+				"stp":"mel"
+			},
+			{
+				"icon":"RSObjectId.svg",
+				"label":"Adds object ID to redshift objects",
+				"script":"mel/RSObjectId.mel",
+				"command":"source RSObjectId;RSObjectId;",
+				"stp":"mel"
+			},
+			{
+				"icon":"RSAOV.svg",
+				"label":"Adds redshift AOV deffinitions",
+				"command":"source RSAOV;RSAOV;",
+				"stp":"mel"
+			},
+			{
+				"icon":"RSFresnel.svg",
+				"label":"Create redshift fresnel / occlusion material",
+				"script":"mel/RSFresnel.mel",
+				"command":"source RSFresnel;RSFresnel;",
+				"stp":"mel"
+			},
+			{
+				"icon":"RSCameraBokeh.svg",
+				"label":"Adds redshift bokeh to camera",
+				"script":"mel/RSCameraBokeh.mel",
+				"command":"source RSCameraBokeh;RSCameraBokeh;",
+				"stp":"mel"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Admin":{
+		"checkStatus":0,
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"lm_projectWindow.svg",
+				"label":"Creates a new project",
+				"script":"pipelime/lm_projectWindow.py",
+				"command":"import pipelime.lm_projectWindow as lm_projectWindow;lm_projectWindow.openProjectWindow()",
+				"stp":"python"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Farm submission":{
+		"dependencies":[
+		],
+		"buttons": [
 
-	]
-
-
+			{
+				"icon":"playblastTemp.svg",
+				"label":"playblast with presets",
+				"script":"mel/playblastTemp.mel",
+				"command":"source playblastTemp;playblastTemp(0);",
+				"menuItem":[
+					{
+						"label":".mov",
+						"command":"source playblastTemp;playblastTemp(1);"
+					},
+					{
+						"label":".mov on green",
+						"command":"source playblastTemp;playblastTemp(2);"
+					},
+					{
+						"label":".png",
+						"command":"source playblastTemp;playblastTemp(3);"
+					},
+					{
+						"label":"green",
+						"command":"source playblastTemp;playblastTemp(4);"
+					}
+					
+				],
+				"stp":"mel"
+			},
+			{
+				"icon":"preFlightChecks.svg",
+				"label":"Pre render checks",
+				"script":"mel/preFlightChecks.mel",
+				"command":"source preFlightChecks;preFlightChecks;",
+				"stp":"mel"
+			},
+			{
+				"icon":"smedgeRender.svg",
+				"label":"Submit render to smedge",
+				"script":"mel/smedgeRender.mel",
+				"command":"source smedgeRender;smedgeRender;",
+				"modules":[
+					"pipelime/__init__.py",
+					"pipelime/submitToFarm.py",
+					"pipelime/submitToFarm.ui",
+					"pipelime/submitToFarmWidget.ui",
+					"baseIO/loadSave.py",
+					"baseIO/sceneVar.py",
+					"baseIO/qtBase.py",
+					"baseIO/getProj.py",
+					"icons/gear.png"
+				],
+				"stp":"mel"
+			},
+			{
+				"icon":"separator"
+			}
+		]
+	},
+	"Updates":{
+		"checkStatus":2,
+		"dependencies":[
+		],
+		"buttons": [
+			{
+				"icon":"icecream.svg",
+				"label":"icecream?",
+				"script":"Tools/toSlack.py",
+				"command":"import toSlack;toSlack.icecreamBot()",
+				"modules": ["Tools/__init__.py"],
+				"stp":"python"
+			},
+			{
+				"icon":"installToolbox.svg",
+				"label":"install or update toolbox",
+				"script":"installToolbox.mel",
+				"command":"source installToolbox;installToolbox;",
+				"stp":"mel"
+			}
+		]
+	}
 }
