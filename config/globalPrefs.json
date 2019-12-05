@@ -6,7 +6,7 @@
         "value": "'C:/Program Files/Smedge/submit.exe'"
     }, 
     "pools": {
-        "value": "'['BIFROST', '980Ti', 'Yeti', '1080TI', 'Redshift']'"
+        "value": "'['ANIMAL', 'BIFROST', '980Ti', 'Yeti', '1080TI', 'Redshift']'"
     }, 
     "window.mainWidget.lineEdit_render": [
         {
