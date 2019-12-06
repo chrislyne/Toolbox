@@ -184,7 +184,7 @@ def selectRenderExe():
 
 def playblastString(l):
     #playblast string
-    filename = '%s_%s_%s'%(getProj.sceneName(),l.renderLayerName,l.camName.split('|')[-2])
+    filename = '%s/%s_%s_%s'%(getProj.sceneName(),getProj.sceneName(),l.renderLayerName,l.camName.rsplit('|',1)[0].replace('|','_'))
 
     pbString = ''
     pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
@@ -200,7 +200,9 @@ def playblastString(l):
     pbString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
     pbString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
     mayaBatchPath = stf_window.mainWidget.lineEdit_render.text().replace('Render','mayaBatch')
-    pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"playblasts/%s\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath(),filename)
+    #imgDir = cmds.workspace(fileRuleEntry="images")
+    playblastFolder = '%simages/playblasts/%s'%(getProj.getProject(),filename)
+    pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"setPlayblastOptions(\\\"\\\"%s\\\"\\\",\\\"\\\"%s\\\"\\\");playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"%s\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath(),l.camName,l.renderLayerName,playblastFolder)
 
     return pbString
 

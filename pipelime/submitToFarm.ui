@@ -658,6 +658,16 @@ background-image: url(/icon/io_ANIMOUT.png);
             <string>Playblast</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Yeti Cache</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Bifrost Cache</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
