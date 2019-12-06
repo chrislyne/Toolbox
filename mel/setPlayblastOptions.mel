@@ -1,0 +1,10 @@
+global proc setPlayblastOptions(string $camName, string $layerName)
+{
+    string $cameraSel[] = `ls -type "camera" -l`;
+	    for($cam in $cameraSel)
+	    {
+	        if ($cam != $camName){setAttr ($cam+".renderable") 0;
+	    }
+	}  
+	editRenderLayerGlobals -currentRenderLayer $layerName;
+}
