@@ -56,7 +56,10 @@ class LayerWidget(qtBase.BaseWidget):
                                 w.setValue(int(value))
                     except:
                         pass
-            
+        
+        jobTypeText = parentWindow.mainWidget.comboBox_jobType.currentText()
+        self.jobType(jobTypeText)
+
         #connect main controls to layer controls
         parentWindow.mainWidget.comboBox_jobType.currentTextChanged.connect(self.jobType)
         parentWindow.mainWidget.prioritySlider.valueChanged.connect(self.slide01)
@@ -68,12 +71,15 @@ class LayerWidget(qtBase.BaseWidget):
         parentWindow.mainWidget.scrollAreaWidgetContents.setMaximumHeight(height)
         parentWindow.mainWidget.scrollAreaWidgetContents.setMinimumHeight(height)
         
-        
     #widget functions
-    
     def jobType(self,value):
         for layer in self.layerWidgets:
             layer.comboBox_jobType.setCurrentText(value)
+            #add text if it doesn't exist in the layer combobox
+            if layer.comboBox_jobType.currentText() != value:
+                layer.comboBox_jobType.addItem(value)
+                layer.comboBox_jobType.setCurrentText(value)
+                layer.comboBox_jobType.setEnabled(False)
 
     def slide01(self,value):
         difference = self.previousValue - value
@@ -86,6 +92,7 @@ class LayerWidget(qtBase.BaseWidget):
             layer.spinBox_layerPacketSize.setValue(value)
           
     def pool(self,value):
+        print value
         for layer in self.layerWidgets:
             layer.comboBox_layerPool.setCurrentText(value)
     
@@ -96,6 +103,7 @@ class LayerWidget(qtBase.BaseWidget):
     def enabled(self,value):
         for layer in self.layerWidgets:
             layer.checkBox_layerEnable.setChecked(value)
+
 
 def listCameras():
     #list renderable cameras
@@ -181,6 +189,36 @@ def selectSubmitExe():
 def selectRenderExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
     stf_window.mainWidget.lineEdit_render.setText(filename[0])
+
+def yetiCacheString(l):
+    #yeti cache string
+    filename = '%s/%s_%s'%(getProj.sceneName(),getProj.sceneName(),l.renderLayerName)
+
+    pbString = ''
+    pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
+    pbString += ' -Type Generic Script'
+    pbString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
+    pbString += ' -UsageLimit 1'
+    pbString += ' -DistributeMode \"Forward\"'
+    pbString += ' -Priority %s'%l.layerPrioritySlider.value()
+    pbString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
+    pbString += ' -Pool %s'%l.comboBox_layerPool.currentText()
+    pbString += ' -Range %s'%l.lineEdit_layerRange.text()
+    pbString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
+    pbString += ' -Paused'
+    pbString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
+    pbString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
+    pbString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+    mayaBatchPath = stf_window.mainWidget.lineEdit_render.text().replace('Render','mayaBatch')
+    #imgDir = cmds.workspace(fileRuleEntry="images")
+    cacheFile = '%scache/yeti/%s.%%04d.fur'%(getProj.getProject(),filename)
+    cacheFolder = cacheFile.rsplit('/',1)[0]
+    if not os.path.exists(cacheFolder):
+        os.makedirs(cacheFolder)
+    #pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"setPlayblastOptions(\\\"\\\"%s\\\"\\\",\\\"\\\"%s\\\"\\\");playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"%s\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath(),l.camName,l.renderLayerName,playblastFolder)
+    pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"pgYetiCommand -writeCache \\\"\\\"%s\\\"\\\" -range $(SubRange.Start) $(SubRange.End) -samples 5 %s;\\\"'%(mayaBatchPath,getProj.filepath(),cacheFile,l.renderLayerName)
+    #pgYetiCommand -writeCache ($fullpath +"/"+ $nodeName +"/"+ $nodeName +".%04d.fur") -range $startFrame $endFrame -samples 5;
+    return pbString
 
 def playblastString(l):
     #playblast string
@@ -284,6 +322,8 @@ def submitButton():
             submitString = renderString(l)
             if l.comboBox_jobType.currentText() == 'Playblast':
                 submitString = playblastString(l)
+            if l.comboBox_jobType.currentText() == 'Yeti Cache':
+                submitString = yetiCacheString(l)
 
 
             try:
@@ -291,12 +331,14 @@ def submitButton():
                 #send = subprocess.check_output(submitString, stdin=None, stderr=None, shell=False)
                 cmds.text(progressLabel, edit=True, label='Submitting Layer - %s'%l.checkBox_layerEnable.text())
                 si = subprocess.STARTUPINFO()
+
                 si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
                 send = subprocess.check_output(submitString, startupinfo=si)
                 jobID = send.rsplit(' ',1)[-1]
                 jobID = jobID.replace('\n', '').replace('\r', '')
                 updateString = submitString.replace("-Paused","-ID %s"%jobID)
                 updateStrings.append(updateString) 
+
                 cmds.progressBar(progressControl, edit=True, step=1)
                 
             except:
@@ -367,6 +409,43 @@ def mergeDictionaries(dict1,dict2):
         pass
     return dict1
 
+def clearLayers():
+    for l in layerWidget.layerWidgets:
+        l.setParent(None)
+    del layerWidget.layerWidgets[:]
+
+    for l in yetiLayerWidget.layerWidgets:
+        l.setParent(None)
+    del yetiLayerWidget.layerWidgets[:]
+
+def populateRenderLayers():
+    layers = sceneVar.getRenderLayers()
+    cameras = listCameras()
+    layerWidget = LayerWidget(layers,cameras,stf_window)
+
+
+def populateYetiLayers():
+    yetiLayerData = []
+    yetiNodes = cmds.ls(type="pgYetiMaya")
+    for n in yetiNodes:
+        yetiLayerData.append([n,1])
+    cameras = listCameras()
+    layerWidget = LayerWidget(yetiLayerData,[''],stf_window)
+
+
+def submitTypeChanged(currentText):
+    clearLayers()
+
+    if currentText == 'Redshift':
+        populateRenderLayers()
+
+    if currentText == 'Playblast':
+        populateRenderLayers()
+
+    if currentText == 'Yeti Cache':
+        populateYetiLayers()
+
+
 def submitRenderUI():
     stf_window = qtBase.BaseWindow(qtBase.GetMayaWindow(),'submitToFarm.ui')
     stf_window._windowTitle = 'Submit to Farm'
@@ -384,6 +463,7 @@ def submitRenderUI():
     stf_window.mainWidget.pushButton_user.clicked.connect(localDict)
     stf_window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     stf_window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
+    stf_window.mainWidget.comboBox_jobType.currentTextChanged.connect(submitTypeChanged)
     #icon on button
     try:
         buttonIcon = QtGui.QIcon("%s/icons/%s.png"%(qtBase.self_path(), "gear"))
@@ -427,7 +507,15 @@ def openSubmitWindow():
     #get render layers from scene
     layers = sceneVar.getRenderLayers()
     cameras = listCameras()
-    layerWidget = LayerWidget(layers,cameras,stf_window)
+
+    layerWidget = LayerWidget([['','']],[],stf_window)
+    #layerWidget = LayerWidget(layers,cameras,stf_window)
+
+    currentText = stf_window.mainWidget.comboBox_jobType.currentText()
+    print currentText
+    submitTypeChanged(currentText)
+
+    
 
 
 #import pipelime.submitToFarm as submitToFarm
