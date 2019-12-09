@@ -190,6 +190,36 @@ def selectRenderExe():
     filename = QtWidgets.QFileDialog.getOpenFileName(filter='*.exe')
     stf_window.mainWidget.lineEdit_render.setText(filename[0])
 
+def bifrostCacheString(l):
+    filename = '%s/%s_%s'%(getProj.sceneName(),getProj.sceneName(),l.renderLayerName)
+
+    pbString = ''
+    pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
+    pbString += ' -Type Generic Script'
+    pbString += ' -Name maya: %s (%s)'%(getProj.sceneName(),l.checkBox_layerEnable.text())
+    pbString += ' -UsageLimit 1'
+    pbString += ' -DistributeMode \"Forward\"'
+    pbString += ' -Priority %s'%l.layerPrioritySlider.value()
+    pbString += ' -PacketSize %s'%l.spinBox_layerPacketSize.value()
+    pbString += ' -Pool %s'%l.comboBox_layerPool.currentText()
+    pbString += ' -Range %s'%l.lineEdit_layerRange.text()
+    pbString += ' -Executable %s'%stf_window.mainWidget.lineEdit_render.text()
+    pbString += ' -Paused'
+    pbString += ' -Creator %s'%stf_window.mainWidget.lineEdit_name.text()
+    pbString += ' -StaggerStart %s'%stf_window.mainWidget.lineEdit_stagger.text()
+    pbString += ' -Note %s'%stf_window.mainWidget.lineEdit_note.text()
+    mayaBatchPath = stf_window.mainWidget.lineEdit_render.text().replace('Render','mayaBatch')
+    #imgDir = cmds.workspace(fileRuleEntry="images")
+    cacheFile = '%scache/bifrost/%s.%%04d.fur'%(getProj.getProject(),filename)
+    cacheFolder = cacheFile.rsplit('/',1)[0]
+    if not os.path.exists(cacheFolder):
+        os.makedirs(cacheFolder)
+    pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"MeshBifrost($(SubRange.Start),$(SubRange.End), %s , %s, %s)\\\"'%(mayaBatchPath,getProj.filepath(),sim,foam,mesh)
+    return pbString
+
+    
+
+
 def yetiCacheString(l):
     #yeti cache string
     filename = '%s/%s_%s'%(getProj.sceneName(),getProj.sceneName(),l.renderLayerName)
@@ -215,9 +245,7 @@ def yetiCacheString(l):
     cacheFolder = cacheFile.rsplit('/',1)[0]
     if not os.path.exists(cacheFolder):
         os.makedirs(cacheFolder)
-    #pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"setPlayblastOptions(\\\"\\\"%s\\\"\\\",\\\"\\\"%s\\\"\\\");playblast -format image -startTime $(SubRange.Start) -endTime $(SubRange.End) -filename (\\\"\\\"%s\\\"\\\") -sequenceTime 0 -clearCache 1 -viewer 0 -showOrnaments 0 -fp 4 -percent 100 -quality 70 -widthHeight 1920 1080;\\\"'%(mayaBatchPath,getProj.filepath(),l.camName,l.renderLayerName,playblastFolder)
     pbString += ' -Command "%s -file \\\"%s\\\" -command \\\"pgYetiCommand -writeCache \\\"\\\"%s\\\"\\\" -range $(SubRange.Start) $(SubRange.End) -samples 5 %s;\\\"'%(mayaBatchPath,getProj.filepath(),cacheFile,l.renderLayerName)
-    #pgYetiCommand -writeCache ($fullpath +"/"+ $nodeName +"/"+ $nodeName +".%04d.fur") -range $startFrame $endFrame -samples 5;
     return pbString
 
 def playblastString(l):
@@ -432,11 +460,19 @@ def populateYetiLayers():
     cameras = listCameras()
     layerWidget = LayerWidget(yetiLayerData,[''],stf_window)
 
+def populateBifrostLayers():
+    yetiLayerData = []
+    yetiNodes = cmds.ls(type="pgYetiMaya")
+    for n in yetiNodes:
+        yetiLayerData.append([n,1])
+    cameras = listCameras()
+    layerWidget = LayerWidget(yetiLayerData,[''],stf_window)
+
 
 def submitTypeChanged(currentText):
     clearLayers()
 
-    if currentText == 'Redshift':
+    if currentText == 'Render':
         populateRenderLayers()
 
     if currentText == 'Playblast':
@@ -444,6 +480,9 @@ def submitTypeChanged(currentText):
 
     if currentText == 'Yeti Cache':
         populateYetiLayers()
+
+    if currentText == 'Bifrost Cache':
+        populateBifrostLayers()
 
 
 def submitRenderUI():
