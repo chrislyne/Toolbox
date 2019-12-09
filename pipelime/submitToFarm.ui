@@ -696,7 +696,7 @@ background-image: url(/icon/io_ANIMOUT.png);
           </property>
           <item>
            <property name="text">
-            <string>Redshift</string>
+            <string>Render</string>
            </property>
           </item>
           <item>
