@@ -92,7 +92,6 @@ class LayerWidget(qtBase.BaseWidget):
             layer.spinBox_layerPacketSize.setValue(value)
           
     def pool(self,value):
-        print value
         for layer in self.layerWidgets:
             layer.comboBox_layerPool.setCurrentText(value)
     
@@ -442,9 +441,6 @@ def clearLayers():
         l.setParent(None)
     del layerWidget.layerWidgets[:]
 
-    for l in yetiLayerWidget.layerWidgets:
-        l.setParent(None)
-    del yetiLayerWidget.layerWidgets[:]
 
 def populateRenderLayers():
     layers = sceneVar.getRenderLayers()
@@ -551,7 +547,6 @@ def openSubmitWindow():
     #layerWidget = LayerWidget(layers,cameras,stf_window)
 
     currentText = stf_window.mainWidget.comboBox_jobType.currentText()
-    print currentText
     submitTypeChanged(currentText)
 
     
