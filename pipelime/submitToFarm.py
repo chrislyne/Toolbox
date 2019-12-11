@@ -9,6 +9,7 @@ from PySide2 import QtCore
 import subprocess
 import os
 import sys
+import pipelime.resources.submitToFarm_icons
 
 class LayerWidget(qtBase.BaseWidget):
 

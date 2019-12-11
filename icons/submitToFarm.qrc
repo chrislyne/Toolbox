@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="buttons">
+    <file>folder.svg</file>
+    <file>folder.svg</file>
+  </qresource>
+</RCC>
