@@ -320,6 +320,14 @@
        <property name="text">
         <string/>
        </property>
+       <property name="icon">
+        <iconset>
+         <normalon>:/buttons/folder.svg</normalon>
+        </iconset>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
@@ -333,7 +341,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons/submitToFarm.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>layerPrioritySlider</sender>

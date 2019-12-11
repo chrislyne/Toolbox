@@ -471,7 +471,7 @@ background-image: url(/icon/io_ANIMOUT.png);
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0,0,0,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,0,0,0,0,0,0">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -625,22 +625,15 @@ background-image: url(/icon/io_ANIMOUT.png);
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="text">
-           <string>Packet Size       </string>
+           <string>Packet Size                     </string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_16">
-          <property name="text">
-           <string>Dir  </string>
           </property>
          </widget>
         </item>
