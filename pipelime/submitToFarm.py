@@ -10,6 +10,7 @@ import subprocess
 import os
 import sys
 import pipelime.resources.submitToFarm_icons
+import webbrowser
 
 class LayerWidget(qtBase.BaseWidget):
 
@@ -21,6 +22,11 @@ class LayerWidget(qtBase.BaseWidget):
         self.pathModify = 'pipelime/'
         self.parent = parentWindow.mainWidget.verticalLayout_3
         self.previousValue = parentWindow.mainWidget.prioritySlider.value()
+
+        
+        def openImageFolder():
+            print 'open image folder'
+
         for l in layers:
             for c in cameras:
                 self.BuildUI()
@@ -41,6 +47,7 @@ class LayerWidget(qtBase.BaseWidget):
                 self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
                 self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
                 self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
+                self.aWidget.pushButton_dir.clicked.connect(openImageFolder)
                 
                 #read attributes from layer
                 widgets = self.aWidget.findChildren(QtWidgets.QWidget)
@@ -57,7 +64,8 @@ class LayerWidget(qtBase.BaseWidget):
                                 w.setValue(int(value))
                     except:
                         pass
-        
+
+
         jobTypeText = parentWindow.mainWidget.comboBox_jobType.currentText()
         self.jobType(jobTypeText)
 
@@ -71,7 +79,10 @@ class LayerWidget(qtBase.BaseWidget):
         height = 50*(len(layers)*len(cameras))
         parentWindow.mainWidget.scrollAreaWidgetContents.setMaximumHeight(height)
         parentWindow.mainWidget.scrollAreaWidgetContents.setMinimumHeight(height)
-        
+  
+
+    
+
     #widget functions
     def jobType(self,value):
         for layer in self.layerWidgets:
@@ -130,6 +141,11 @@ def fetchPools():
     for l in layerWidget.layerWidgets:
         l.comboBox_layerPool.addItems(pools)
     #return pools
+
+def openSceneFolder():
+    #open folder location in system file browser
+    webbrowser.open(os.path.realpath(getProj.sceneFolder()))
+
 
 def globalDict():
     prefData = []
@@ -499,6 +515,7 @@ def submitRenderUI():
     stf_window.mainWidget.pushButton_user.clicked.connect(localDict)
     stf_window.mainWidget.pushButton_render.clicked.connect(selectRenderExe)
     stf_window.mainWidget.pushButton_submitExe.clicked.connect(selectSubmitExe)
+    stf_window.mainWidget.pushButton_dir.clicked.connect(openSceneFolder)
     stf_window.mainWidget.comboBox_jobType.currentTextChanged.connect(submitTypeChanged)
     #icon on button
     try:
