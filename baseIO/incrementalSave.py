@@ -41,13 +41,24 @@ def GetFilename(short):
     return filename
 
 ## Remove initals
+def hasNumbers(inputString):
+    return any(char.isdigit() for char in inputString)
+
 def RemoveInitials(s, c, n):
+    hasVersion = 0
     words = s.split(c)
-    name = c.join(words)
-    #check if filename has initials
-    if (words[-1].isalpha()):
-        name = c.join(words[:n])
-    return name
+    for w in words:
+        if hasNumbers(w):
+            hasVersion = 1
+    if hasVersion == 1:  
+        name = c.join(words)
+        #check if filename has initials
+        if (words[-1].isalpha()):
+            name = c.join(words[:n])
+        return name
+    else:
+        name = s.rsplit('.',1)[0]
+        return name
     
 ## Remove version
 def RemoveVersion(s, c, n):
