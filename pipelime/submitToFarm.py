@@ -23,9 +23,6 @@ class LayerWidget(qtBase.BaseWidget):
         self.parent = parentWindow.mainWidget.verticalLayout_3
         self.previousValue = parentWindow.mainWidget.prioritySlider.value()
 
-        
-        def openImageFolder():
-            print 'open image folder'
 
         for l in layers:
             for c in cameras:
@@ -34,7 +31,7 @@ class LayerWidget(qtBase.BaseWidget):
                 if len(cameras) > 1:
                     layerName = '%s - %s'%(l[0],c.split('|')[-2])
                 self.aWidget.renderLayerName = l[0]
-                self.aWidget.camName = c
+                self.aWidget.camName = c.split('|')[-1]
                 self.aWidget.checkBox_layerEnable.setText(layerName) 
                 self.aWidget.checkBox_layerEnable.setChecked(l[1])
                 self.layerWidgets.append(self.aWidget)
@@ -47,7 +44,7 @@ class LayerWidget(qtBase.BaseWidget):
                 self.aWidget.comboBox_layerPool.setCurrentText(parentWindow.mainWidget.comboBox_pool.currentText())
                 self.aWidget.lineEdit_layerRange.setText(parentWindow.mainWidget.lineEdit_range.text())
                 self.aWidget.layerPrioritySlider.setValue(parentWindow.mainWidget.prioritySlider.value())
-                self.aWidget.pushButton_dir.clicked.connect(openImageFolder)
+
                 
                 #read attributes from layer
                 widgets = self.aWidget.findChildren(QtWidgets.QWidget)
@@ -182,9 +179,11 @@ def fileDict():
     IO.writePrefsToFile(prefData,'%s/.data/%s.json'%(getProj.sceneFolder(),versionlessSceneName))
 
 def layerDict(l):
+    #niceLayerName = l.checkBox_layerEnable.text().replace(':','_')
+    niceLayerName = '%s.%s'%(l.renderLayerName,l.camName.replace(':','_'))
     prefData = []
     #get image path for the render layer
-    rendeFilePath = cmds.renderSettings(fin=True,fp=True,cts=True,lyr=l)
+    rendeFilePath = cmds.renderSettings(fin=True,fp=True,cts=True,lyr=l.renderLayerName)
     path = rendeFilePath[0].rsplit('/',1)[0]
     filename = rendeFilePath[0].split('/')[-1]
 
@@ -195,7 +194,7 @@ def layerDict(l):
     prefData.append(['user','name',stf_window.mainWidget.lineEdit_name.text()])
     prefData.append(['user','slackID',stf_window.mainWidget.lineEdit_slack.text()])
 
-    IO.writePrefsToFile(prefData,'%s/.data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),l))
+    IO.writePrefsToFile(prefData,'%s/.data/%s.%s.json'%(getProj.sceneFolder(),getProj.sceneName(),niceLayerName))
 
 #button functions
 def selectSubmitExe():
@@ -234,11 +233,10 @@ def bifrostCacheString(l):
     return pbString
 
     
-
-
 def yetiCacheString(l):
     #yeti cache string
-    filename = '%s/%s_%s'%(getProj.sceneName(),getProj.sceneName(),l.renderLayerName)
+    renderLayerName = l.renderLayerName.replace(':','_')
+    filename = '%s/%s_%s'%(getProj.sceneName(),getProj.sceneName(),renderLayerName)
 
     pbString = ''
     pbString += '%s Script '%stf_window.mainWidget.lineEdit_submitExe.text()
@@ -388,7 +386,7 @@ def submitButton():
             except:
                 print 'failed to submit, check path to submit.exe exists'
             print submitString
-            layerDict(l.checkBox_layerEnable.text())
+            layerDict(l)
 
     #save file with added metadata
     cmds.text(progressLabel, edit=True, label='Writing Metadata')
@@ -403,6 +401,7 @@ def submitButton():
             subprocess.check_output(updateLayer, startupinfo=si)
             cmds.progressBar(progressControl, edit=True, step=1)
     cmds.text(progressLabel, edit=True, label='DONE!')
+    cmds.deleteUI(progressWindow)
     #projectDict()
     localDict()
     fileDict()
