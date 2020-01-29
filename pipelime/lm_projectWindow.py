@@ -47,7 +47,7 @@ def createButton():
         folderNames.append('%s/%s'%(projectRoot,i))
 
     #perform options
-    checkBoxes = [[lm_projectWin.mainWidget.checkBox_3D,'3D'],[lm_projectWin.mainWidget.checkBox_anim,'anim'],[lm_projectWin.mainWidget.checkBox_FX,'FX'],[lm_projectWin.mainWidget.checkBox_track,'tracking'],[lm_projectWin.mainWidget.checkBox_2D,'2D Animation'],[lm_projectWin.mainWidget.checkBox_render,'render'],[lm_projectWin.mainWidget.checkBox_comp,'Comp'],[lm_projectWin.mainWidget.checkBox_edit,'Edit'],[lm_projectWin.mainWidget.checkBox_live,'Live action'],[lm_projectWin.mainWidget.checkBox_board,'Storyboard'],[lm_projectWin.mainWidget.checkBox_matte,'Matte Painting']]
+    checkBoxes = [[lm_projectWin.mainWidget.checkBox_3D,'3D'],[lm_projectWin.mainWidget.checkBox_anim,'anim'],[lm_projectWin.mainWidget.checkBox_FX,'FX'],[lm_projectWin.mainWidget.checkBox_track,'tracking'],[lm_projectWin.mainWidget.checkBox_2D,'2D Animation'],[lm_projectWin.mainWidget.checkBox_render,'render'],[lm_projectWin.mainWidget.checkBox_comp,'Comp'],[lm_projectWin.mainWidget.checkBox_edit,'Edit'],[lm_projectWin.mainWidget.checkBox_live,'Live action'],[lm_projectWin.mainWidget.checkBox_board,'Storyboard'],[lm_projectWin.mainWidget.checkBox_matte,'Matte Painting'],[lm_projectWin.mainWidget.checkBox_matte,'Audio']]
     for c in checkBoxes:
         if c[0].isChecked() == 1:
             #create folders
