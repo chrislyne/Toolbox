@@ -40,6 +40,9 @@
             },
         "Matte Painting":
             {"folders":["Elements/mattePainting"]
+            },
+        "Audio":
+            {"folders":["Elements/Audio"]
             }
     },
     "settings":

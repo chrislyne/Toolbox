@@ -1,7 +1,7 @@
-//Maya 2018 Project Definition
+//Maya 2019 Project Definition
 
 workspace -fr "fluidCache" "cache/nCache/fluid";
-workspace -fr "images" "../images/Elements/3D_RENDERS";
+workspace -fr "images" "../Elements/3D_RENDERS";
 workspace -fr "offlineEdit" "scenes/edits";
 workspace -fr "furShadowMap" "renderData/fur/furShadowMap";
 workspace -fr "iprImages" "renderData/iprImages";
@@ -25,7 +25,7 @@ workspace -fr "clips" "clips";
 workspace -fr "depth" "renderData/depth";
 workspace -fr "sceneAssembly" "sceneAssembly";
 workspace -fr "teClipExports" "Time Editor/Clip Exports";
-workspace -fr "movie" "movies";
+workspace -fr "movie" "../Elements/Playblasts";
 workspace -fr "audio" "sound";
 workspace -fr "bifrostCache" "cache/bifrost";
 workspace -fr "autoSave" "autosave";
