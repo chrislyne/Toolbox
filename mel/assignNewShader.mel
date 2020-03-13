@@ -1,22 +1,33 @@
-global proc assignNewShader(string $shaderType)
-{
-    if($shaderType == "")
-    {
-        $shaderType = "lambert";
-    }
+sel = cmds.ls(sl=True)
+tempDict = {}
+for s in sel:
+
+    nodeAtts = cmds.attributeInfo(s,w=True )
+    nodeType = cmds.nodeType(s)
+    attrDict = {s:{"attr":{},"nType":nodeType}}
     
-    //define selection
-    string $sel[] = `ls -sl`;
-    //create material
-    string $material = `shadingNode -asShader $shaderType`;
-    string $shadingSet = `sets -renderable true -noSurfaceShader true -empty -name ($material+"SG")`;
-    connectAttr -f ($material+".outColor") ($shadingSet+".surfaceShader");
+    for a in nodeAtts:
+        try:
+            value = cmds.getAttr('%s.%s'%(s,a))
+            defaultValue = cmds.attributeQuery( a, node=s,ld=True)
+          
+            if len(defaultValue) == 1:
+                defaultValue = defaultValue[0]
+            elif len(defaultValue) > 1:
+                defaultValue = [tuple(defaultValue)]
+                
+            if value != defaultValue:
+                attrDict[s]['attr'][a] = value
+        except:
+            pass
+    tempDict = attrDict
+print tempDict
+nodeType = tempDict['aiStandardSurface3']
+
+newShader = cmds.shadingNode(tempDict['aiStandardSurface3']['nType'],asShader=True );
+for key in tempDict['aiStandardSurface3']['attr']:
+    try:
+        cmds.setAttr('%s.%s'%(newShader,key),tempDict['aiStandardSurface3']['attr'][key])
+    except:
+        pass
     
-    //assign material
-    for( $item in $sel)
-    {
-        sets -e -forceElement $shadingSet $item;
-    };
-}
-//assignNewShader("lambert");
-//assignNewShader("RedshiftMaterial");
