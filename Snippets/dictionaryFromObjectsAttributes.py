@@ -1,17 +1,17 @@
 import maya.cmds as cmds
 
 def getNodeClassType(nodeType):
-	#get type of node 
-	#nodeType = cmds.nodeType(node)
-	nodeClass = ''
-	#list of shading nodes
-	nodeClasses = ['utility','shader','texture']
-	#find type of class
-	for c in nodeClasses:
-		if cmds.getClassification(nodeType,satisfies=c):
-			nodeClass = c
-	
-	return nodeClass
+    #get type of node 
+    #nodeType = cmds.nodeType(node)
+    nodeClass = ''
+    #list of shading nodes
+    nodeClasses = ['utility','shader','texture']
+    #find type of class
+    for c in nodeClasses:
+        if cmds.getClassification(nodeType,satisfies=c):
+            nodeClass = c
+    
+    return nodeClass
 
 sel = cmds.ls(sl=True)
 tempDict = {}
@@ -26,28 +26,38 @@ for s in sel:
     nodeType = cmds.nodeType(s)
     attrDict = {s:{"attr":{},"nType":nodeType}}
     
-    for a in nodeMulti:
-        children = cmds.attributeQuery( a, node=s,listChildren=True)
-        if children:
-            print children
-            value = cmds.getAttr('%s.%s'%(s,a),multiIndices=True)
-            print value
-            for i,v in enumerate(value):
-                print cmds.getAttr('%s.%s[%s].position'%(s,a,i))
-                print cmds.getAttr('%s.%s[%s].colorR'%(s,a,i))
-                print cmds.getAttr('%s.%s[%s].colorG'%(s,a,i))
-                print cmds.getAttr('%s.%s[%s].colorB'%(s,a,i))
+    if nodeMulti:
+        for a in nodeMulti:
+            children = cmds.attributeQuery( a, node=s,listChildren=True)
+            if children:
+
+                value = cmds.getAttr('%s.%s'%(s,a),multiIndices=True)
+
+                for i,v in enumerate(value):
+                    for child in children:
+                        childAttr = '%s[%s].%s'%(a,i,child)
+                        childAttrValue = cmds.getAttr('%s.%s[%s].%s'%(s,a,i,child))
+
+                        nodeAtts.append('%s[%s].%s'%(a,i,child))
     
     for a in nodeAtts:
         try:
             value = cmds.getAttr('%s.%s'%(s,a))
-            defaultValue = cmds.attributeQuery( a, node=s,ld=True)
-            if len(defaultValue) == 1:
-                defaultValue = defaultValue[0]
-            elif len(defaultValue) > 1:
-                defaultValue = [tuple(defaultValue)]
+            if cmds.attributeQuery( a, node=s,ex=True):
+                defaultValue = cmds.attributeQuery( a, node=s,ld=True)
+                if len(defaultValue) == 1:
+                    defaultValue = defaultValue[0]
+                elif len(defaultValue) > 1:
+                    defaultValue = [tuple(defaultValue)]
+            else:
+                #force attributes without defaults to the dictionary 
+                defaultValue = ''
                 
             if value != defaultValue:
+                #remove tuple from list
+                if isinstance(value, list):
+                    value = tuple(value[0])
+                #add attr to attrDict
                 attrDict[s]['attr'][a] = value
         except:
             pass
@@ -67,9 +77,16 @@ for key in tempDict:
         newShader = cmds.shadingNode(tempDict[key]['nType'],asTexture=True )
 
     for k in tempDict[key]['attr']:
-        try:
-            cmds.setAttr('%s.%s'%(newShader,k),tempDict[key]['attr'][k])
-        except:
-            pass
-	
+            try:
+                tValue = tempDict[key]['attr'][k]
+                #check if value is a tuple
+                if isinstance(tValue, tuple):
+                    #set value as tuple
+                    cmds.setAttr('%s.%s'%(newShader,k),tValue[0],tValue[1],tValue[2])
+                else:
+                    #set value as float
+                    cmds.setAttr('%s.%s'%(newShader,k),tValue)
+            except:
+                pass
+    
 
