@@ -1,4 +1,9 @@
 import maya.cmds as cmds
+import json
+
+def addAttrPlus(obj,attr):
+    if not cmds.attributeQuery('%s'%(attr),node=obj,exists=True):
+        cmds.addAttr(obj,ln=attr,dt="string")   
 
 def makeConnections(nodes_attr,ns):
 
@@ -70,6 +75,14 @@ def listShadingNodes(objects):
                         for mDest in matching:
                             allConnections.append('%s,%s'%(matConnection,mDest))
                         allMaterials.append(mat)
+        addAttrPlus(shape,'embeddedShaderNetwork')
+        shaderAttr = shaderNetworkToDict(list(set(allMaterials)))
+        shaderNetwork = {"nodes":shaderAttr,"connections":allConnections}
+
+        shaderNetworkJson = json.dumps(shaderNetwork)
+
+        cmds.setAttr('%s.%s'%(shape,'embeddedShaderNetwork'),shaderNetworkJson,type='string')
+
         return (list(set(allMaterials)),list(set(allConnections)))
 
 def shaderNetworkToDict(sel):
@@ -77,7 +90,7 @@ def shaderNetworkToDict(sel):
     tempDict = {}
 
     for s in sel:
-        nodeAtts = cmds.attributeInfo(s,all=True )
+        nodeAtts = cmds.attributeInfo(s,hidden=False)
         nodeMulti = cmds.attributeInfo(s,m=True )
         nodeType = cmds.nodeType(s)
         attrDict = {s:{"attr":{},"nType":nodeType}}
@@ -97,7 +110,7 @@ def shaderNetworkToDict(sel):
         for a in nodeAtts:
             try:
                 value = cmds.getAttr('%s.%s'%(s,a))
-                if cmds.attributeQuery( a, node=s,ex=True):
+                if cmds.attributeQuery( a, node=s,ex=True) and value != "":
                     defaultValue = cmds.attributeQuery( a, node=s,ld=True)
 
                     if defaultValue == None and isinstance(value, basestring):
@@ -160,8 +173,9 @@ def dictToShaderNetwork(tempDict):
 sel = cmds.ls(sl=True)
 materials,connections = listShadingNodes(sel)
 shaderNetwork = shaderNetworkToDict(materials)
-for key in shaderNetwork:
-    print key
+#print materials
+
+
 tempNs = createNewNamespace('temp_shader_namespace')
 dictToShaderNetwork(shaderNetwork)
 

@@ -36,13 +36,9 @@ def listShadingNodes(objects):
 					if any(nodeClass in s for s in ['utility','shader','texture']) and nodeClass:
 					#if cmds.ls(mat,materials=True) or cmds.ls(mat,tex=True):
 						allMaterials.append(mat)
-		print list(set(allMaterials))
+		return (list(set(allMaterials)))
 	
 	
 sel = cmds.ls(sl=True)
-listShadingNodes(sel)
-
-
-
-
-
+shadingNodes = listShadingNodes(sel)
+print shadingNodes
