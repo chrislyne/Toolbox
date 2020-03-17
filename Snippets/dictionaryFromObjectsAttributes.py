@@ -1,6 +1,23 @@
 import maya.cmds as cmds
 import json
 
+def sortFaceShadingGroups(shape,shadingGrp):
+    #find transform
+    transform = cmds.listRelatives(shape,p=True,type='transform')
+    #list all objects in set
+    allObjects = cmds.sets( shadingGrp, q=True )
+    
+    faces = []
+    #search set for matching shapes 
+    if allObjects:
+        for obj in allObjects:
+            splitObj = obj.split('.')
+            if len(splitObj) > 1:
+                if splitObj[0] == transform[0]:
+                    faces.append(splitObj[1])
+        #return faces assign to material
+        return faces
+
 def addAttrPlus(obj,attr):
     if not cmds.attributeQuery('%s'%(attr),node=obj,exists=True):
         cmds.addAttr(obj,ln=attr,dt="string")   
@@ -54,6 +71,12 @@ def listShadingNodes(objects):
     for shape in allShapes:
         #find connected shading networks
         con = cmds.listConnections( shape, scn=True, type='shadingEngine' )
+
+        shaderFaces = {}
+        for shader in con:
+            faces = sortFaceShadingGroups(shape,shader)
+            shaderFaces[shader] = {"faces":faces}
+
         #remove duplicate materials  
         allMaterials = cmds.listConnections( shape, scn=True, type='shadingEngine' )
         allConnections = []
@@ -77,13 +100,13 @@ def listShadingNodes(objects):
                         allMaterials.append(mat)
         addAttrPlus(shape,'embeddedShaderNetwork')
         shaderAttr = shaderNetworkToDict(list(set(allMaterials)))
-        shaderNetwork = {"nodes":shaderAttr,"connections":allConnections}
+        shaderNetwork = {"nodes":shaderAttr,"connections":allConnections,"shaderAssignment":shaderFaces}
 
         shaderNetworkJson = json.dumps(shaderNetwork)
 
         cmds.setAttr('%s.%s'%(shape,'embeddedShaderNetwork'),shaderNetworkJson,type='string')
 
-        return (list(set(allMaterials)),list(set(allConnections)))
+        return (shaderNetwork)
 
 def shaderNetworkToDict(sel):
 
@@ -171,19 +194,15 @@ def dictToShaderNetwork(tempDict):
                     pass    
     
 sel = cmds.ls(sl=True)
-materials,connections = listShadingNodes(sel)
-shaderNetwork = shaderNetworkToDict(materials)
-#print materials
-
-
+shaderNetwork = listShadingNodes(sel)
+#create namespace to avoid auto renaming of materials
 tempNs = createNewNamespace('temp_shader_namespace')
-dictToShaderNetwork(shaderNetwork)
-
-
-
-for c in connections:
+#make shading nodes from dictionary
+dictToShaderNetwork(shaderNetwork["nodes"])
+#make shaing node connections
+for c in shaderNetwork["connections"]:
     makeConnections(c.split(','),tempNs)
 
-
+#remove temp namesapce
 removeNamespace(tempNs)
 
