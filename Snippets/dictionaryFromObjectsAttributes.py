@@ -1,6 +1,41 @@
 import maya.cmds as cmds
 import json
 
+def rebuildMaterials(objects):
+    #list ALL of the objects shape nodes
+    allShapes = []
+    for o in objects:
+        shapes = cmds.listRelatives( o, allDescendents=True,type='shape')
+        allShapes += shapes
+    
+    for shape in allShapes:
+        transform = cmds.listRelatives(shape,p=True)[0]
+        if cmds.attributeQuery('embeddedShaderNetwork',node=shape,exists=True):
+            networkData = cmds.getAttr('%s.embeddedShaderNetwork'%(shape))
+            shaderNetwork = json.loads(networkData)
+
+            tempNs = createNewNamespace('temp_shader_namespace')
+            #make shading nodes from dictionary
+            dictToShaderNetwork(shaderNetwork["nodes"])
+            #make shaing node connections
+            for c in shaderNetwork["connections"]:
+                makeConnections(c.split(','),tempNs)
+            
+            for a in shaderNetwork["shaderAssignment"]:
+                try:
+                    faceLists = shaderNetwork["shaderAssignment"][a]['faces']
+                    for l in faceLists:
+                        cmds.sets('%s.%s'%(transform,l),e=True,forceElement='%s:%s'%(tempNs,a))
+                except:
+                    pass
+                try:
+                    obj = shaderNetwork["shaderAssignment"][a]['objects']
+                    cmds.sets(obj,e=True,forceElement='%s:%s'%(tempNs,a))
+                except:
+                    pass
+            #remove temp namesapce
+            removeNamespace(tempNs)
+
 def sortFaceShadingGroups(shape,shadingGrp):
     #find transform
     transform = cmds.listRelatives(shape,p=True,type='transform')
@@ -26,7 +61,7 @@ def makeConnections(nodes_attr,ns):
 
     source = nodes_attr[0].split('.',1)
     dest = nodes_attr[1].split('.',1)
-    if cmds.attributeQuery( source[1], node=source[0],exists=True) and cmds.attributeQuery( dest[1], node=dest[0],exists=True):
+    if cmds.attributeQuery( source[1], node='%s:%s'%(ns,source[0]),exists=True) and cmds.attributeQuery( dest[1], node='%s:%s'%(ns,dest[0]),exists=True):
         cmds.connectAttr( '%s:%s'%(ns,nodes_attr[0]), '%s:%s'%(ns,nodes_attr[1]) )
 
 def createNewNamespace(ns):
@@ -71,11 +106,18 @@ def listShadingNodes(objects):
     for shape in allShapes:
         #find connected shading networks
         con = cmds.listConnections( shape, scn=True, type='shadingEngine' )
+        con = list(set(con))
 
         shaderFaces = {}
         for shader in con:
             faces = sortFaceShadingGroups(shape,shader)
-            shaderFaces[shader] = {"faces":faces}
+
+            if faces != None:
+
+                if faces:
+                    shaderFaces[shader] = {"faces":faces}
+                else:
+                    shaderFaces[shader] = {"objects":shape}
 
         #remove duplicate materials  
         allMaterials = cmds.listConnections( shape, scn=True, type='shadingEngine' )
@@ -202,7 +244,6 @@ dictToShaderNetwork(shaderNetwork["nodes"])
 #make shaing node connections
 for c in shaderNetwork["connections"]:
     makeConnections(c.split(','),tempNs)
-
 #remove temp namesapce
 removeNamespace(tempNs)
 
