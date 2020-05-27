@@ -28,13 +28,14 @@ def listShadingNodes(objects,nodeType):
 		allMaterials = list(set(con))
 		#add objects back into the list while it's being iterated 
 		for m in allMaterials:
-			materials = cmds.listConnections( m, source=True,scn=True,destination=False)
+			materials = cmds.listConnections( m, source=True,scn=True,sh=True,destination=False)
 			if materials:
 				for mat in materials:
-					allMaterials.append(mat)
-					#add file textures to the list 
-					if cmds.ls(mat,type=nodeType):
-						allTextures.append(mat)
+					if cmds.objectType( mat) != 'mesh': 
+						allMaterials.append(mat)
+						#add file textures to the list 
+						if cmds.ls(mat,type=nodeType):
+							allTextures.append(mat)
 	return allTextures	
 
 #sel = cmds.ls(sl=True)

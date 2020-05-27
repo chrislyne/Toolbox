@@ -79,6 +79,7 @@ def exportFile():
 	#selected objects
 	objects = cmds.ls(sl=True)
 	#check objects are selected
+
 	if len(objects)>0:
 		#create new file
 		class2 = cmds.textField( "modelClassInputText", q=True, text=True)
