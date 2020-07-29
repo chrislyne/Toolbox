@@ -266,12 +266,19 @@
 				"command":"import Tools.materialSwitch as materialSwitch;from Tools.materialSwitch import *;materialSwitch.materialSwitchWindow()",
 				"menuItem":[
 					{
+						"label":"Add Switch",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.addHoldingAttrs()",
+						"stp":"python"
+					},
+					{
 						"label":"Render",
-						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToRender()"
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToRender()",
+						"stp":"python"
 					},
 					{
 						"label":"Viewport",
-						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToViewport()"
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToViewport()",
+						"stp":"python"
 					}
 				],
 				"stp":"python"
