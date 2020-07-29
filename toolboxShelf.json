@@ -263,7 +263,17 @@
 				"icon":["materialSwitch.svg","shaded.png","textured.png"],
 				"label":"Switch Materials in Viewport",
 				"script":"Tools/materialSwitch.py",
-				"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.materialSwitchWindow()",
+				"command":"import Tools.materialSwitch as materialSwitch;from Tools.materialSwitch import *;materialSwitch.materialSwitchWindow()",
+				"menuItem":[
+					{
+						"label":"Render",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToRender()"
+					},
+					{
+						"label":"Viewport",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToViewport()"
+					}
+				],
 				"stp":"python"
 			},
 			{
