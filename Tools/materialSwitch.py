@@ -37,5 +37,5 @@ def materialSwitchWindow():
 
 	cmds.showWindow( window )
 
-materialSwitchWindow()
+#materialSwitchWindow()
 
