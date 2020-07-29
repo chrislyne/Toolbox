@@ -260,10 +260,10 @@
 				"stp":"python"
 			},
 			{
-				"icon":"materialSwitch.svg",
+				"icon":["materialSwitch.svg","shaded.png","textured.png"],
 				"label":"Switch Materials in Viewport",
 				"script":"Tools/materialSwitch.py",
-				"command":"source RSTessellate;RSTessellate;",
+				"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.materialSwitchWindow()",
 				"stp":"python"
 			},
 			{
