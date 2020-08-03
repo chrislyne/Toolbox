@@ -1,26 +1,24 @@
 import maya.cmds as cmds
 
-
 def getShadingEngineNodes():
-	shadingEngines = []
-	sel = cmds.ls(sl=True)
-	allChildNodes = []
-	for obj in sel:
-		childNodes = cmds.listRelatives(obj,allDescendents=True,fullPath=True)
-		allChildNodes += childNodes
-		
-	allChildNodes = list(dict.fromkeys(allChildNodes))
-
-	for shapeNode in allChildNodes:
-		shadingEng = cmds.listConnections(shapeNode,type="shadingEngine")
-		if shadingEng:
-			shadingEngines += shadingEng
-			
-	shadingEngines = list(set(shadingEngines))
-	print shadingEngines
-	return shadingEngines
-
-
+	shadingEngines = [] #hold all connected shading engines
+	sel = cmds.ls(sl=True) #list selected nodes
+	if sel: #check if anything is selected
+		allChildNodes = [] #hold all decendents of selection
+		for obj in sel: #loop through selected objects
+			childNodes = cmds.listRelatives(obj,allDescendents=True,fullPath=True) #list child nodes
+			allChildNodes += childNodes #add child nodes to the main list of decendents 
+		allChildNodes = list(dict.fromkeys(allChildNodes)) #remove duplicates from list
+		for shapeNode in allChildNodes: #loop through all child nodes
+			shadingEng = cmds.listConnections(shapeNode,type="shadingEngine") #find connected shading engine
+			if shadingEng: #<-- redundant?
+				shadingEngines += shadingEng #add to list of all connected shading engines
+		shadingEngines = list(set(shadingEngines)) #remove duplicate shading engines from list
+	else: #if nothing is selected
+		shadingEngines = cmds.ls(type="shadingEngine") #list all shading engines in scene
+		shadingEngines.remove('initialParticleSE') #remove 'initialParticleSE' from list
+		shadingEngines.remove('initialShadingGroup') #remove 'initialShadingGroup' from list
+	return shadingEngines #return requested shading engines
 
 def addHoldingAttrs():
 	shadingEngines = getShadingEngineNodes()
