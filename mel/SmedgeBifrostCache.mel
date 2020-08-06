@@ -43,7 +43,7 @@ global proc SubmitToSmedge()
     }
 
     //make folder
-    sysFile -makeDir ("Z:/Job_2/Amstel/maya/cache/bifrost/"+$buffer[0]); // Windows
+    sysFile -makeDir ("Z:/Job_2/Alpenliebe Full Fruits LLP - LIVE ACTION/3D/cache/bifrost/"+$buffer[0]); // Windows
 
     //save file
     file -rename ($filename+$extentionType); 
@@ -51,7 +51,7 @@ global proc SubmitToSmedge()
     file -rename $filename; 
     file -save;
 
-    string $cmd = $submit + " Script -Type \"Generic Script\" -Status \"Paused\" -Name "+$smedgeName+" -Priority "+$priority+" "+$extra+" -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2018\\bin\\mayabatch.exe\\\" \\\""+$filename+$extentionType+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$sim+","+$foam+","+$mesh+")\\\"";
+    string $cmd = $submit + " Script -Type \"Generic Script\" -Status \"Paused\" -Name "+$smedgeName+" -Priority "+$priority+" "+$extra+" -Pool \"Redshift\" -ErrorStarts \"Failed\" -Range \""+$startFrame+"-"+$endFrame+"\" -PacketSize "+$packetSize+" -Command \\\"C:\\Program\ Files\\Autodesk\\Maya2019\\bin\\mayabatch.exe\\\" \\\""+$filename+$extentionType+"\\\"\ \\\"-command\\\" \\\"MeshBifrost($(SubRange.Start),$(SubRange.End),"+$sim+","+$foam+","+$mesh+")\\\"";
     
     // Do it!
     print( "// smedgeRender is executing system command:\n// " + $cmd + "\n" );

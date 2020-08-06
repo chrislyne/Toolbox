@@ -260,6 +260,30 @@
 				"stp":"python"
 			},
 			{
+				"icon":["materialSwitch.svg","shaded.png","textured.png"],
+				"label":"Switch Materials in Viewport",
+				"script":"Tools/materialSwitch.py",
+				"command":"import Tools.materialSwitch as materialSwitch;from Tools.materialSwitch import *;materialSwitch.materialSwitchWindow()",
+				"menuItem":[
+					{
+						"label":"Add Switch",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.addHoldingAttrs()",
+						"stp":"python"
+					},
+					{
+						"label":"Render",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToRender()",
+						"stp":"python"
+					},
+					{
+						"label":"Viewport",
+						"command":"import Tools.materialSwitch as materialSwitch;materialSwitch.switchToViewport()",
+						"stp":"python"
+					}
+				],
+				"stp":"python"
+			},
+			{
 				"icon":"separator"
 			}
 		]
