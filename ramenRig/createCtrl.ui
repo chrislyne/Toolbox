@@ -432,42 +432,21 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QRadioButton" name="radioButton_2">
-             <property name="text">
-              <string>-x</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButton">
+            <widget class="QRadioButton" name="radioButton_pointX">
              <property name="text">
               <string>x</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_4">
-             <property name="text">
-              <string>-y</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButton_3">
+            <widget class="QRadioButton" name="radioButton_pointY">
              <property name="text">
               <string>y</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_6">
-             <property name="text">
-              <string>-z</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButton_5">
+            <widget class="QRadioButton" name="radioButton_pointZ">
              <property name="text">
               <string>z</string>
              </property>
@@ -1016,6 +995,150 @@
     <hint type="destinationlabel">
      <x>156</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_x</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointX</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>93</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>97</x>
+     <y>245</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_y</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointX</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_z</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointX</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>165</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_x</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointY</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_x</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointZ</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>172</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_y</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointY</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>136</x>
+     <y>213</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>136</x>
+     <y>244</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_y</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointZ</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_z</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointY</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>242</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_z</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>radioButton_pointZ</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
