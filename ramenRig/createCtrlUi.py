@@ -58,8 +58,16 @@ def createNewCtrl(shape,shapeName,pos,pointOnRamp):
     newCtrl.pos = pos
     if win.radioButton_x.isChecked():
         newCtrl.rot = [0,90,0]
+        if win.radioButton_pointZ.isChecked():
+            newCtrl.aim = [90,0,0]
     if win.radioButton_y.isChecked():
         newCtrl.rot = [90,0,0]
+        if win.radioButton_pointX.isChecked():
+            newCtrl.aim = [0,90,0]
+    if win.radioButton_z.isChecked():
+        newCtrl.rot = [0,0,0]
+        if win.radioButton_pointX.isChecked():
+            newCtrl.aim = [0,0,-90]
 
     ctrl = newCtrl.makeCtrl(newCtrl.makeShape())
     return ctrl

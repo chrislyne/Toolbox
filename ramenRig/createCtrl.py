@@ -6,6 +6,7 @@ class MakeCtrlCurve:
     ctrlName = 'newCtrl'
     pos = [0,0,0]
     rot = [0,0,0]
+    aim = [0,0,0]
     scl = [1,1,1]
     ctrlColour = []
     thickness = 2
@@ -92,6 +93,8 @@ class MakeCtrlCurve:
         #set transformations
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
         cmds.xform(ctrl,ro=self.rot,s=self.scl)
+        cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
+        cmds.xform(ctrl,ro=self.aim,s=self.scl)
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
         #set attributes
         for attrName in self.attr:
