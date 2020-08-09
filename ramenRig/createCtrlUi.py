@@ -81,7 +81,7 @@ def createBtn(shape):
 
 
     if sel and win.checkBox_selection.isChecked() == True:
-
+        parent = ''
         if len(sel) > 1:
             gradSplit = 1.0/float(len(sel)-1)
         else:
@@ -112,6 +112,11 @@ def createBtn(shape):
                 ctrlGrp = cmds.group(ctrl,n='%s_GRP'%(ctrl[0]))
                 cmds.xform(ctrlGrp,piv=[objPos2[0],objPos2[1],objPos2[2]],ws=True)
                 cmds.xform(ctrlGrp,ro=[objRo[0],objRo[1],objRo[2]],ws=True)
+                if win.checkBox_stack.isChecked():
+                    if parent:
+                        cmds.parent(ctrlGrp,parent)
+                    parent = ctrl
+
             if win.checkBox_constraint.isChecked():
                 cmds.parentConstraint(ctrl,o,mo=True)
     else:
