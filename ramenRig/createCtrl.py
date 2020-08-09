@@ -33,11 +33,11 @@ class MakeCtrlCurve:
     def makeShape(self):
 
         if self.shape.lower() == 'square':
-            ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+            ctrl = cmds.circle(r=1,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
             cmds.xform(ctrl,ro=[0,0,45],t=self.pos)
 
         elif self.shape.lower() == 'diamond':
-            ctrl = cmds.circle(r=0.3,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+            ctrl = cmds.circle(r=1,s=4,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
             cmds.xform(ctrl,t=self.pos)
 
         elif self.shape.lower() == 'plus':
@@ -70,7 +70,7 @@ class MakeCtrlCurve:
             cmds.xform(ctrl,t=self.pos)
 
         elif self.shape.lower() == 'arch':
-            ctrl = cmds.circle(r=0.3,s=4,ut=0,d=3,ch=0,sw=180,tol=0.01,n=self.ctrlName)
+            ctrl = cmds.circle(r=1,s=4,ut=0,d=3,ch=0,sw=180,tol=0.01,n=self.ctrlName)
             cmds.xform(ctrl,ro=[0,0,-90],t=self.pos)
 
         elif self.shape.lower() == 'pin':
@@ -80,9 +80,15 @@ class MakeCtrlCurve:
             cmds.xform('%s.cv[11]'%ctrl[0],t=[0,-0.3,0],r=True) 
             cmds.xform(ctrl,ro=[0,0,180],s=[0.5,0.5,0.5],t=self.pos)
 
+        elif self.shape.lower() == 'arrow':
+            ctrl = cmds.curve(d=1,p=[(-0.5,1,0),(-0.5,0,0),(-1,0,0),(0,-1,0),(1,0,0),(0.5,0,0.0),(0.5,1,0),(-0.5,1,0)],n=self.ctrlName)
+            #ctrl = cmds.curve(d=1,p=[(-0.5,0,-1),(-0.5,0,0),(-1,0,0),(0,0,1),(1,0,0),(0.5,0,0.0),(0.5,0,-1),(-0.5,0,-1)],n=self.ctrlName)
+            cmds.xform(ctrl,t=self.pos)
+            ctrl = [ctrl]
+
 
         else:
-            ctrl = cmds.circle(r=0.3,s=8,ut=0,d=0,ch=0,sw=360,tol=0.01,n=self.ctrlName)
+            ctrl = cmds.circle(r=1,s=8,ut=0,d=0,ch=0,sw=360,tol=0.01,n=self.ctrlName)
             cmds.xform(ctrl,t=self.pos)
     
         return ctrl
@@ -94,7 +100,7 @@ class MakeCtrlCurve:
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
         cmds.xform(ctrl,ro=self.rot,s=self.scl)
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
-        cmds.xform(ctrl,ro=self.aim,s=self.scl)
+        cmds.xform(ctrl,ro=self.aim)
         cmds.makeIdentity(ctrl,apply=True,t=1,r=1,s=1)
         #set attributes
         for attrName in self.attr:
