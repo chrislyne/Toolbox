@@ -73,7 +73,8 @@ def materialSwitchWindow():
 	btn_viewport = cmds.iconTextButton('btn_viewport', flat=False,style='iconAndTextVertical',image='textured.png',l="Viewport",h=60,en=True,c='switchToViewport()')
 	btn_render =  cmds.iconTextButton('btn_render', flat=False,style='iconAndTextVertical',image='shaded.png',l="Render",h=60,en=True,c='switchToRender()')
 
-
+ 
+ 
 	cmds.formLayout(formLayout,edit=True,
 		attachForm=[
 		 (cl,'left',5),
