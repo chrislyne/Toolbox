@@ -43,7 +43,6 @@ class MakeCtrlCurve:
         elif self.shape.lower() == 'plus':
             ctrl = cmds.circle(r=0.3,s=12,ut=0,d=1,ch=0,sw=360,tol=0.01,n=self.ctrlName)
             cmds.xform(ctrl,ro=[0,0,15],t=self.pos)
-            #shape plus
             cvs = ['%s.cv[1]'%ctrl[0],'%s.cv[10]'%ctrl[0],'%s.cv[7]'%ctrl[0],'%s.cv[4]'%ctrl[0]]
             cmds.scale(0.361464,0.361464,0.361464,cvs,r=True,) 
 
