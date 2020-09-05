@@ -2,10 +2,20 @@ import maya.cmds as cmds
 
 sel = cmds.ls(sl=True)
 
-cmds.connectAttr("%s.translate"%sel[0],"%s.translate"%sel[1],f=True)
-cmds.connectAttr("%s.rotate"%sel[0],"%s.rotate"%sel[1],f=True)
-cmds.connectAttr("%s.scale"%sel[0],"%s.scale"%sel[1],f=True)
-try:
-	cmds.connectAttr("%s.follow"%sel[0],"%s.follow"%sel[1],f=True)
-except:
-	pass
+for s in sel:
+    
+    ctrlNode = s
+    connectionNode = s.replace("CTRL", "connection")
+
+    cmds.connectAttr("%s.translate"%ctrlNode,"%s.translate"%connectionNode,f=True)
+    cmds.connectAttr("%s.rotate"%ctrlNode,"%s.rotate"%connectionNode,f=True)
+    cmds.connectAttr("%s.scale"%ctrlNode,"%s.scale"%connectionNode,f=True)
+    try:
+    	cmds.connectAttr("%s.follow"%ctrlNode,"%s.follow"%connectionNode,f=True)
+    except:
+    	pass
+    try:
+    	cmds.connectAttr("%s.topLipWeight"%ctrlNode,"%s.topLipWeight"%connectionNode,f=True)
+    except:
+    	pass
+	
