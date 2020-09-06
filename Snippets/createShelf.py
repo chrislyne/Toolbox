@@ -1,16 +1,36 @@
 import maya.cmds as cmds
 
-
 def rigWindow_UI():
 	form = cmds.formLayout(bgc=(0.14,0.14,0.14))
-
-
 	flow = cmds.flowLayout( columnSpacing=2,wrap=True)
-	cmds.iconTextButton(height=60,width=80, flat=True,useAlpha=True,style='iconOnly',highlightImage='logicGrp_over.svg',image='logicGrp.svg',l="Logic Group",en=True,c='makeBlendshapes()')
-	cmds.button( height=60,width=80,label='Blendshapes', command='makeBlendshapes()', bgc=(0.14,0.14,0.14))
-	cmds.button( height=60,width=80,label='Joints',command='makeJoints()', bgc=(0.14,0.14,0.14))
-	cmds.button( height=60,width=80,label='Mirror Joints',command='mirrorJoints()',bgc=(0.14,0.14,0.14))
-	cmds.iconTextButton('btn_viewport',height=60,width=80, flat=True,style='iconAndTextVertical',image='textured.png',l="Viewport",h=60,en=True,c='switchToViewport()',bgc=(0.14,0.14,0.14))
+	buttons = [
+		{
+		"highlightImage":"logicGrp.svg",
+		"image":"logicGrp.svg",
+		"l":"Logic Group",
+		"c":"makeBlendshapes()"
+		},
+		{
+		"highlightImage":"blendshapes.svg",
+		"image":"blendshapes.svg",
+		"l":"Blendshapes",
+		"c":"makeBlendshapes()"
+		},
+		{
+		"highlightImage":"makeJoints.svg",
+		"image":"makeJoints.svg",
+		"l":"Joints",
+		"c":"makeJoints()"
+		},
+		{
+		"highlightImage":"mirrorJoints.svg",
+		"image":"mirrorJoints.svg",
+		"l":"Mirror Joints",
+		"c":"mirrorJoints()"
+		}
+	]
+	for b in buttons:
+		cmds.iconTextButton(height=60,width=60, flat=True,useAlpha=True,style='iconOnly',highlightImage=b["highlightImage"],image=b["image"],l=b["l"],en=True,c=b["c"])
 	cmds.setParent('..')
 
 	cmds.formLayout(form,  edit=True, 
@@ -18,8 +38,6 @@ def rigWindow_UI():
 	                     (flow, 'top', 0),
 	                     (flow, 'right', 0),
 	                     (flow, 'bottom', 0),])
-
-
 
 def rigWindow():
 	workspaceName = 'rigWindow'
