@@ -1,4 +1,5 @@
 import maya.cmds as cmds
+import maya.mel as mel
 
 def rigWindow_UI():
 	form = cmds.formLayout(bgc=(0.14,0.14,0.14))
@@ -27,6 +28,12 @@ def rigWindow_UI():
 		"image":"mirrorJoints.svg",
 		"l":"Mirror Joints",
 		"c":"mirrorJoints()"
+		},
+		{
+		"highlightImage":"menuIconSkinning.png",
+		"image":"menuIconSkinning.png",
+		"l":"Hammer Skin Weights",
+		"c":"mel.eval(\"WeightHammer;\")"
 		}
 	]
 	for b in buttons:
