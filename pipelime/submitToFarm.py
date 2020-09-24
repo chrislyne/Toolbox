@@ -342,7 +342,11 @@ def renderString(l):
         submitString += ' -Extra \"-x %s -y %s -preRender \"setAttr \\\"redshiftOptions.unifiedMaxSamples\\\" 16; setAttr \\\"redshiftOptions.unifiedMinSamples\\\" 4;\"\"'%(width,height)
     if stf_window.mainWidget.checkBox_errors.isChecked() == 1:
         submitString += ' -DetectErrors 0'
-    submitString += ' -CPUs -1 -GPUs 1 -RAM -1 -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
+    if stf_window.mainWidget.comboBox_layerPool.currentText() == "GPU":
+        submitString += ' -CPUs -1 -GPUs 1 -RAM -1'
+    else:
+        submitString += ' -CPUs 0 -GPUs 0 -RAM 0'
+    submitString += ' -DistributeMode 0 -StaggerCount 1 -StaggerMode 1'
 
     return submitString
 
