@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>947</width>
-    <height>750</height>
+    <height>772</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1022,6 +1022,27 @@ background-image: url(/icon/io_ANIMOUT.png);
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>Resource Allocation</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_resourceAllocation">
+          <item>
+           <property name="text">
+            <string>Engine</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GPU</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
            <string>Stagger (sec)</string>
@@ -1341,12 +1362,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>509</x>
-     <y>417</y>
+     <x>667</x>
+     <y>402</y>
     </hint>
     <hint type="destinationlabel">
-     <x>545</x>
-     <y>416</y>
+     <x>703</x>
+     <y>401</y>
     </hint>
    </hints>
   </connection>
@@ -1357,12 +1378,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>545</x>
-     <y>416</y>
+     <x>703</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel">
-     <x>509</x>
-     <y>417</y>
+     <x>667</x>
+     <y>402</y>
     </hint>
    </hints>
   </connection>
@@ -1373,8 +1394,8 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
-     <y>60</y>
+     <x>935</x>
+     <y>61</y>
     </hint>
     <hint type="destinationlabel">
      <x>179</x>
@@ -1389,12 +1410,12 @@ background-image: url(/icon/io_ANIMOUT.png);
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>727</x>
-     <y>312</y>
+     <x>927</x>
+     <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>727</x>
-     <y>341</y>
+     <x>927</x>
+     <y>267</y>
     </hint>
    </hints>
   </connection>
